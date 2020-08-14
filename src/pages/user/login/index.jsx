@@ -1,9 +1,9 @@
-import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from '@ant-design/icons';
+// import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from '@ant-design/icons';
 import { Space, Alert, Checkbox } from 'antd';
 import React, { useState } from 'react';
 import { Link, connect } from 'umi';
 import LoginForm from './components/Login';
-import smcApp from '../../../assets/smc_qrcode.png';
+// import smcApp from '../../../assets/smc_qrcode.png';
 import styles from './style.less';
 
 const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginForm;

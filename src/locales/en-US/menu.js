@@ -9,6 +9,7 @@ export default {
   'menu.register.result': 'Register Result',
   'menu.test': 'Test Page',
   'menu.dashboard': 'Dashboard',
+  'menu.dashboard.repair-wip': 'Repair WIP',
   'menu.dashboard.analysis': 'Analysis',
   'menu.dashboard.monitor': 'Monitor',
   'menu.dashboard.workplace': 'Workplace',

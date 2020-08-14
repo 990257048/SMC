@@ -2,7 +2,7 @@ const proSettings = {
   navTheme: 'dark',   // light  dark
   // 拂晓蓝
   // primaryColor: 'daybreak',
-  primaryColor: '#337ab7', // '#1890ff',
+  primaryColor: '#1890ff', // '#1890ff',
   layout: 'side',
   contentWidth: 'Fluid',
   fixedHeader: true,

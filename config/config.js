@@ -56,6 +56,18 @@ export default defineConfig({
               component: './Welcome',
             },
             {
+              path: '/dashboard',
+              name: 'dashboard',
+              icon: 'lineChart',
+              routes: [
+                {
+                  path: '/dashboard/repair-wip',
+                  name: 'repair-wip',
+                  component: './dashboard/RepairWip'
+                }
+              ]
+            },
+            {
               path: '/admin',
               name: 'admin',
               icon: 'crown',

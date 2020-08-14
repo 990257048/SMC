@@ -4,9 +4,7 @@ import { Card, Typography, Alert } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 
 export default props => (
-  <PageHeaderWrapper content=" 这个页面只有 admin 权限才能查看">
-    { props.children }
-    {/* <Card>
+    <Card>
       <Alert
         message="umi ui 现已发布，欢迎使用 npm run ui 启动体验。"
         type="success"
@@ -26,17 +24,16 @@ export default props => (
         <SmileTwoTone /> Ant Design Pro <HeartTwoTone twoToneColor="#eb2f96" /> You
       </Typography.Title>
     </Card>
-    <p
-      style={{
-        textAlign: 'center',
-        marginTop: 24,
-      }}
-    >
-      Want to add more pages? Please refer to{' '}
-      <a href="https://pro.ant.design/docs/block-cn" target="_blank" rel="noopener noreferrer">
-        use block
-      </a>
-      。
-    </p> */}
-  </PageHeaderWrapper>
+    // <p
+    //   style={{
+    //     textAlign: 'center',
+    //     marginTop: 24,
+    //   }}
+    // >
+    //   Want to add more pages? Please refer to{' '}
+    //   <a href="https://pro.ant.design/docs/block-cn" target="_blank" rel="noopener noreferrer">
+    //     use block
+    //   </a>
+    //   。
+    // </p> 
 );

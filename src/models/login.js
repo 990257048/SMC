@@ -17,7 +17,7 @@ const Model = {
         type: 'user/changeLoginStatus',     // 设置登录状态
         payload: response,
       }); // Login successfully
-      setAuthority(payload.currentAuthority);    // 设置账号权限
+      setAuthority(response.currentAuthority);    // 设置账号权限
 
 
       if (response.status === 'ok') {

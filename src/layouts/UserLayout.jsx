@@ -4,7 +4,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Link, SelectLang, useIntl, connect } from 'umi';
 import React from 'react';
 import GlobalFooter from '../components/GlobalFooter';
-import logo from '../assets/smc.png';
+import logo from '../assets/smc-logo.png';
 import styles from './UserLayout.less';
 
 const UserLayout = props => {
