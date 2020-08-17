@@ -14,7 +14,7 @@ class SecurityLayout extends React.Component {
     });
     const { dispatch, user } = this.props;
     if (dispatch) {
-      console.log(user);
+      // console.log(user);
       user.login.status == "ok" && 
       dispatch({    // 当前登录状态是成功的才去获取个人信息
         type: 'user/fetchCurrent',
