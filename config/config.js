@@ -55,10 +55,13 @@ export default defineConfig({
               icon: 'smile',
               component: './Welcome',
             },
+
+            // 202008171508 add by gch (smc系统路由) START ================================================================================================================
+
             {
-              path: '/dashboard',
+              path: '/dashboard',    // 仪表盘
               name: 'dashboard',
-              icon: 'lineChart',
+              icon: 'dashboard',
               routes: [
                 {
                   path: '/dashboard/repair-wip',
@@ -67,6 +70,21 @@ export default defineConfig({
                 }
               ]
             },
+            {
+              path: '/increase-productivity',    // 提高生产力
+              name: 'increase-productivity',
+              icon: 'lineChart',
+              routes: [
+                {
+                  path: '/increase-productivity/abnormal-decision',    // 异常决策中心
+                  name: 'abnormal-decision',
+                  component: './IncreaseProductivity/AbnormalDecision'
+                }
+              ]
+            },
+
+            // 202008171508 add by gch (smc系统路由) END =====================================================================================================================
+
             {
               path: '/admin',
               name: 'admin',

@@ -135,7 +135,7 @@ const BasicLayout = props => {
           <span>{route.breadcrumbName}</span>
         );
       }}
-      footerRender={ GlobalFooter }
+      // footerRender={ GlobalFooter }
       menuDataRender={menuDataRender}
       rightContentRender={() => <RightContent /> }
       {...props}

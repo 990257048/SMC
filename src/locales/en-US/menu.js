@@ -10,6 +10,8 @@ export default {
   'menu.test': 'Test Page',
   'menu.dashboard': 'Dashboard',
   'menu.dashboard.repair-wip': 'Repair WIP',
+  'menu.increase-productivity': 'Increase Productivity',
+  'menu.increase-productivity.abnormal-decision': 'Abnormal Decision',
   'menu.dashboard.analysis': 'Analysis',
   'menu.dashboard.monitor': 'Monitor',
   'menu.dashboard.workplace': 'Workplace',

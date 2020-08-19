@@ -10,6 +10,8 @@ export default {
   'menu.test': '测试页面测试页面测试页面测试页面测试页面',
   'menu.dashboard': '仪表盘',
   'menu.dashboard.repair-wip': '维修WIP',
+  'menu.increase-productivity': '提高生产力',
+  'menu.increase-productivity.abnormal-decision': '异常决策中心',
   'menu.dashboard.analysis': '分析页',
   'menu.dashboard.monitor': '监控页',
   'menu.dashboard.workplace': '工作台',
