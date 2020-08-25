@@ -15,6 +15,8 @@ export default {
   'menu.dashboard.repair-wip': '維修WIP',
   'menu.increase-productivity': '提高生產力',
   'menu.increase-productivity.abnormal-decision': '異常決策中心',
+  'menu.production-board': '生產性看板',
+  'menu.production-board.real-time-production': '實時生產看板',
   'menu.dashboard.analysis': '分析頁',
   'menu.dashboard.monitor': '監控頁',
   'menu.dashboard.workplace': '工作臺',

@@ -4,13 +4,14 @@
  * https://github.com/ant-design/ant-design-pro-layout
  */
 import ProLayout from '@ant-design/pro-layout';
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Link, useIntl, connect, history } from 'umi';
 // import { GithubOutlined } from '@ant-design/icons';
 import { Result, Button } from 'antd';
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { getAuthorityFromRouter } from '@/utils/utils';
+import { debounce } from '@/utils/custom';
 import GlobalFooter from '../components/GlobalFooter';
 import logo from '../assets/smc-logo.png';
 
@@ -88,6 +89,24 @@ const BasicLayout = props => {
       });
     }
   }, []);
+
+
+  let resize = useCallback(() => {
+    let height = document.documentElement.clientHeight;
+    dispatch({
+      type: 'global/setHeight',
+      height
+    });
+  }, []);
+
+  useEffect(() => {
+    resize();
+    window.onresize = debounce(resize, 100);
+    return () => {
+      window.onresize = null;
+    }
+  }, []);
+
   /**
    * init variables
    */

@@ -83,6 +83,18 @@ export default defineConfig({
               ]
             },
 
+            {
+              path: '/production-board',    // 生产看板
+              name: 'production-board',
+              icon: 'barChart',
+              routes: [
+                {
+                  path: '/production-board/real-time-production',   // 实时生产看板
+                  name: 'real-time-production',
+                  component: './ProductionBoard/RealTimeProduction'
+                }
+              ]
+            },
             // 202008171508 add by gch (smc系统路由) END =====================================================================================================================
 
             {

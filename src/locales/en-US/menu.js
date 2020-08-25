@@ -12,6 +12,8 @@ export default {
   'menu.dashboard.repair-wip': 'Repair WIP',
   'menu.increase-productivity': 'Increase Productivity',
   'menu.increase-productivity.abnormal-decision': 'Abnormal Decision',
+  'menu.production-board': 'Production Board',
+  'menu.production-board.real-time-production': 'Realtime Production',
   'menu.dashboard.analysis': 'Analysis',
   'menu.dashboard.monitor': 'Monitor',
   'menu.dashboard.workplace': 'Workplace',

@@ -3,8 +3,8 @@ const proSettings = {
   // 拂晓蓝
   // primaryColor: 'daybreak',
   primaryColor: '#1890ff', // '#1890ff',
-  layout: 'side',
-  contentWidth: 'Fluid',
+  layout: 'side',    // 'side' 'top'
+  contentWidth: 'Fluid',  //'Fluid' 'Fixed'
   fixedHeader: true,
   fixSiderbar: true,
   colorWeak: false,
