@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect, useMemo, useCallback } from 'react'
 import { connect, FormattedMessage, formatMessage } from 'umi';
 import { Space, Input, Button, Table } from 'antd';
 import { ProfileOutlined, BarChartOutlined, RedoOutlined } from '@ant-design/icons';
-import { debounce } from '../../../../utils/custom';
 
 import styles from '../style.less';
 
@@ -57,12 +56,12 @@ let ret_table_config = h => ({
         {
             title: '实际产出',
             dataIndex: 'field6',
-            // render: (text) => <b style={{color: 'blue'}}>{ text }</b>
+            render: (text) => <span style={{color: 'green'}}>{ text }</span>
         },
         {
             title: '差异',
             dataIndex: 'field7',
-            // render: (text) => <b style={{color: 'red'}}>{ text }</b>
+            render: (text) => <span style={{color: 'red'}}>{ text }</span>
         },
         {
             title: '累计产出',
@@ -88,7 +87,6 @@ let ret_table_config = h => ({
 
 let TableWrap = props => {
     let { height } = props;
-
     
     const tableConfig = useMemo(() => {
         let h = height - 405;
