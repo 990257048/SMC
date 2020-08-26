@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMeno, useCallback, useState } from 'react';
+import React, { useRef, useEffect, useMemo, useCallback, useState } from 'react';
 import { connect, FormattedMessage, formatMessage } from 'umi';
 import { Space, Input, Button, Table, Row, Col, Spin } from 'antd';
 import echarts from 'echarts';
@@ -103,22 +103,21 @@ let option = {
 
 let Tab5 = props => {
 
-    let { collapsed } = props;
-    let chartWrap = useRef();
+    let { collapsed, activeKey } = props;
     let [w, setW] = useState(100);
+    let chartWrap = useRef();
 
     useEffect(() => {
-        let width = chartWrap.current.clientWidth;
-        setW(width);
-    }, [collapsed]);
+        activeKey === 'tab5' && setW(chartWrap.current.clientWidth);
+    }, [collapsed, activeKey]);
 
     useEffect(() => {
-        console.log("componwntDidMount111");
-        let mychart = echarts.init(chartWrap.current);
-        mychart.resize({ width: w });
-        mychart.setOption(option);
-    }, [w]);
-
+        if(activeKey === 'tab5'){
+            let myChart = echarts.init(chartWrap.current);
+            myChart.resize({ width: w });
+            myChart.setOption(option);
+        }
+    }, [w, activeKey]);
 
     return <div className={styles.tab5}>
         <Spin size="large" spinning={false}>
@@ -128,7 +127,10 @@ let Tab5 = props => {
         </Spin>
     </div>
 }
+
 let mapStateToProps = state => ({
-    collapsed: state.global.collapsed
+    collapsed: state.global.collapsed,
+    activeKey: state.AbnormalDecision.anomalousGraph.activeKey
 })
+
 export default connect(mapStateToProps)(Tab5);

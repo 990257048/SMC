@@ -121,7 +121,7 @@ let ret_option = (tit, num) => {
 
 
 let Tab1 = props => {   // 异常状态
-    let { dispatch, collapsed } = props;
+    let { collapsed, activeKey } = props;
     let graph1 = useRef();
     let graph2 = useRef();
     let graph3 = useRef();
@@ -129,24 +129,25 @@ let Tab1 = props => {   // 异常状态
     let [w, setW] = useState(100);
 
     useEffect(() => {
-        let width = graph1.current.clientWidth;
-        setW(width);
-    }, [collapsed]);
+        activeKey === 'tab1' && setW(graph1.current.clientWidth);
+    }, [collapsed, activeKey]);
 
     useEffect(() => {
-        let chart1 = echarts.init(graph1.current);
-        let chart2 = echarts.init(graph2.current);
-        let chart3 = echarts.init(graph3.current);
-        let option1 = ret_option('所有异常', 600);
-        let option2 = ret_option('未结案异常', 100);
-        let option3 = ret_option('待签核异常', 80);
-        chart1.resize({ width: w });
-        chart2.resize({ width: w });
-        chart3.resize({ width: w });
-        chart1.setOption(option1);
-        chart2.setOption(option2);
-        chart3.setOption(option3);
-    }, [w]);
+        if(activeKey === 'tab1'){
+            let chart1 = echarts.init(graph1.current);
+            let chart2 = echarts.init(graph2.current);
+            let chart3 = echarts.init(graph3.current);
+            let option1 = ret_option('所有异常', 600);
+            let option2 = ret_option('未结案异常', 100);
+            let option3 = ret_option('待签核异常', 80);
+            chart1.resize({ width: w });
+            chart2.resize({ width: w });
+            chart3.resize({ width: w });
+            chart1.setOption(option1);
+            chart2.setOption(option2);
+            chart3.setOption(option3);
+        }
+    }, [w, activeKey]);
 
     return <div className={styles.tab1}>
         <Spin size="large" spinning={false}>
@@ -167,6 +168,7 @@ let Tab1 = props => {   // 异常状态
 }
 // collapsed
 let mapStateToProps = state => ({
-    collapsed: state.global.collapsed
+    collapsed: state.global.collapsed,
+    activeKey: state.AbnormalDecision.anomalousGraph.activeKey
 })
 export default connect(mapStateToProps)(Tab1);

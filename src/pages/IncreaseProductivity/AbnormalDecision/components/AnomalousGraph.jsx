@@ -11,6 +11,7 @@ import Tab3 from './Tab3';
 import Tab4 from './Tab4';
 import Tab5 from './Tab5';
 import styles from '../style.less';
+import { dispatch } from 'rxjs/internal/observable/range';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -378,30 +379,31 @@ let ControlContent2 = props => {  // 控件内容
 }
 
 let AnomalousGraph = props => {  // 异常统计图
+    let { activeKey, setActiveKey } = props;
     return <div className={styles['anomalous-graph']}>
-        <Tabs size="middle" type='line' defaultActiveKey="1" className={styles.tabs} >
+        <Tabs size="middle" type='line' activeKey={ activeKey } onChange={ key => setActiveKey(key) } className={styles.tabs} >
             <TabControls />
-            <TabPane tab="异常状态统计" key="1">
+            <TabPane tab="异常状态统计" key="tab1">
                 <div className={styles.tab}>
                     <Tab1 />
                 </div>
             </TabPane>
-            <TabPane tab="异常类别统计" key="2">
+            <TabPane tab="异常类别统计" key="tab2">
                 <div className={styles.tab}>
                     <Tab2 />
                 </div>
             </TabPane>
-            <TabPane tab="原因类别统计" key="3">
+            <TabPane tab="原因类别统计" key="tab3">
                 <div className={styles.tab}>
                     <Tab3 />
                 </div>
             </TabPane>
-            <TabPane tab="异常工时統計" key="4">
+            <TabPane tab="异常工时統計" key="tab4">
                 <div className={styles.tab}>
                     <Tab4 />
                 </div>
             </TabPane>
-            <TabPane tab="結案狀態統計" key="5">
+            <TabPane tab="結案狀態統計" key="tab5">
                 <div className={styles.tab}>
                     <Tab5 />
                 </div>
@@ -414,4 +416,14 @@ let AnomalousGraph = props => {  // 异常统计图
     </div>
 }
 
-export default AnomalousGraph;
+let mapStateToProps = ({ AbnormalDecision }) => ({
+    activeKey: AbnormalDecision.anomalousGraph.activeKey
+});
+
+let mapDispatchToProps = dispatch => ({
+    setActiveKey: activeKey => {
+        dispatch({ type: 'AbnormalDecision/setActiveKey', activeKey });
+    }
+}); 
+
+export default connect(mapStateToProps, mapDispatchToProps)(AnomalousGraph);
