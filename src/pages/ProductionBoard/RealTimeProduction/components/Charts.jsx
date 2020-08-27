@@ -86,13 +86,13 @@ let Charts = props => {
             <Col span={3}>
                 <div className={styles.box}>
                     <h3> <b>待维护异常</b> </h3>
-                    <h2 style={{ color: 'red' }}> <b>10次</b> </h2>
+                    <h2 style={{ color: 'red' }}> <b>10个</b> </h2>
                 </div>
             </Col>
             <Col span={3}>
                 <div className={styles.box}>
                     <h3> <b>全部异常</b> </h3>
-                    <h2 style={{ color: 'red' }}> <b>10次</b> </h2>
+                    <h2 style={{ color: 'red' }}> <b>10个</b> </h2>
                 </div>
             </Col>
             <Col span={3}>

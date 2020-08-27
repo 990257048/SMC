@@ -5,65 +5,13 @@ import { Button, Space, Input, Tabs, Popover, Row, Col, Divider, Select, Radio, 
 import { SearchOutlined, PlusOutlined, ProfileOutlined, BarsOutlined, ZoomInOutlined } from '@ant-design/icons'
 import moment from 'moment';
 
-import AdvancedSearch from './AdvancedSearch';
-import NewAbnormal from './NewAbnormal';
-import Tab1 from './Tab1';
-import Tab2 from './Tab2';
-import Tab3 from './Tab3';
-import Tab4 from './Tab4';
-import Tab5 from './Tab5';
 import styles from '../style.less';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-let TabControls = props => {   // 标签页控件
-    return <div className={styles['tab-controls']}>
-        <Space size="middle" align="baseline">
-            {/* <b>当前：MFGII · 按区域统计 · 2020年 · 异常</b> */}
-            
-            <Tooltip title="制造处">
-                <Select defaultValue="ALL" style={{ width: '100px' }}>
-                    <Option value="ALL">All</Option>
-                    <Option value="MFGI">MFGI</Option>
-                    <Option value="MFGII">MFGII</Option>
-                    <Option value="MFGIII">MFGIII</Option>
-                    <Option value="MFGV">MFGV</Option>
-                    <Option value="MFGVI">MFGVI</Option>
-                    <Option value="MFGVII">MFGVII</Option>
-                    <Option value="MFGVIII">MFGVIII</Option>
-                </Select>
-            </Tooltip>
-            <Tooltip title="查询分类">
-                <Select defaultValue="按發生區域" style={{ width: '120px' }}>
-                    <Option value="按發生區域">按發生區域</Option>
-                    <Option value="按責任單位">按責任單位</Option>
-                    <Option value="按責任人員">按責任人員</Option>
-                    <Option value="按問題分類">按問題分類</Option>
-                </Select>
-            </Tooltip>
-
-            <Tooltip title="快速搜索">
-                <Popover placement="bottomRight" content={ QuickSearch } trigger="click">
-                    <Button type="primary" icon={<SearchOutlined />}></Button>
-                </Popover>
-            </Tooltip>
-            <Tooltip title="高级搜索">
-                <Popover placement="bottomRight" content={AdvancedSearch} trigger="click">
-                    <Button type="primary" icon={<ZoomInOutlined />}></Button>
-                </Popover>
-            </Tooltip>
-            <Tooltip title="新增异常">
-                <Popover placement="bottomRight" content={NewAbnormal} trigger="click">
-                    <Button type="primary" icon={<PlusOutlined />}></Button>
-                </Popover>
-            </Tooltip>
-        </Space>
-    </div>
-}
-
-let QuickSearch = props => {  // 快速搜索
+let AdvancedSearch = props => {  // 高级搜索
     return <div className={styles['control-content']}>
         <Tabs size="small" type='line' defaultActiveKey="1" className={styles['tabs-query']} >
             <TabPane tab="按年份" key="1">
@@ -221,53 +169,4 @@ let QuickSearch = props => {  // 快速搜索
     </div>
 }
 
-
-let AnomalousGraph = props => {  // 异常统计图
-    let { activeKey, setActiveKey } = props;
-    return <div className={styles['anomalous-graph']}>
-        <Tabs size="middle" type='line' activeKey={ activeKey } onChange={ key => setActiveKey(key) } className={styles.tabs} >
-            <TabControls />
-            <TabPane tab={ <b>异常状态统计</b> } key="tab1">
-                <div className={styles.tab}>
-                    <Tab1 />
-                </div>
-            </TabPane>
-            <TabPane tab={ <b>异常类别统计</b> } key="tab2">
-                <div className={styles.tab}>
-                    <Tab2 />
-                </div>
-            </TabPane>
-            <TabPane tab={ <b>原因类别统计</b> } key="tab3">
-                <div className={styles.tab}>
-                    <Tab3 />
-                </div>
-            </TabPane>
-            <TabPane tab={ <b>异常工时統計</b> } key="tab4">
-                <div className={styles.tab}>
-                    <Tab4 />
-                </div>
-            </TabPane>
-            <TabPane tab={ <b>結案狀態統計</b> } key="tab5">
-                <div className={styles.tab}>
-                    <Tab5 />
-                </div>
-            </TabPane>
-        </Tabs>
-        <Space size="middle" style={{ float: 'right', marginRight: '25px' }}>
-            <b>当前数据：</b>
-            <span>MFGII · 2020年 · 第2季度 · 异常汇总</span>
-        </Space>
-    </div>
-}
-
-let mapStateToProps = ({ AbnormalDecision }) => ({
-    activeKey: AbnormalDecision.anomalousGraph.activeKey
-});
-
-let mapDispatchToProps = dispatch => ({
-    setActiveKey: activeKey => {
-        dispatch({ type: 'AbnormalDecision/setActiveKey', activeKey });
-    }
-}); 
-
-export default connect(mapStateToProps, mapDispatchToProps)(AnomalousGraph);
+export default AdvancedSearch;
