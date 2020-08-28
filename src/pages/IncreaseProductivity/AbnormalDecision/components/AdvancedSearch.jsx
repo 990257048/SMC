@@ -1,4 +1,4 @@
-// AnomalousGraph 异常统计图
+
 import React, { useEffect, useMeno, useCallback } from 'react';
 import { connect, FormattedMessage, formatMessage } from 'umi';
 import { Button, Space, Input, Tabs, Popover, Row, Col, Divider, Select, Radio, DatePicker, Tooltip } from 'antd';
