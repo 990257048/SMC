@@ -1,3 +1,57 @@
+// import React from 'react';
+// import { PageLoading } from '@ant-design/pro-layout';
+// import { Redirect, connect } from 'umi';
+// import { stringify } from 'querystring';
+
+// class SecurityLayout extends React.Component {
+//   state = {
+//     isReady: false,
+//   };
+
+//   componentDidMount() {
+//     this.setState({
+//       isReady: true,
+//     });
+//     const { dispatch, user } = this.props;
+//     if (dispatch) {
+//       // console.log(user);
+//       user.login.status == "ok" && 
+//       dispatch({    // 当前登录状态是成功的才去获取个人信息
+//         type: 'user/fetchCurrent',
+//       });
+//     }
+//   }
+
+//   render() {
+//     const { isReady } = this.state;
+//     const { children, loading, user: {currentUser}  } = this.props; // You can replace it to your authentication rule (such as check token exists)
+//     // 你可以把它替换成你自己的登录认证规则（比如判断 token 是否存在）
+
+//     const isLogin = currentUser && currentUser.userid;
+//     const queryString = stringify({
+//       redirect: window.location.href,
+//     });
+
+//     if ((!isLogin && loading) || !isReady) {
+//       return <PageLoading />;
+//     }
+
+//     if (!isLogin && window.location.pathname !== '/user/login') {
+//       return <Redirect to={`/user/login?${queryString}`} />;
+//     }
+
+//     return children;
+//   }
+// }
+
+// export default connect(({ user, loading }) => ({
+//   user,
+//   currentUser: user.currentUser,
+//   loading: loading.models.user,
+// }))(SecurityLayout);
+
+
+
 import React from 'react';
 import { PageLoading } from '@ant-design/pro-layout';
 import { Redirect, connect } from 'umi';
@@ -12,11 +66,10 @@ class SecurityLayout extends React.Component {
     this.setState({
       isReady: true,
     });
-    const { dispatch, user } = this.props;
+    const { dispatch } = this.props;
+
     if (dispatch) {
-      // console.log(user);
-      user.login.status == "ok" && 
-      dispatch({    // 当前登录状态是成功的才去获取个人信息
+      dispatch({
         type: 'user/fetchCurrent',
       });
     }
@@ -24,14 +77,15 @@ class SecurityLayout extends React.Component {
 
   render() {
     const { isReady } = this.state;
-    const { children, loading, user: {currentUser}  } = this.props; // You can replace it to your authentication rule (such as check token exists)
+    const { children, loading, currentUser } = this.props; // You can replace it to your authentication rule (such as check token exists)
     // 你可以把它替换成你自己的登录认证规则（比如判断 token 是否存在）
 
     const isLogin = currentUser && currentUser.userid;
-    const queryString = stringify({
+    const queryString = stringify({     // 加密跳转路径
       redirect: window.location.href,
     });
 
+    // console.log(window.location.pathname, window.location.href, queryString);
     if ((!isLogin && loading) || !isReady) {
       return <PageLoading />;
     }
@@ -45,7 +99,6 @@ class SecurityLayout extends React.Component {
 }
 
 export default connect(({ user, loading }) => ({
-  user,
-  // currentUser: user.currentUser,
+  currentUser: user.currentUser,
   loading: loading.models.user,
 }))(SecurityLayout);

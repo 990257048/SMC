@@ -6,7 +6,7 @@ import { getPageQuery } from '@/utils/utils';
 
 const Model = {
   namespace: 'login',
-  state: {                // status: 登录状态（ok）  type: 登录类型（account账号登录）
+  state: {              
     status: undefined,   
   },
   effects: {
@@ -40,8 +40,8 @@ const Model = {
           }
         }
 
-        // history.replace(redirect || '/');    // 路由跳转
-        history.push(redirect || '/');    // 路由跳转changeLoginStatus
+        history.replace(redirect || '/');    // 路由跳转
+        // history.push(redirect || '/');    // 路由跳转changeLoginStatus
       }
     },
 
@@ -59,10 +59,10 @@ const Model = {
     },
   },
   reducers: {
-    // changeLoginStatus(state, { payload }) {
-    //   setAuthority(payload.currentAuthority);    // 设置账号权限
-    //   return { ...state, status: payload.status, type: payload.type };
-    // },
+    changeLoginStatus(state, { payload }) {
+      setAuthority(payload.currentAuthority);    // 设置账号权限
+      return { ...state, status: payload.status, type: payload.type };
+    },
   },
 };
 export default Model;

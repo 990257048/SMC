@@ -12,9 +12,9 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 let AdvancedSearch = props => {  // 高级搜索
-    return <div className={styles['control-content']}>
+    return <div className={styles['advanced-search']}>
         <Tabs size="small" type='line' defaultActiveKey="1" className={styles['tabs-query']} >
-            <TabPane tab="按年份" key="1">
+            <TabPane tab="按BU" key="1">
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
@@ -33,7 +33,7 @@ let AdvancedSearch = props => {  // 高级搜索
                     </Row>
                 </div>
             </TabPane>
-            <TabPane tab="按季度" key="2">
+            <TabPane tab="按发生区域" key="2">
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
@@ -65,7 +65,7 @@ let AdvancedSearch = props => {  // 高级搜索
                     </Row>
                 </div>
             </TabPane>
-            <TabPane tab="按月份" key="3">
+            <TabPane tab="按异常分类" key="3">
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
@@ -105,7 +105,7 @@ let AdvancedSearch = props => {  // 高级搜索
                     </Row>
                 </div>
             </TabPane>
-            <TabPane tab="按周别" key="4">
+            <TabPane tab="按原因分析" key="4">
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
@@ -137,22 +137,6 @@ let AdvancedSearch = props => {  // 高级搜索
                                         ].map(n => <Option key={'week' + n} value={'第' + n + '周'}>{'第' + n + '周'}</Option>)
                                     }
                                 </Select>
-                            </div>
-                        </Col>
-                    </Row>
-                </div>
-            </TabPane>
-            <TabPane tab="按时间段" key="5">
-                <div className={styles['tab-query']}>
-                    <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
-                        <Col span={6}>
-                            <div className={styles['col-con']}>年份</div>
-                        </Col>
-                        <Col span={18}>
-                            <div>
-                                <RangePicker className={styles.w100}
-                                    defaultValue={[moment('2020/01/01', 'YYYY/MM/DD'), moment('2020/01/01', 'YYYY/MM/DD')]} format='YYYY/MM/DD'
-                                />
                             </div>
                         </Col>
                     </Row>

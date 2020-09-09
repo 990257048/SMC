@@ -20,6 +20,7 @@ const UserModel = {
 
     *fetchCurrent(_, { call, put }) {
       const response = yield call(queryCurrent);
+      console.log(response);
       yield put({
         type: 'saveCurrentUser',
         payload: response,
@@ -27,7 +28,8 @@ const UserModel = {
     },
   },
   reducers: {
-    changeLoginStatus(state, {payload}){
+    changeLoginStatus(state, {payload}){   // status: 登录状态（ok）  type: 登录类型（account账号登录）
+      // console.log(payload);
       return {...state, login: {...state.login, status: payload.status, type: payload.type }};
     },
     saveCurrentUser(state, action) {
