@@ -2,7 +2,7 @@
  * request 网络请求工具
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
-import { extend } from 'umi-request';
+import umiRequest, { extend } from 'umi-request';
 import { notification } from 'antd';
 
 const codeMessage = {
@@ -49,9 +49,38 @@ const errorHandler = error => {
  * 配置request请求时的默认参数
  */
 
-const request = extend({
-  errorHandler,
-  // 默认错误处理
+const requestMock = extend({    // 请求模拟数据
+  errorHandler,  // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
 });
-export default request;
+
+export const requestReal = (url, ...args) => {   // 请求真实数据
+  const host = 'http://10.132.37.63:800';  // 'http://10.132.37.63:800'; // 'https://gcrc.efoxconn.com:8023'; http://localhost:3001  // 宿主
+  return umiRequest(host + url, ...args);
+}
+
+export default requestMock;
+
+/// 封装请求方法： 方便切换模拟数据和真实数据  20200909 add by gch
+
+// const isMock = true;   // 是否使用Mock数据
+// const host = 'http://10.132.37.63:800';  // 宿主
+
+// const requestMock = extend({    // 请求模拟数据
+//   errorHandler,  // 默认错误处理
+//   credentials: 'include', // 默认请求是否带上cookie
+// });
+
+// const requestReal = (url, ...args) => {   // 请求真实数据
+//   return umiRequest(host + url, ...args);
+// }
+
+// const request = (url, ...args) => {
+//   if(isMock){
+//     return requestMock(url, ...args);
+//   }else{
+//     return requestReal(url, ...args);
+//   }
+// }
+
+

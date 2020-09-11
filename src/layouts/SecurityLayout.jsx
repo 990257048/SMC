@@ -54,6 +54,7 @@
 
 import React from 'react';
 import { PageLoading } from '@ant-design/pro-layout';
+import cookies from 'js-cookie';
 import { Redirect, connect } from 'umi';
 import { stringify } from 'querystring';
 
@@ -62,22 +63,29 @@ class SecurityLayout extends React.Component {
     isReady: false,
   };
 
-  componentDidMount() {
+  componentDidMount() {  // 第一次（未登录）渲染完毕该组件执行，或者 （登录状态）每次刷新页面（会卸载该组件）又会重新一挂载（不是二次渲染）该组件，相当于又会进行第一次渲染，渲染完毕后触发执行
+    // 每次页面刷新都会触发登录验证
+    console.log("SecurityLayout rendered!!!");
     this.setState({
       isReady: true,
     });
     const { dispatch } = this.props;
 
-    if (dispatch) {
+    console.log(cookies.get('token'));
+
+    if (dispatch) {  // 登录验证
       dispatch({
         type: 'user/fetchCurrent',
+        token: cookies.get('token')
       });
     }
+
   }
 
   render() {
     const { isReady } = this.state;
     const { children, loading, currentUser } = this.props; // You can replace it to your authentication rule (such as check token exists)
+    
     // 你可以把它替换成你自己的登录认证规则（比如判断 token 是否存在）
 
     const isLogin = currentUser && currentUser.userid;
@@ -85,16 +93,15 @@ class SecurityLayout extends React.Component {
       redirect: window.location.href,
     });
 
-    // console.log(window.location.pathname, window.location.href, queryString);
-    if ((!isLogin && loading) || !isReady) {
+    if ((!isLogin && loading) || !isReady) {   // 未登录 加载中 未准备好
       return <PageLoading />;
     }
 
-    if (!isLogin && window.location.pathname !== '/user/login') {
+    if (!isLogin && window.location.pathname !== '/user/login') {  // 未登录 且 当前页不是登录页， 重定向到登录页，url附带登录后的重定向信息（当前页，加密）
       return <Redirect to={`/user/login?${queryString}`} />;
     }
 
-    return children;
+    return children;   // 已登录 已准备好
   }
 }
 

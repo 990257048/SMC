@@ -146,8 +146,7 @@ let ret_table_config = h => ({
         defaultPageSize: 50,
         hideOnSinglePage: true
     },
-    dataSource,
-    
+    dataSource: dataSource.map((row, i) => ({key: 'row' + i, ...row})),
     columns: [
         {
             title: '时间段',
@@ -161,7 +160,7 @@ let ret_table_config = h => ({
             dataIndex: 'field2',
             width: 120,
             render: (text) => <> {
-                text.split(' ').map(t => <p style={{ height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>)
+                text.split(' ').map((t, i) => <p key={text + '-' + t + i} style={{ height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>)
             } </>
         },
         {
@@ -170,7 +169,7 @@ let ret_table_config = h => ({
             dataIndex: 'field3',
             width: 130,
             render: (text) => <> {
-                text.split(' ').map(t => <p style={{ height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>)
+                text.split(' ').map((t, i) => <p key={text + '-' + t + i} style={{ height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>)
             } </>
         },
         {
@@ -183,7 +182,7 @@ let ret_table_config = h => ({
             align: 'center',
             dataIndex: 'field5',
             render: (text) => <> {
-                text.split(' ').map(t => <p style={{ color: 'green', height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>) 
+                text.split(' ').map((t, i) => <p key={text + '-' + t + i} style={{ color: 'green', height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>) 
             } </>
         },
         {
@@ -191,7 +190,7 @@ let ret_table_config = h => ({
             align: 'center',
             dataIndex: 'field6',
             render: (text) => <> {
-                text.split(' ').map(t => <p style={{ color: '#337ab7', height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>) 
+                text.split(' ').map((t, i) => <p key={text + '-' + t + i} style={{ color: '#337ab7', height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>) 
             } </>
         },
         {
@@ -199,7 +198,7 @@ let ret_table_config = h => ({
             align: 'center',
             dataIndex: 'field7',
             render: (text) => <> {
-                text.split(' ').map(t => <p style={{ color: /^-/.test(t) ? 'red' : 'green', height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>) 
+                text.split(' ').map((t, i) => <p key={text + '-' + t + i} style={{ color: /^-/.test(t) ? 'red' : 'green', height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>) 
             } </>
         },
         {

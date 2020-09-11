@@ -1,4 +1,5 @@
 import { queryCurrent, query as queryUsers } from '@/services/user';
+import { message } from 'antd';
 
 const UserModel = {
   namespace: 'user',
@@ -18,13 +19,20 @@ const UserModel = {
       });
     },
 
-    *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
-      console.log(response);
-      yield put({
-        type: 'saveCurrentUser',
-        payload: response,
-      });
+    *fetchCurrent({ token }, { call, put }) {
+      console.log("fetchCurrent run !!");
+      const response = yield call(queryCurrent, token);
+      // console.log(response);
+      if(response && response.userid){
+        message.success("登录验证成功！");
+        yield put({
+          type: 'saveCurrentUser',
+          payload: response,
+        });
+      }else{
+        message.error("登录验证失败！");
+      }
+      
     },
   },
   reducers: {
