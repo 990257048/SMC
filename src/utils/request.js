@@ -3,6 +3,7 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import umiRequest, { extend } from 'umi-request';
+import cookies from 'js-cookie';
 import { notification } from 'antd';
 
 const codeMessage = {
@@ -54,10 +55,42 @@ const requestMock = extend({    // 请求模拟数据
   credentials: 'include', // 默认请求是否带上cookie
 });
 
+// umiRequest.interceptors.request.use(async (url, options) => {
+//   console.log(url, options);
+//   const headers = {
+//     'Content-Type': 'application/json',
+//     Accept: 'application/json',
+//     Token: cookies.get('token'),
+//     xxxc: 'xzxxxx'
+//   };
+//   return {
+//     url: 'http://localhost:3001/umiui/info?t=1599788167981',
+//     options: { ...options, headers },
+//   };
+// });
+
 export const requestReal = (url, ...args) => {   // 请求真实数据
   const host = 'http://10.132.37.63:800';  // 'http://10.132.37.63:800'; // 'https://gcrc.efoxconn.com:8023'; http://localhost:3001  // 宿主
-  return umiRequest(host + url, ...args);
+  
+  return extend({
+    credentials: 'include'
+  })(host + url, ...args);
+  // return umiRequest(host + url, ...args);
 }
+
+
+
+
+// credentials: 'include', // 默认请求是否带上cookie
+//     headers: {
+//       'Content-Type': 'application/json',
+//       Accept: 'application/json',
+//       token: cookies.get('token')
+//     },
+
+
+
+
 
 export default requestMock;
 

@@ -95,6 +95,19 @@ export default defineConfig({
                 }
               ]
             },
+            // -------------------------------------------------------------------------------------------------------------------------------------------------------------
+            {
+              path: '/ant-design-components',    // ant-design 组件一般化（快速开发系统）
+              name: 'ant-design-components',
+              icon: 'antDesign',
+              routes: [
+                {
+                  path: '/ant-design-components/antd-button',   // 按钮
+                  name: 'antd-button',
+                  component: './AntDesignComponents/AntdButton'
+                }
+              ]
+            },
             // 202008171508 add by gch (smc系统路由) END =====================================================================================================================
 
             {
@@ -119,12 +132,12 @@ export default defineConfig({
               path: '/list',
               component: './ListTableList',
             },
-            {
-              name: 'test',
-              icon: 'plus',
-              path: '/test',
-              component: './Test',
-            },
+            // {
+            //   name: 'test',
+            //   icon: 'plus',
+            //   path: '/test',
+            //   component: './Test',
+            // },
             {
               component: './404',
             },

@@ -27,7 +27,7 @@ export default {
 
     // 支持值为 Object 和 Array
     'GET /api/currentUser_new': (req, res) => {
-        console.log(req.query);
+        // console.log(req.query);
         if(req.query.token !== 'qwertyuiop'){
             res.send({});
             return;

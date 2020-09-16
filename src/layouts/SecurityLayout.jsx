@@ -72,11 +72,11 @@ class SecurityLayout extends React.Component {
     const { dispatch } = this.props;
 
     console.log(cookies.get('token'));
-
-    if (dispatch) {  // 登录验证
+    const token = cookies.get('token');
+    if (dispatch && token) {  // 登录验证   有token时再进行登录验证（请求个人信息），没有的话不用登录验证
       dispatch({
         type: 'user/fetchCurrent',
-        token: cookies.get('token')
+        token
       });
     }
 
@@ -85,10 +85,8 @@ class SecurityLayout extends React.Component {
   render() {
     const { isReady } = this.state;
     const { children, loading, currentUser } = this.props; // You can replace it to your authentication rule (such as check token exists)
-    
-    // 你可以把它替换成你自己的登录认证规则（比如判断 token 是否存在）
 
-    const isLogin = currentUser && currentUser.userid;
+    const isLogin = currentUser && currentUser.userid;   // 以登入人信息作为登录标识
     const queryString = stringify({     // 加密跳转路径
       redirect: window.location.href,
     });

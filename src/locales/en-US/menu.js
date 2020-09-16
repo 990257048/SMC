@@ -9,11 +9,16 @@ export default {
   'menu.register.result': 'Register Result',
   'menu.test': 'Test Page',
   'menu.dashboard': 'Dashboard',
+  //-------------------------------------------------------------
   'menu.dashboard.repair-wip': 'Repair WIP',
   'menu.increase-productivity': 'Increase Productivity',
   'menu.increase-productivity.abnormal-decision': 'Abnormal Decision',
   'menu.production-board': 'Production Board',
   'menu.production-board.real-time-production': 'Realtime Production',
+  //-------------------------------------------------------------
+  'menu.ant-design-components': 'Ant Design Components',
+  'menu.ant-design-components.antd-button': 'Button',
+  //-------------------------------------------------------------
   'menu.dashboard.analysis': 'Analysis',
   'menu.dashboard.monitor': 'Monitor',
   'menu.dashboard.workplace': 'Workplace',

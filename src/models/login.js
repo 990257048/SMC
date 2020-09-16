@@ -20,10 +20,11 @@ const Model = {
         type: 'user/changeLoginStatus',     // 设置登录状态
         payload: response,
       }); // Login successfully
-      setAuthority('admin');    // 设置账号权限
-      cookies.set('token', response.token)  // 设置token
-
+      
       if (response.status === 'pass') {
+        setAuthority('admin');    // 设置账号权限
+        cookies.set('token', response.token)  // 设置token
+
         const urlParams = new URL(window.location.href);
         const params = getPageQuery(); // 解密路由
         let { redirect } = params;  // 整个路由（解密后）
