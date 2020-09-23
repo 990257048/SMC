@@ -20,19 +20,18 @@ const UserModel = {
     },
 
     *fetchCurrent({ token }, { call, put }) {
-      console.log("fetchCurrent run !!");
-      const response = yield call(queryCurrent, token);
-      // console.log(response);
-      if(response && response.userid){
-        message.success("登录验证成功！");
+      // console.log("fetchCurrent run !!");
+      const {Status, Message, Data} = yield call(queryCurrent, token);
+      console.log({Status, Message, Data});
+      if(Status == 'Pass'){
+        message.success(Message);
         yield put({
           type: 'saveCurrentUser',
-          payload: response,
+          payload: Data,
         });
       }else{
-        message.error("登录验证失败！");
+        message.error(Message);
       }
-      
     },
   },
   reducers: {

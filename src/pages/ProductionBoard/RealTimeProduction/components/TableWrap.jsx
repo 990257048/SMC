@@ -16,7 +16,7 @@ const dataSource = [
         field7: '-20',
         field8: '80',
         field9: '-20',
-        field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
+        field10: '類型:開/收線/開/收線(20m)劉達\r\n:SMC:開/收線類型:開/收線/開/收線(20m)劉達:SMC:開/收線',
     },
     {
         field1: '09:00 - 10:00',
@@ -44,88 +44,88 @@ const dataSource = [
     },
     {
         field1: '11:00 - 12:00',
-        field2: '74-123456-01',
-        field3: '74-123456-01-A0 74-123456-01-A0 74-123456-01-A0',
-        field4: '60',
-        field5: '100 100 100',
-        field6: '80 80 80',
-        field7: '-20 -20 -20',
-        field8: '80',
-        field9: '-20',
-        field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
-    },
-    {
-        field1: '11:00 - 12:00',
-        field2: '74-123456-01',
-        field3: '74-123456-01-A0 74-123456-01-A0 74-123456-01-A0',
-        field4: '60',
-        field5: '100 100 100',
-        field6: '80 120 80',
-        field7: '-20 20 -20',
-        field8: '80',
-        field9: '-20',
-        field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
-    },
-    {
-        field1: '13:00 - 14:00',
-        field2: '74-123456-01',
-        field3: '74-123456-01-A0',
-        field4: '60',
-        field5: '100',
-        field6: '80',
-        field7: '-20',
-        field8: '80',
-        field9: '-20',
-        field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
-    },
-    {
-        field1: '14:00 - 15:00',
-        field2: '74-123456-01',
-        field3: '74-123456-01-A0',
-        field4: '60',
-        field5: '100',
-        field6: '80',
-        field7: '-20',
-        field8: '80',
-        field9: '-20',
-        field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
-    },
-    {
-        field1: '15:00 - 16:00',
-        field2: '74-123456-01',
-        field3: '74-123456-01-A0',
-        field4: '60',
-        field5: '100',
-        field6: '110',
-        field7: '10',
-        field8: '80',
-        field9: '-20',
-        field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
-    },
-    {
-        field1: '16:00 - 17:00',
-        field2: '74-123456-01',
-        field3: '74-123456-01-A0 74-123456-01-A0 74-123456-01-A0',
-        field4: '60',
-        field5: '100 100 100',
-        field6: '80 80 80',
-        field7: '-20 -20 -20',
-        field8: '80',
-        field9: '-20',
-        field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
-    },
-    {
-        field1: '17:00 - 18:00',
         field2: '74-123456-01 74-123456-02 74-123456-03',
         field3: '74-123456-01-A0 74-123456-02-A0 74-123456-03-A0',
-        field4: '60',
+        field4: '60 60 60',
         field5: '100 100 100',
-        field6: '80 120 80',
-        field7: '-20 20 -20',
+        field6: '80 80 80',
+        field7: '-20 -20 -20',
         field8: '80',
         field9: '-20',
         field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
-    }
+    },
+    // {
+    //     field1: '11:00 - 12:00',
+    //     field2: '74-123456-01',
+    //     field3: '74-123456-01-A0 74-123456-01-A0 74-123456-01-A0',
+    //     field4: '60',
+    //     field5: '100 100 100',
+    //     field6: '80 120 80',
+    //     field7: '-20 20 -20',
+    //     field8: '80',
+    //     field9: '-20',
+    //     field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
+    // },
+    // {
+    //     field1: '13:00 - 14:00',
+    //     field2: '74-123456-01',
+    //     field3: '74-123456-01-A0',
+    //     field4: '60',
+    //     field5: '100',
+    //     field6: '80',
+    //     field7: '-20',
+    //     field8: '80',
+    //     field9: '-20',
+    //     field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
+    // },
+    // {
+    //     field1: '14:00 - 15:00',
+    //     field2: '74-123456-01',
+    //     field3: '74-123456-01-A0',
+    //     field4: '60',
+    //     field5: '100',
+    //     field6: '80',
+    //     field7: '-20',
+    //     field8: '80',
+    //     field9: '-20',
+    //     field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
+    // },
+    // {
+    //     field1: '15:00 - 16:00',
+    //     field2: '74-123456-01',
+    //     field3: '74-123456-01-A0',
+    //     field4: '60',
+    //     field5: '100',
+    //     field6: '110',
+    //     field7: '10',
+    //     field8: '80',
+    //     field9: '-20',
+    //     field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
+    // },
+    // {
+    //     field1: '16:00 - 17:00',
+    //     field2: '74-123456-01',
+    //     field3: '74-123456-01-A0 74-123456-01-A0 74-123456-01-A0',
+    //     field4: '60',
+    //     field5: '100 100 100',
+    //     field6: '80 80 80',
+    //     field7: '-20 -20 -20',
+    //     field8: '80',
+    //     field9: '-20',
+    //     field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
+    // },
+    // {
+    //     field1: '17:00 - 18:00',
+    //     field2: '74-123456-01 74-123456-02 74-123456-03',
+    //     field3: '74-123456-01-A0 74-123456-02-A0 74-123456-03-A0',
+    //     field4: '60',
+    //     field5: '100 100 100',
+    //     field6: '80 120 80',
+    //     field7: '-20 20 -20',
+    //     field8: '80',
+    //     field9: '-20',
+    //     field10: 'xxxxxxxxxxxxxxxx xxxxxx xxxxxxxx',
+    // }
 ];
 // for (var i = 1; i <= 12; i++) {
 //     let o = {};
@@ -175,7 +175,10 @@ let ret_table_config = h => ({
         {
             title: '有效工时',
             align: 'center',
-            dataIndex: 'field4'
+            dataIndex: 'field4',
+            render: (text) => <> {
+                text.split(' ').map((t, i) => <p key={text + '-' + t + i} style={{ height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>)
+            } </>
         },
         {
             title: '目标产能',
@@ -215,7 +218,13 @@ let ret_table_config = h => ({
             title: '备注',
             align: 'center',
             dataIndex: 'field10',
-            width: 220
+            width: 320,
+            // render: (text) => <> {
+            //     text.split('\n').map((t, i) => <p key={text + '-' + t + i} style={{ height: '16px', lineHeight: '16px', textAlign: 'left', marginBottom: '0' }}>{t}</p>)
+            // } </>
+            render: (text) => <> {
+                <p style={{ height: '16px', lineHeight: '16px', textAlign: 'left', marginBottom: '0' }}>{text}</p>
+            } </>
         }
     ],
     // onRow: (a, b, c) => {   //绑事件（行）
@@ -230,7 +239,7 @@ let TableWrap = props => {
     let { height } = props;
     
     const tableConfig = useMemo(() => {
-        let h = height - 405;
+        let h = height - 430;
         return ret_table_config(h);
     }, [height]);
     

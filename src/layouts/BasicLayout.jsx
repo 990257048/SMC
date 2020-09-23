@@ -93,9 +93,10 @@ const BasicLayout = props => {
 
   let resize = useCallback(() => {
     let height = document.documentElement.clientHeight;
+    let width = document.documentElement.clientWidth;
     dispatch({
-      type: 'global/setHeight',
-      height
+      type: 'global/setSize',
+      height, width
     });
   }, []);
 

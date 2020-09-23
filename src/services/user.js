@@ -1,4 +1,4 @@
-import request from '@/utils/request';
+import request, {requestReal} from '@/utils/request';
 
 export async function query() {
   return request('/api/users');
@@ -12,11 +12,20 @@ export async function queryNotices() {
 
 //----------------------------------------------
 
-export async function queryCurrent(token) {
-  return request('/api/currentUser_new', {
+// export async function queryCurrent(token) {
+//   return request('/api/currentUser_new', {
+//     method: 'GET',
+//     params: {
+//       token
+//     }
+//   });
+// }
+
+export async function queryCurrent(Token) {
+  return requestReal('/api/SMCAccount/GetBUPrivillege', {
     method: 'GET',
     params: {
-      token
+      Token
     }
   });
 }

@@ -20,7 +20,7 @@ let RealTimeProduction = props => {
                 <b> 实时生产看板</b>
             </h3>
             <div className={styles['real-time-production-main']}>
-                <div style={{ overflow: 'hidden' }}>
+                <div className={styles['real-time-production-main-top']}>
                     <Space size="middle" style={{ float: 'right' }}>
                         <b>2020/08/24 16:11</b>
                         <Tooltip title="制造处">

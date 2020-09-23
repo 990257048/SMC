@@ -21,9 +21,9 @@ const Model = {
         payload: response,
       }); // Login successfully
       
-      if (response.status === 'pass') {
+      if (response.Status === 'Pass') {
         setAuthority('admin');    // 设置账号权限
-        cookies.set('token', response.token)  // 设置token
+        cookies.set('token', response.Data.Token)  // 设置token
 
         const urlParams = new URL(window.location.href);
         const params = getPageQuery(); // 解密路由
@@ -47,7 +47,7 @@ const Model = {
         history.replace(redirect || '/');    // 路由跳转
         // history.push(redirect || '/');    // 路由跳转changeLoginStatus
       }else{
-        message.error(response.message);
+        message.error(response.Message);
       }
 
     },

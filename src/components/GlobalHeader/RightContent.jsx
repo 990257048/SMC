@@ -47,7 +47,7 @@ const GlobalHeaderRight = props => {
         //   //console.log('input', value);
         // }}
       />
-      <Tooltip title="使用文档">
+      {/* <Tooltip title="使用文档">
         <a
           style={{
             color: 'inherit',
@@ -59,8 +59,8 @@ const GlobalHeaderRight = props => {
         >
           <QuestionCircleOutlined />
         </a>
-      </Tooltip>
-      <Avatar />
+      </Tooltip> */}
+      <Avatar menu />
       {REACT_APP_ENV && (
         <span>
           <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>

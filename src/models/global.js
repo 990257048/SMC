@@ -3,6 +3,7 @@ import { queryNotices } from '@/services/user';
 const GlobalModel = {
   namespace: 'global',
   state: {
+    width: null,
     height: null,
     collapsed: false,
     notices: [],
@@ -70,8 +71,8 @@ const GlobalModel = {
     },
   },
   reducers: {
-    setHeight(state, { height }) {
-      return { ...state, height }
+    setSize(state, { height, width }) {
+      return { ...state, height, width }
     },
 
     changeLayoutCollapsed(

@@ -12,7 +12,7 @@ let option = {
     title: {
         text: '分机种实时产出（单位:pcs）',
         left: 'center',
-        top: '5%',
+        top: '8%',
         textStyle: {
             fontSize: 14
         }
@@ -26,26 +26,35 @@ let option = {
         formatter: '{a}:<br>机种: {b}<br>数量: {c}pcs'
     },
     grid: {
-        top: '25%',
-        left: '6%',
-        right: '6%',
-        bottom: '6%',
+        top: '20%',
+        left: '7%',
+        right: '14%',
+        bottom: '10%',
+        // show: false,
         containLabel: true
     },
     xAxis: [
         {
-            type: 'category',
-            // data: ['74-104761-03', '74-104761-04', '74-104761-05', '74-104761-06', '74-104761-07'],
-            data: ['74-104761-03', '74-104761-04', '74-104761-05', '74-104761-06'],
+            // type: 'category',
+            type: 'value',
             axisTick: {
                 alignWithLabel: true
+            },
+            splitLine: {
+                show: false
             }
         }
     ],
     yAxis: [
         {
-            type: 'value',
-            interval: 400
+            // type: 'value',
+            type: 'category',
+            data: ['74-104761-03', '74-104761-04'],
+            // data: ['74-104761-03', '74-104761-04', '74-104761-05', '74-104761-06', '74-104761-07', '74-104761-08', '74-104761-09', '74-104761-10'],
+            // interval: 600,
+            splitLine: {
+                show: false
+            }
             // axisLabel: {
             //     formatter: '{value} pcs'
             // }
@@ -55,8 +64,24 @@ let option = {
         {
             name: '实时产出',
             type: 'bar',
-            barWidth: '40%',
-            data: [334, 1090, 700, 460]
+            barWidth: '35%',
+            data: [1000, 800],
+            // data: [1090, 460, 333, 222, 111, 80, 70, 60],
+            label: {
+                show: true,
+                position: 'right',
+                formatter: '{c} pcs'
+            },
+            itemStyle: {
+                color: new echarts.graphic.LinearGradient(
+                    0, 0, 0, 1,
+                    [
+                        {offset: 0, color: '#83bff6'},
+                        {offset: 0.5, color: '#188df0'},
+                        {offset: 1, color: '#188df0'}
+                    ]
+                )
+            }
         }
     ]
 };
@@ -82,7 +107,7 @@ let Charts = props => {
 
 
     return <div className={styles.charts}>
-        <Row gutter={[12, 12]}>
+        <Row gutter={[24, 12]}>
             <Col span={3}>
                 <div className={styles.box}>
                     <h3> <b>待维护异常</b> </h3>

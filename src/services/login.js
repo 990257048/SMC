@@ -15,28 +15,28 @@ export async function getFakeCaptcha(mobile) {
 
 //----------------------------------------------------------------------------
 
-export async function accountLogin(params) {
-  console.log(params);
-  return requestMock('/api/login/account_new', {
-    method: 'POST',
-    data: params
-  });
-}
-
-
 // export async function accountLogin(params) {
 //   console.log(params);
-//   return requestReal( '/api/SMCAccount/CheckUserInfo1?WORKID=F1320854&KEY=123&LANGUAGE=ENGLISH' // '/api/DutySheet/GetDutySheet' // '/api/SMCAccount/Connect?User=F1320854',
-//     // {
-//     //   method: 'GET',
-//     //   credentials: 'include',
-//     //   headers: {
-//     //     "Content-Type": "application/x-www-form-urlencoded",
-//     //   },
-//     //   data: params
-//     // }
-//   );
+//   return requestMock('/api/login/account_new', {
+//     method: 'POST',
+//     data: params
+//   });
 // }
+
+
+export async function accountLogin({userName, password}) {
+  console.log(userName, password);
+  return requestReal( '/api/SMCAccount/CheckUserInfo', // '/api/DutySheet/GetDutySheet' // '/api/SMCAccount/Connect?User=F1320854',
+    {
+      method: 'GET',
+      params: {
+        WORKID: userName,
+        KEY: password,
+        LANGUAGE: 'CHINESE'
+      }
+    }
+  );
+}
 
 
 
