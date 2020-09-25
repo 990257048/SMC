@@ -32,7 +32,7 @@ class AvatarDropdown extends React.Component {
       },
       menu,
     } = this.props;
-    console.log(this.props);
+    // console.log(this.props);
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
         {menu && (

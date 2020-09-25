@@ -22,7 +22,7 @@ const UserModel = {
     *fetchCurrent({ token }, { call, put }) {
       // console.log("fetchCurrent run !!");
       const {Status, Message, Data} = yield call(queryCurrent, token);
-      console.log({Status, Message, Data});
+      // console.log({Status, Message, Data});
       if(Status == 'Pass'){
         message.success(Message);
         yield put({

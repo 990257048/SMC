@@ -7,8 +7,9 @@ import { ProfileOutlined, BarChartOutlined, RedoOutlined } from '@ant-design/ico
 import styles from '../style.less';
 
 
+
 let option = {
-    color: ['#3398DB'],
+    // color: ['#3398DB'],
     title: {
         text: '分机种实时产出（单位:pcs）',
         left: 'center',
@@ -49,7 +50,7 @@ let option = {
         {
             // type: 'value',
             type: 'category',
-            data: ['74-104761-03', '74-104761-04'],
+            data: ['74-104761-03', '74-104761-04', '74-104761-05'],
             // data: ['74-104761-03', '74-104761-04', '74-104761-05', '74-104761-06', '74-104761-07', '74-104761-08', '74-104761-09', '74-104761-10'],
             // interval: 600,
             splitLine: {
@@ -64,8 +65,8 @@ let option = {
         {
             name: '实时产出',
             type: 'bar',
-            barWidth: '35%',
-            data: [1000, 800],
+            barWidth: '40%',
+            data: [1000, 800, 700],
             // data: [1090, 460, 333, 222, 111, 80, 70, 60],
             label: {
                 show: true,
@@ -86,10 +87,36 @@ let option = {
     ]
 };
 
+let ret_option = (yAxisData, seriesData) => {
+    return {
+        ...option,
+        yAxis: {
+            ...option.yAxis,
+            data: yAxisData
+        },
+        series: [
+            {
+                ...option.series[0],
+                data: seriesData
+            }
+        ]
+    }
+}
+
 
 let Charts = props => {
-
-    let { collapsed } = props;
+    // Abnormal_NoOK_Count: "4",  // 待维护异常
+    // Abnormal_Count: "4",    // 异常数量
+    // Abnormal_Time: "0",     // 异常工时
+    // Capacity_achievement_rate: "100%"  // 目标达成率
+    let {
+        dispatch,
+        collapsed,
+        realTimeProduction: {
+            Abnormal: {Abnormal_NoOK_Count, Abnormal_Count, Abnormal_Time, Capacity_achievement_rate},
+            AbnormalChart: {yAxis, series}
+        }
+    } = props;
     let chartWrap = useRef();
     let [w, setW] = useState(100);
 
@@ -99,11 +126,12 @@ let Charts = props => {
     }, [collapsed]);
 
     useEffect(() => {
-        console.log("componwntDidMount");
+        // console.log("componwntDidMount");
         let mychart = echarts.init(chartWrap.current);
+        let option = ret_option(yAxis, series);
         mychart.resize({width: w});
         mychart.setOption(option);
-    }, [w]);
+    }, [w, yAxis, series]);
 
 
     return <div className={styles.charts}>
@@ -111,25 +139,25 @@ let Charts = props => {
             <Col span={3}>
                 <div className={styles.box}>
                     <h3> <b>待维护异常</b> </h3>
-                    <h2 style={{ color: 'red' }}> <b>10个</b> </h2>
+                    <h2 style={{ color: 'red' }}> <b>{ Abnormal_NoOK_Count }个</b> </h2>
                 </div>
             </Col>
             <Col span={3}>
                 <div className={styles.box}>
                     <h3> <b>全部异常</b> </h3>
-                    <h2 style={{ color: 'red' }}> <b>10个</b> </h2>
+                    <h2 style={{ color: 'red' }}> <b>{ Abnormal_Count }个</b> </h2>
                 </div>
             </Col>
             <Col span={3}>
                 <div className={styles.box}>
                     <h3> <b>异常时间</b> </h3>
-                    <h2 style={{ color: 'red' }}> <b>100min</b> </h2>
+                    <h2 style={ Abnormal_Time == '0' ? { color: 'green' } : { color: 'red' }}> <b>{ Abnormal_Time }小时</b> </h2>
                 </div>
             </Col>
             <Col span={3}>
                 <div className={styles.box}>
                     <h3> <b>目标达成率</b> </h3>
-                    <h2 style={{ color: 'green' }}> <b>90%</b> </h2>
+                    <h2 style={{ color: 'green' }}> <b>{ Capacity_achievement_rate }</b> </h2>
                 </div>
             </Col>
             <Col span={12}>
@@ -143,7 +171,10 @@ let Charts = props => {
         </Row>
     </div>
 }
-let mapStateToProps = state => ({
-    collapsed: state.global.collapsed
+
+let mapStateToProps = ({global, realTimeProduction: {Abnormal, AbnormalChart}}) => ({
+    collapsed: global.collapsed,
+    realTimeProduction: {Abnormal, AbnormalChart}
 })
+
 export default connect(mapStateToProps)(Charts);
