@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useMemo, useCallback, useState } from 'react';
 import { connect, FormattedMessage, formatMessage } from 'umi';
 import { Space, Input, Button, Table, Row, Col, Spin } from 'antd';
+import { PageLoading } from '@ant-design/pro-layout';
 import echarts from 'echarts';
 import { ProfileOutlined, BarChartOutlined, RedoOutlined } from '@ant-design/icons';
 
@@ -55,40 +56,80 @@ let option = {
             name: '实时产出',
             type: 'bar',
             barWidth: '40%',
+            label: {
+                show: true,
+                position: 'top',
+                formatter: '{c} 個'
+            },
             data: [334, 1090, 700, 460, 560, 780]
         }
     ]
 };
 
 
+let ret_option = (xAxisData, seriesData) => {
+    return {
+        ...option,
+        xAxis: [
+            {
+                ...option.xAxis[0],
+                data: xAxisData
+            }
+        ],
+        series: [
+            {
+                ...option.series[0],
+                data: seriesData
+            }
+        ]
+    }
+}
+
+
 let Tab2 = props => {
 
-    let { collapsed, activeKey } = props;
+    let { dispatch, collapsed, loading, activeKey, graph2: {xAxisData, seriesData} } = props;
+
     let [w, setW] = useState(100);
     let chartWrap = useRef();
 
-    useEffect(() => {
-        activeKey === 'tab2' && setW(chartWrap.current.clientWidth);
-    }, [collapsed, activeKey]);
+    let isReady = useMemo(() => {
+        if(xAxisData.length > 0 && seriesData.length > 0){
+            return true;
+        }
+        return false;
+    }, [props.graph2]);
+
+    useMemo(() => {
+        dispatch({
+            type: 'AbnormalDecision/getGraph2'
+        });
+    }, []);
 
     useEffect(() => {
-        if(activeKey === 'tab2'){
+        isReady && activeKey === 'tab2' && setW(chartWrap.current.clientWidth);
+    }, [isReady, collapsed, activeKey]);
+
+    useEffect(() => {
+        if (isReady && activeKey === 'tab2') {
             let myChart = echarts.init(chartWrap.current);
+            let option = ret_option(xAxisData, seriesData);
             myChart.resize({ width: w });
             myChart.setOption(option);
         }
-    }, [w, activeKey]);
+    }, [isReady, w, activeKey, props.graph2]);
 
+    if(loading || !isReady){
+        return <PageLoading size='large' />
+    }
     return <div className={styles.tab2}>
-        <Spin size="large" spinning={false}>
-            <div className={styles['chart2-box']} ref={chartWrap}>
-
-            </div>
-        </Spin>
+        <div className={styles['chart2-box']} ref={chartWrap}></div>
     </div>
 }
 let mapStateToProps = state => ({
     collapsed: state.global.collapsed,
-    activeKey: state.AbnormalDecision.anomalousGraph.activeKey
+    loading: state.loading.AbnormalDecision,
+    activeKey: state.AbnormalDecision.anomalousGraph.activeKey,
+    graph2: state.AbnormalDecision.anomalousGraph.graphData.graph2
 })
 export default connect(mapStateToProps)(Tab2);

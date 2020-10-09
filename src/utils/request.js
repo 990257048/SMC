@@ -69,16 +69,25 @@ const requestMock = extend({    // 请求模拟数据
 //   };
 // });
 
-export const requestReal = (url, ...args) => {   // 请求真实数据
-  const host = 'http://10.132.37.63:800';  // 'http://10.132.37.63:800'; // 'https://gcrc.efoxconn.com:8023'; http://localhost:3001  // 宿主
-  
-  // return extend({
-  //   credentials: 'include'
-  // })(host + url, ...args);
-  return umiRequest(host + url, ...args);
+//==========================================================================
+
+const isMock = true;  // 是否使用模拟数据
+
+//==========================================================================
+
+let requestReal;
+if( !isMock ){
+  requestReal = (url, ...args) => {   // 请求真实数据
+    const host = 'http://10.132.37.63:800';  // 'http://10.132.37.63:800'; // 'https://gcrc.efoxconn.com:8023'; http://localhost:3001  // 宿主
+    
+    // return extend({
+    //   credentials: 'include'
+    // })(host + url, ...args);
+    return umiRequest(host + url, ...args);
+  }
+}else{
+  requestReal = requestMock;  //请求模拟数据
 }
-
-
 
 
 // credentials: 'include', // 默认请求是否带上cookie
@@ -88,10 +97,7 @@ export const requestReal = (url, ...args) => {   // 请求真实数据
 //       token: cookies.get('token')
 //     },
 
-
-
-
-
+export { requestReal };
 export default requestMock;
 
 /// 封装请求方法： 方便切换模拟数据和真实数据  20200909 add by gch

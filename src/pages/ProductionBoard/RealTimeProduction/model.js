@@ -61,7 +61,7 @@ let Model = {
 
             yield put({
                 type: 'setGlobalState',
-                payload: {
+                payload: {  // 当前日期班别： （类似 2020年10月5号1点10分 等价于 2020年10月4号晚班）
                     currentDate: dateStr,
                     currentClass: className
                 }

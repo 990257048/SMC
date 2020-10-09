@@ -1,29 +1,5 @@
 import requestMock, { requestReal } from '@/utils/request';
 
-// mock
-
-// export async function fakeAccountLogin(params) {   // 请求登录
-//   return requestMock('/api/login/account_new', {
-//     method: 'POST',
-//     data: params
-//   });
-// }
-
-export async function getFakeCaptcha(mobile) {
-  return requestMock(`/api/login/captcha_new?mobile=${mobile}`);
-}
-
-//----------------------------------------------------------------------------
-
-// export async function accountLogin(params) {
-//   console.log(params);
-//   return requestMock('/api/login/account_new', {
-//     method: 'POST',
-//     data: params
-//   });
-// }
-
-
 export async function accountLogin({userName, password}) {
   console.log(userName, password);
   return requestReal( '/api/SMCAccount/CheckUserInfo', // '/api/DutySheet/GetDutySheet' // '/api/SMCAccount/Connect?User=F1320854',
@@ -37,30 +13,6 @@ export async function accountLogin({userName, password}) {
     }
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

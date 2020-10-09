@@ -64,7 +64,8 @@ let RealTimeProduction = props => {
     }, [currentClass]);
 
     let dateChange = useCallback((date) => {
-        dispatch({
+        console.log(date);
+        date && dispatch({
             type: 'realTimeProduction/setGlobalState',
             payload: {
                 currentDate: date.format('YYYY-MM-DD')

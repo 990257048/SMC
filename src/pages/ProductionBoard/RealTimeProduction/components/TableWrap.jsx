@@ -179,6 +179,7 @@ let ret_table_config = (h, tableData) => ({
             title: '有效工时',
             align: 'center',
             dataIndex: 'COST_TIME',
+            width: 80,
             render: (text) => <> {
                 text.split('\n').map((t, i) => <p key={text + '-' + t + i} style={{ height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>)
             } </>
@@ -187,6 +188,7 @@ let ret_table_config = (h, tableData) => ({
             title: '目标产能',
             align: 'center',
             dataIndex: 'UPH',
+            width: 80,
             render: (text) => <> {
                 text.split('\n').map((t, i) => <p key={text + '-' + t + i} style={{ color: 'green', height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>)
             } </>
@@ -195,6 +197,7 @@ let ret_table_config = (h, tableData) => ({
             title: '实际产出',
             align: 'center',
             dataIndex: 'REAL_OUT',
+            width: 80,
             render: (text) => <> {
                 text.split('\n').map((t, i) => <p key={text + '-' + t + i} style={{ color: '#337ab7', height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>)
             } </>
@@ -203,6 +206,7 @@ let ret_table_config = (h, tableData) => ({
             title: '差异',
             align: 'center',
             dataIndex: 'DIFF',
+            width: 80,
             render: (text) => <> {
                 text.split('\n').map((t, i) => <p key={text + '-' + t + i} style={{ color: /^-/.test(t) ? 'red' : 'green', height: '16px', lineHeight: '16px', marginBottom: '0' }}>{t}</p>)
             } </>
@@ -210,18 +214,20 @@ let ret_table_config = (h, tableData) => ({
         {
             title: '累计产出',
             align: 'center',
-            dataIndex: 'TOTAL_OUT'
+            dataIndex: 'TOTAL_OUT',
+            width: 80,
         },
         {
             title: '累计差异',
             align: 'center',
-            dataIndex: 'TOTAL_DIFF'
+            dataIndex: 'TOTAL_DIFF',
+            width: 80,
         },
         {
             title: '备注',
             align: 'center',
             dataIndex: 'REMARK',
-            width: 320,
+            // width: 300,
             // render: (text) => <> {
             //     text.split('\n').map((t, i) => <p key={text + '-' + t + i} style={{ height: '16px', lineHeight: '16px', textAlign: 'left', marginBottom: '0' }}>{t}</p>)
             // } </>

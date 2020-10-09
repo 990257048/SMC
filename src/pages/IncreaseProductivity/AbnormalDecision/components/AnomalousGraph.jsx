@@ -1,4 +1,4 @@
-// AnomalousGraph 异常统计图
+// AnomalousGraph 异常统计图（上面的部分 ： 一行控件 快速搜索 异常统计图（引）  高级搜索（引） 新增异常（引））
 import React, { useEffect, useMeno, useCallback } from 'react';
 import { connect, FormattedMessage, formatMessage } from 'umi';
 import { Button, Space, Input, Tabs, Popover, Row, Col, Divider, Select, Radio, DatePicker, Tooltip } from 'antd';

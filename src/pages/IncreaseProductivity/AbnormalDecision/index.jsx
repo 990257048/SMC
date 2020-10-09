@@ -10,7 +10,7 @@ import styles from './style.less';
 const { TabPane } = Tabs;
 
 let AbnormalDecision = props => {   // 异常决策中心
-    console.log(props);
+    // console.log(props);
     return <div className={ styles['abnormal-decision'] }>
         {/* <PageContainer /> */}
         <h3> 

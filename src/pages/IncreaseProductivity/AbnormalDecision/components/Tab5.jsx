@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useMemo, useCallback, useState } from 'react';
 import { connect, FormattedMessage, formatMessage } from 'umi';
 import { Space, Input, Button, Table, Row, Col, Spin } from 'antd';
+import { PageLoading } from '@ant-design/pro-layout';
 import echarts from 'echarts';
 import { ProfileOutlined, BarChartOutlined, RedoOutlined } from '@ant-design/icons';
 
@@ -36,10 +37,10 @@ let option = {
     },
     toolbox: {
         feature: {
-            dataView: {show: true, readOnly: false},
-            magicType: {show: true, type: ['line', 'bar']},
-            restore: {show: true},
-            saveAsImage: {show: true}
+            dataView: { show: true, readOnly: false },
+            magicType: { show: true, type: ['line', 'bar'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
         }
     },
     legend: {
@@ -83,54 +84,110 @@ let option = {
             name: '新增异常次数',
             type: 'bar',
             barWidth: '30%',
+            label: {
+                show: true,
+                position: 'top',
+                formatter: '{c}'
+            },
             data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
         },
         {
             name: '结案异常次数',
             type: 'bar',
             barWidth: '30%',
+            label: {
+                show: true,
+                position: 'top',
+                formatter: '{c}'
+            },
             data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
         },
         {
             name: '待结案异常次数',
             type: 'line',
             yAxisIndex: 1,
+            label: {
+                show: true,
+                position: 'top',
+                formatter: '{c}次'
+            },
             data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
         }
     ]
 };
 
+let ret_option = (xAxisData, seriesData1, seriesData2, seriesData3) => {
+    return {
+        ...option,
+        xAxis: [
+            {
+                ...option.xAxis[0],
+                data: xAxisData
+            }
+        ],
+        series: [
+            {
+                ...option.series[0],
+                data: seriesData1
+            },
+            {
+                ...option.series[1],
+                data: seriesData2
+            },
+            {
+                ...option.series[2],
+                data: seriesData3
+            },
+        ]
+    }
+}
 
 let Tab5 = props => {
 
-    let { collapsed, activeKey } = props;
+    let { dispatch, collapsed, loading, activeKey, graph5: { xAxisData, seriesData1, seriesData2, seriesData3 } } = props;
     let [w, setW] = useState(100);
     let chartWrap = useRef();
 
-    useEffect(() => {
-        activeKey === 'tab5' && setW(chartWrap.current.clientWidth);
-    }, [collapsed, activeKey]);
+    let isReady = useMemo(() => {
+        if (xAxisData.length > 0 && seriesData1.length > 0 && seriesData2.length > 0 && seriesData3.length > 0) {
+            return true;
+        }
+        return false;
+    }, [props.graph5]);
+
+    useMemo(() => {
+        dispatch({
+            type: 'AbnormalDecision/getGraph5'
+        });
+    }, []);
 
     useEffect(() => {
-        if(activeKey === 'tab5'){
+        isReady && activeKey === 'tab5' && setW(chartWrap.current.clientWidth);
+    }, [isReady, collapsed, activeKey]);
+
+    useEffect(() => {
+        if (isReady && activeKey === 'tab5') {
             let myChart = echarts.init(chartWrap.current);
+            let option = ret_option(xAxisData, seriesData1, seriesData2, seriesData3);
             myChart.resize({ width: w });
             myChart.setOption(option);
         }
-    }, [w, activeKey]);
+    }, [isReady, w, activeKey, props.graph5]);
+
+    if (loading || !isReady) {
+        return <PageLoading size='large' />
+    }
 
     return <div className={styles.tab5}>
-        <Spin size="large" spinning={false}>
-            <div className={styles['chart5-box']} ref={chartWrap}>
-
-            </div>
-        </Spin>
+        <div className={styles['chart5-box']} ref={chartWrap}></div>
     </div>
 }
 
 let mapStateToProps = state => ({
     collapsed: state.global.collapsed,
-    activeKey: state.AbnormalDecision.anomalousGraph.activeKey
+    loading: state.loading.AbnormalDecision,
+    activeKey: state.AbnormalDecision.anomalousGraph.activeKey,
+    graph5: state.AbnormalDecision.anomalousGraph.graphData.graph5
 })
 
 export default connect(mapStateToProps)(Tab5);

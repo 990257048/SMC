@@ -2,7 +2,7 @@ import { stringify } from 'querystring';
 import cookies from 'js-cookie';
 import { history } from 'umi';
 import { message } from 'antd';
-import { fakeAccountLogin, accountLogin } from '@/services/login';
+import { accountLogin } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 
@@ -14,7 +14,7 @@ const Model = {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(accountLogin, payload);
-      console.log(response);
+      // console.log(response);
       // console.log(payload, response);
       yield put({
         type: 'user/changeLoginStatus',     // 设置登录状态
