@@ -1,11 +1,11 @@
 
-import React, { createContext, useState, useEffect, useMemo, useCallback, useContext } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { memo, createContext, useState, useEffect, useMemo, useCallback, useContext } from 'react';
+// import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'dva';
 import { connect, FormattedMessage, formatMessage } from 'umi';
 import { Button, Space, Input, Tabs, Steps, Popover, Row, Col, Divider, Select, Radio, DatePicker, InputNumber, Tooltip } from 'antd';
 import { SearchOutlined, PlusOutlined, ProfileOutlined, BarsOutlined, ZoomInOutlined, OrderedListOutlined, SaveOutlined, BorderBottomOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
-
 import styles from '../style.less';
 
 const { TabPane } = Tabs;
@@ -17,14 +17,16 @@ const { Step } = Steps
 let NewAbnormalContext = createContext();
 
 let NewAbnormal = props => {  // 新增异常
-    console.log('render NewAbnormal', props);
+    console.log('render NewAbnormal');
     let w = useSelector(state => state.global.width);
     let h = useSelector(state => state.global.height);
+
+    console.log(w, h)
 
     let [current, setCurrent] = useState(0);
 
     let size = useMemo(() => {
-        console.log(w, h);
+        // console.log(w, h);
         return {
             width: w - 355 + 'px',
             height: h - 245 + 'px',
@@ -71,7 +73,15 @@ let NewAbnormal = props => {  // 新增异常
     </div>
 }
 
+// export default connect(() => {
+//     return {
+//         w: state.global.width,
+//         h: state.global.height
+//     }
+// })(NewAbnormal);
+
 export default NewAbnormal;
+
 
 //====================================================================================================================================
 

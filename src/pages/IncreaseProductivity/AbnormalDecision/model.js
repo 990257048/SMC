@@ -1,6 +1,7 @@
 
-import {getGraph1, getGraph2, getGraph3, getGraph4, getGraph5} from './service'
+import {getAllBu, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5} from './service'
 import {message} from 'antd'
+import moment from 'moment'
 
 let Model = {
     namespace: 'AbnormalDecision',
@@ -9,16 +10,192 @@ let Model = {
         anomalousGraph: { // 异常统计图组件
             activeKey: 'tab1', // 当前活动的tab页： tab1 | tab2 | tab3 | tab4 | tab5
             globalSearch: {    // 全局条件搜索（当前制造处 分类标准）
-
+                allMFG: [], // ['ALL', 'MFGI', 'MFGII', 'MFGIII', 'MFGV'], //所有制造处
+                allCategories: ['按發生區域', '按責任單位', '按責任人員', '按問題分類'], //所有查询类别
+                MFG: '', // 'ALL', //当前制造处
+                classify: '按發生區域', //当前查询类别
             },
             quickSearch: {     // 快速搜索（时间条件：年 季 月 周 时间段 -- 当前是否需要该条件， 当前选项卡位置，当前的值是多少）
-
+                allYear: [],  //可选年份
+                allCategories: ['year', 'season', 'month', 'week', 'time'], //所有查询类别
+                classify: 'year', //当前查询类别
+                year: '', // 当前年份
+                season: '', // 当前季
+                month: '', //当前月份
+                week: '', //当前周
+                time: ['2020-01-01', '2020-01-02'] //时间段
             },
             advancedSearch: {   // 高级搜索（选项卡 位置 控件值 ）
-
+                allBU: [], // 所有BU
+                BU: [], //按BU
+                region: [], //按发生区域
+                abnormalClassify: {   //按异常分类
+                    currentClassify: 'equipment',  //当前分类
+                    equipment: { //设备异常
+                        desc: [],  //异常描述
+                        category: [], //异常类别
+                        name: '',  // 设备名称
+                        equipmentNumber: '' // 设备编号
+                    },
+                    material: { //物料异常
+                        desc: [], //异常描述
+                        partNo: '', //零件料号
+                        rejectRatio: '', //不良率
+                        supplier: '', //供应商
+                        DC: '',
+                        LC: ''
+                    },
+                    person: { //人员异常
+                        desc: [] //异常描述
+                    },
+                    quality: { //品质异常
+                        process: [], //制程段
+                        BadPhenomenon: [], //不良现象
+                        scope: [], //影响范围
+                        station: '', //发生站位
+                        measures: '' //当前措施
+                    },
+                    tools: { //治工具异常
+                        desc: [],   //异常描述
+                        skuno: '',  //涉及的产品料号
+                        station: '' //使用站位
+                    },
+                    system: { //系统异常
+                        category: [], //异常类别
+                        station: '' //使用站位
+                    }
+                },
+                causeAnalysis: {   //按原因分析
+                    currentClassify: 'parson',  //当前分类
+                    parson: {   //人
+                        chargePerson: '', //责任人
+                        decision: '', //处理决定
+                        improve: ''   //改善方向
+                    },
+                    equipment: { //机
+                        chargePerson: '', //责任人
+                        name: '',  // 机器名称
+                        equipmentNumber: '', // 机器编号
+                        cause: '', //具体原因
+                        improve: '',   //改善方向
+                        anImprove: '',  //橫向展開改善  Y | N
+                        completionTime: '' //預計完成時間
+                    },
+                    material: {  //料
+                        chargePerson: '', // 負責人
+                        skuno: '', // 料號
+                        DC: '', // DC
+                        LC: '', // LC
+                        vendor: '', // 廠商
+                        result: '', // 處理結果
+                        improve: '', // 改善方向
+                        completionTime: '' // 預計完成時間
+                    },
+                    function: {  //法
+                        chargePerson: '', // 負責人
+                        result: '', // 改善結果
+                        anImprove: '',  // 橫向展開改善
+                        completionTime: '' // 預計完成時間
+                    },
+                    annulus: {  //环
+                        chargePerson: '', // 負責人
+                        cause: '', // 具體原因
+                        result: '', // 處理結果
+                        improve: '',  // 改善方向
+                        completionTime: '' // 預計完成時間
+                    },
+                    detection: {  //量检测
+                        chargePerson: '', // 負責人
+                        content: '', // 測試內容
+                        result: '' // 測試結果
+                    }
+                }
             },
             newAbnormal: {  // 新增异常 状态
-
+                type: '异常', // 通知单类型  异常 | 停线
+                emergencyDegree: '一般', // 紧急程度  一般 | 紧急
+                baseMsg: { //基本信息
+                    issuer: '', // 發文人員
+                    units: '', // 發文單位
+                    date: '', // 發文日期
+                    time: '', // 异常时期
+                    class: '', // 异常班别
+                    BU: '', // 异常BU
+                    area: '', //异常区域
+                    station: '', //异常工站
+                    skuName: '', //机种名称
+                    skuno: '', //机种料号
+                    WO: '', //工單編號
+                    stage: '' // 产品阶段
+                },
+                report: { //上报机制
+                    sectionManager: '', //课级
+                    minister: '', //部级
+                    sectionChief: '', //处级
+                },
+                Problem: { //問題描述
+                    handler: [],  //異常處理人
+                    noticeTime: '', //異常通知時間
+                    emailTitle: '', // 郵件標題
+                    abnormalClassify: {   //按异常分类
+                        currentClassify: 'equipment',  //当前分类
+                        equipment: { //设备异常
+                            desc: '',  //异常描述
+                            category: '', //异常类别
+                            name: '',  // 设备名称
+                            equipmentNumber: '', // 设备编号
+                            equipmentModel: '' // 設備型號
+                        },
+                        material: { //物料异常
+                            desc: '', //异常描述
+                            partNo: '', //零件料号
+                            rejectRatio: '', //不良率
+                            supplier: '', //供应商
+                            DC: '',
+                            LC: ''
+                        },
+                        person: { //人员异常
+                            desc: '' //异常描述
+                        },
+                        quality: { //品质异常
+                            process: '', //制程段
+                            BadPhenomenon: '', //不良现象
+                            scope: '', //影响范围
+                            station: '', //发生站位
+                            measures: '' //当前措施
+                        },
+                        tools: { //治工具异常
+                            desc: '',   //异常描述
+                            skuno: '',  //涉及的产品料号
+                            station: '' //使用站位
+                        },
+                        system: { //系统异常
+                            category: '', //异常类别
+                            desc: '', //異常描述
+                            startTime: '' //異常開始時間
+                        }
+                    },
+                    countermeasures: { //临时对策
+                        lostWorkTime: '', //损失工时
+                        idleHuman: '', //闲置人力
+                        manpowerArrangement: '', //闲置人力安排
+                        lostOutput: '', //损失产出
+                        lostYield: '', //良率損失
+                        measures: '' //臨時解決措施
+                    },
+                    causeAnalysis: {  // 原因分析(只有填寫原因分析才能申請結案)
+                        chargePerson: '', // 負責人
+                        sectionManager: [], //負責人课级
+                        minister: [], //負責人部级
+                        sectionChief: [], //負責人处级
+                        notifier: [] // 異常知會人
+                    },
+                    remarksAndAttachments: {  // 備註與附件
+                        problemStatus: '', // 問題狀態
+                        remarks: '', // 備註
+                        attachments: {} // 附件
+                    }
+                }
             },
             graphData: {
                 graph1: { // 异常状态统计（饼）
@@ -78,6 +255,12 @@ let Model = {
         setActiveKey: (state, { activeKey }) => { // 设置当前活动的tab页：activeKey： tab1 | tab2 | tab3 | tab4 | tab5
             return { ...state, anomalousGraph: { ...state.anomalousGraph, activeKey } };
         },
+        setGlobalSearch: (state, { payload }) => { // 设置全局搜索条件
+            return { ...state, anomalousGraph: { ...state.anomalousGraph, globalSearch: { ...state.anomalousGraph.globalSearch, ...payload } } };
+        },
+        setQuickSearch: (state, { payload }) => { // 设置快速搜索的条件
+            return { ...state, anomalousGraph: { ...state.anomalousGraph, quickSearch: { ...state.anomalousGraph.quickSearch, ...payload } } };
+        },
         setGraphData: (state, { graphName, data }) => {   // 设置统计图数据 (graph1, graph2, graph3, graph4, graph5)
             let graphData = {...state.anomalousGraph.graphData};
             graphData[graphName] = data;
@@ -91,6 +274,35 @@ let Model = {
         }
     },
     effects: {
+        *getAllBu(_, {call, put, select}) {
+            let {Status, Message, Data} = yield call(getAllBu);
+            // console.log(Status, Message, Data);
+            if(Status == 'Pass'){
+                yield put({ 
+                    type: 'setGlobalSearch', 
+                    payload: { allMFG: Data.Mfg, MFG: Data.Mfg[0] }
+                })
+            }else{
+                message.error(Message);
+            }
+        },
+
+        *initQuickSearch(_, {call, put, select}) {  //初始化快速搜索条件
+            let currentDate = moment();
+            let year = currentDate.year(), month = currentDate.month() + 1, week = currentDate.week(), time, allYear = [], season; 
+            for(var i = 2017; i <= year; i++ ) allYear.push(i);
+            season = month <= 3 ? '第一季度' : month <=6 ? '第二季度' : month <= 9 ? '第三季度' : '第四季度';
+            time = [ currentDate.subtract(1, 'days').format('YYYY-MM-DD'), currentDate.add(1, 'days').format('YYYY-MM-DD')];
+
+            yield put({
+                type: 'setQuickSearch',
+                payload: {
+                    allYear, year, season, month, week, time
+                }
+            })
+        },
+
+
         *getGraph1(_, {call, put, select}) {
             // select...
             let {Status, Message, Data} = yield call(getGraph1, {});

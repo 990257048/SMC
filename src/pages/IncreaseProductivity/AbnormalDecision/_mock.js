@@ -9,17 +9,11 @@ export default {
                 left: {  // 所有异常
                     sum: 1075,
                     seriesData: [
-                        { value: 335, name: '设备异常' },
-                        { value: 310, name: '系统异常' },
-                        { value: 274, name: '物料异常' },
-                        { value: 235, name: '人员异常' },
-                        { value: 400, name: '品质异常' }
-                    ]
-                },
-                center: {  // 未结案异常
-                    sum: 1075,
-                    status: '#52c41a', // red(#f5222d) yellow(#ffec3d) green(#52c41a)  
-                    seriesData: [
+                        // { value: 335, name: '设备异常' },
+                        // { value: 310, name: '系统异常' },
+                        // { value: 274, name: '物料异常' },
+                        // { value: 235, name: '人员异常' },
+                        // { value: 400, name: '品质异常' }
                         { value: 200, name: '5DX' },
                         { value: 100, name: 'BST' },
                         { value: 300, name: 'ICT' },
@@ -34,8 +28,18 @@ export default {
                         { value: 100, name: '压合' }
                     ]
                 },
+                center: {  // 未结案异常
+                    sum: 475,
+                    status: '#f5222d', // red(#f5222d) yellow(#ffec3d) green(#52c41a)  
+                    seriesData: [
+                        { value: 200, name: '5DX' },
+                        { value: 100, name: 'BST' },
+                        { value: 300, name: 'ICT' },
+                        { value: 500, name: 'KITTING' },
+                    ]
+                },
                 right: {  // 未签核异常
-                    sum: 1075,
+                    sum: 675,
                     status: '#ffec3d',
                     seriesData: [
                         { value: 200, name: '5DX' },
@@ -44,10 +48,7 @@ export default {
                         { value: 500, name: 'KITTING' },
                         { value: 200, name: 'MCEBU' },
                         { value: 100, name: 'PACKING' },
-                        { value: 100, name: 'PCBU' },
-                        { value: 100, name: 'PTH' },
-                        { value: 100, name: 'RE' },
-                        { value: 100, name: 'SMT' }
+                        { value: 100, name: 'PCBU' }
                     ]
                 }
             }
