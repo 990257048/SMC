@@ -28,23 +28,24 @@ let TabControls = props => {   // 标签页控件
     // classify: '', //当前查询类别
     let {
         MFGChange, classifyChange,
-        getAllBu,
+        getAllMfg, getBU,
         activeKey, globalSearch: { allMFG, allCategories, MFG, classify }
     } = props;
 
     let isReady = useMemo(() => {
-        return allMFG.length == 0 || !MFG;
+        return allMFG.length > 0 && MFG;
     }, [allMFG, MFG]);
 
-    // 获取BU
+    // 获取制造处
     useMemo(() => {
-        getAllBu();
+        getAllMfg();
     }, []);
 
-    // if (allMFG.length == 0 || !MFG) {
-    //     return <PageLoading />
-    // }
-
+    // 获取BU
+    useEffect(() => {
+        MFG && getBU(MFG);
+    }, [MFG]);
+    
     return <div className={styles['tab-controls']}>
         <Space size="middle" align="baseline">
             {/* <b>当前：MFGII · 按区域统计 · 2020年 · 异常</b> */}
@@ -105,8 +106,11 @@ TabControls = connect(({ AbnormalDecision }) => {
         classifyChange: classify => {
             dispatch({ type: 'AbnormalDecision/setGlobalSearch', payload: { classify } })
         },
-        getAllBu: () => {
-            dispatch({ type: 'AbnormalDecision/getAllBu' })
+        getAllMfg: () => {
+            dispatch({ type: 'AbnormalDecision/getAllMfg' })
+        },
+        getBU: MFG => {
+            dispatch({ type: 'AbnormalDecision/getBU', MFG })
         }
     }
 })(memo(TabControls));
@@ -118,7 +122,7 @@ TabControls = connect(({ AbnormalDecision }) => {
 let QuickSearch = props => {  // 快速搜索
     let { dispatch, quickSearch: { allYear, allCategories, classify, year, season, month, week, time } } = props;
     // console.log(allYear, allCategories, classify, year, season, month, week, time);
-    console.log(<div>1234</div>);
+    // console.log(<div>1234</div>);
     const v = <div>1234</div>
     useMemo(() => {
         dispatch({
@@ -170,9 +174,8 @@ let QuickSearch = props => {  // 快速搜索
     }, []);
 
     return <div className={styles['control-content']}>
-        { v }
         <Tabs size="small" type='line' activeKey={classify} onChange={ changeClassify } className={styles['tabs-query']} >
-            <TabPane tab="按年份" key="year">
+            <TabPane tab="按年份" key="year" disabled={ !allCategories.includes('year') }>
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
@@ -190,7 +193,7 @@ let QuickSearch = props => {  // 快速搜索
                     </Row>
                 </div>
             </TabPane>
-            <TabPane tab="按季度" key="season">
+            <TabPane tab="按季度" key="season" disabled={ !allCategories.includes('season') }>
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
@@ -220,7 +223,7 @@ let QuickSearch = props => {  // 快速搜索
                     </Row>
                 </div>
             </TabPane>
-            <TabPane tab="按月份" key="month">
+            <TabPane tab="按月份" key="month" disabled={ !allCategories.includes('month') }>
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
@@ -260,7 +263,7 @@ let QuickSearch = props => {  // 快速搜索
                     </Row>
                 </div>
             </TabPane>
-            <TabPane tab="按周别" key="week">
+            <TabPane tab="按周别" key="week" disabled={ !allCategories.includes('week') } >
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
@@ -293,7 +296,7 @@ let QuickSearch = props => {  // 快速搜索
                     </Row>
                 </div>
             </TabPane>
-            <TabPane tab="按时间段" key="time">
+            <TabPane tab="按时间段" key="time" disabled={ !allCategories.includes('time') }>
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
@@ -331,9 +334,36 @@ QuickSearch = connect(({ AbnormalDecision }) => {
 
 
 let AnomalousGraph = props => {  // 异常统计图
-    let { activeKey, setActiveKey } = props;
+    let { dispatch, activeKey, classify } = props;
+
+    let tabChange = useCallback((activeKey) => {
+        dispatch({
+            type: 'AbnormalDecision/setActiveKey', activeKey
+        });
+        let allCategories, newClassify;
+        //不同的选项卡对应不同的快速搜索的条件，选项卡切换时可能需要改变当前的条件
+        switch(activeKey){
+            case 'tab4':
+                allCategories = ['year'];
+                newClassify = allCategories.includes(classify) ? classify : 'year';
+                break;
+            case 'tab5':
+                allCategories = ['year', 'season'];
+                newClassify = allCategories.includes(classify) ? classify : 'season';
+                break;
+            default:
+                allCategories = ['year', 'season', 'month', 'week', 'time'];
+                newClassify = classify;
+                break;
+        }
+        dispatch({
+            type: 'AbnormalDecision/setQuickSearch',
+            payload: { allCategories, classify: newClassify }
+        });
+    }, [classify]);
+
     return <div className={styles['anomalous-graph']}>
-        <Tabs size="middle" type='line' activeKey={activeKey} onChange={key => setActiveKey(key)} className={styles.tabs} >
+        <Tabs size="middle" type='line' activeKey={activeKey} onChange={ tabChange } className={styles.tabs} >
             <TabControls />
             <TabPane tab={<b>异常状态统计</b>} key="tab1">
                 <div className={styles.tab}>
@@ -376,13 +406,8 @@ let AnomalousGraph = props => {  // 异常统计图
 }
 
 let mapStateToProps = ({ AbnormalDecision }) => ({
-    activeKey: AbnormalDecision.anomalousGraph.activeKey
+    activeKey: AbnormalDecision.anomalousGraph.activeKey,
+    classify: AbnormalDecision.anomalousGraph.quickSearch.classify
 });
 
-let mapDispatchToProps = dispatch => ({
-    setActiveKey: activeKey => {
-        dispatch({ type: 'AbnormalDecision/setActiveKey', activeKey });
-    }
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(AnomalousGraph);
+export default connect(mapStateToProps)(AnomalousGraph);

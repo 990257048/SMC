@@ -1,7 +1,7 @@
 import request, { requestReal } from '@/utils/request';
 import cookies from 'js-cookie';
 
-export async function getAllBu () {
+export async function getAllMfg () {
     // console.log(cookies.get('token'));
     return requestReal('/api/SMCAccount/GetMfg', {
         method: 'GET',
@@ -11,7 +11,14 @@ export async function getAllBu () {
     });
 }
 
-
+export async function getBU () {
+    return requestReal('/api/getBU', {
+        method: 'GET',
+        params: {
+            MFG: 'MFGII'
+        }
+    });
+}
 
 export async function getGraph1 () {
     return requestReal('/api/abnormalDecision/getGraph1', {

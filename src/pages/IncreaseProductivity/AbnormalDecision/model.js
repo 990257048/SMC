@@ -1,5 +1,6 @@
 
-import {getAllBu, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5} from './service'
+import {getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5} from './service'
+import {deepClone} from '../../../utils/custom'
 import {message} from 'antd'
 import moment from 'moment'
 
@@ -28,16 +29,20 @@ let Model = {
             advancedSearch: {   // 高级搜索（选项卡 位置 控件值 ）
                 allBU: [], // 所有BU
                 BU: [], //按BU
+                allRegion: ['Kitting', 'SMT', 'ICT', 'Packing', '5DX', '壓合', 'PTH', 'RE', 'MCEBU', '分板', 'BST', '其它'],  //所有发生区域
                 region: [], //按发生区域
                 abnormalClassify: {   //按异常分类
                     currentClassify: 'equipment',  //当前分类
                     equipment: { //设备异常
+                        allDesc: ['設備檔機', '保養超時', '低效生產', '安全隱患', '功能缺失', '帶病運行'], //所有异常描述
+                        allCategory: ['SMT設備', 'PTH設備', '測試設備', '流水線', 'SFC設備', '公務設備'], //所有機器類別
                         desc: [],  //异常描述
-                        category: [], //异常类别
+                        category: [], //機器類別
                         name: '',  // 设备名称
                         equipmentNumber: '' // 设备编号
                     },
                     material: { //物料异常
+                        allDesc: ['來料短缺', '物料Delay', '錯料', '混料', '物料包裝異常', '特采過期', '包裝信息與實物不符', '有帳無務', '其它'],  //所有异常描述
                         desc: [], //异常描述
                         partNo: '', //零件料号
                         rejectRatio: '', //不良率
@@ -46,21 +51,30 @@ let Model = {
                         LC: ''
                     },
                     person: { //人员异常
+                        allDesc: ['人力不足', '新人技能不足', '外借人力技能不足', '其它'], //所有异常描述
                         desc: [] //异常描述
                     },
                     quality: { //品质异常
+                        allProcess: ['SMT製程不良', 'PTH製程不良', '組裝製程不良', '測試製程不良', '維修製程不良', '壓合製程不良'], //所有制程段
+                        allBadPhenomenon: ['批量損件', '燒機', '批量錯件', '批量少料', '批量反向', '不良率超標', '其它'], //所有不良现象
+                        allScope: ['當前工站', '前置工站', '後續工站'], //所有影响范围
                         process: [], //制程段
-                        BadPhenomenon: [], //不良现象
+                        badPhenomenon: [], //不良现象
                         scope: [], //影响范围
                         station: '', //发生站位
                         measures: '' //当前措施
                     },
                     tools: { //治工具异常
+                        allDesc: ['治工具損壞', '治工具不足', '治工具功能不良', '治工具未點檢', '治工具要求不符', '其它'], //所有异常描述
                         desc: [],   //异常描述
                         skuno: '',  //涉及的产品料号
                         station: '' //使用站位
                     },
                     system: { //系统异常
+                        allCategory: [
+                            '測試系統異常', 'SFC系統異常', '氮氣供應系統異常', '電力系統異常', '壓縮空氣系統異常', '真空供氣系統異常', '冰水供應系統異常',
+                            'ALL Parts系統異常', 'Beacon系統異常', 'Agile系統異常', 'Dom系統異常', 'SAP系統異常', '其它'
+                        ], //所有异常类别
                         category: [], //异常类别
                         station: '' //使用站位
                     }
@@ -78,7 +92,7 @@ let Model = {
                         equipmentNumber: '', // 机器编号
                         cause: '', //具体原因
                         improve: '',   //改善方向
-                        anImprove: '',  //橫向展開改善  Y | N
+                        anImprove: [],  //橫向展開改善  Y | N
                         completionTime: '' //預計完成時間
                     },
                     material: {  //料
@@ -94,7 +108,7 @@ let Model = {
                     function: {  //法
                         chargePerson: '', // 負責人
                         result: '', // 改善結果
-                        anImprove: '',  // 橫向展開改善
+                        anImprove: [],  // 橫向展開改善 Y | N
                         completionTime: '' // 預計完成時間
                     },
                     annulus: {  //环
@@ -261,6 +275,21 @@ let Model = {
         setQuickSearch: (state, { payload }) => { // 设置快速搜索的条件
             return { ...state, anomalousGraph: { ...state.anomalousGraph, quickSearch: { ...state.anomalousGraph.quickSearch, ...payload } } };
         },
+        
+        setAdvancedSearchOfBuAndRegion: (state, { payload }) => { // 设置高级搜索中前两个tab内容（按BU 和 按发生区域查询）
+            return { ...state, anomalousGraph: { ...state.anomalousGraph, advancedSearch: { ...state.anomalousGraph.advancedSearch, ...payload } } };
+        },
+        setAdvancedSearchOfAbnormalClassify: (state, { classify, payload }) => { // classify:当前异常分类 （设置高级搜索中第三个tab内容（按异常分类查询）） 
+            let newState = deepClone(state);
+            newState.anomalousGraph.advancedSearch.abnormalClassify[classify] = payload;
+            return newState;
+        },
+        setAdvancedSearchOfCauseAnalysis: (state, { classify, payload }) => { // 设置高级搜索中第四个tab内容（按原因分析查询）
+            let newState = deepClone(state);
+            newState.anomalousGraph.advancedSearch.causeAnalysis[classify] = payload;
+            return newState;
+        },
+        
         setGraphData: (state, { graphName, data }) => {   // 设置统计图数据 (graph1, graph2, graph3, graph4, graph5)
             let graphData = {...state.anomalousGraph.graphData};
             graphData[graphName] = data;
@@ -274,13 +303,25 @@ let Model = {
         }
     },
     effects: {
-        *getAllBu(_, {call, put, select}) {
-            let {Status, Message, Data} = yield call(getAllBu);
+        *getAllMfg(_, {call, put, select}) {
+            let {Status, Message, Data} = yield call(getAllMfg);
             // console.log(Status, Message, Data);
             if(Status == 'Pass'){
                 yield put({ 
                     type: 'setGlobalSearch', 
                     payload: { allMFG: Data.Mfg, MFG: Data.Mfg[0] }
+                })
+            }else{
+                message.error(Message);
+            }
+        },
+
+        *getBU({MFG}, {call, put}) {
+            let {Status, Message, Data} = yield call(getBU, MFG);
+            if(Status == 'Pass'){
+                yield put({
+                    type: 'setAdvancedSearchOfBuAndRegion',
+                    payload: { allBU: Data.BU }
                 })
             }else{
                 message.error(Message);

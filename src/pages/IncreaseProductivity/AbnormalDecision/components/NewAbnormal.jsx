@@ -17,11 +17,11 @@ const { Step } = Steps
 let NewAbnormalContext = createContext();
 
 let NewAbnormal = props => {  // 新增异常
-    console.log('render NewAbnormal');
+    // console.log('render NewAbnormal');
     let w = useSelector(state => state.global.width);
     let h = useSelector(state => state.global.height);
 
-    console.log(w, h)
+    // console.log(w, h)
 
     let [current, setCurrent] = useState(0);
 
