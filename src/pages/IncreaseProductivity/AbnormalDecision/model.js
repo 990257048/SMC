@@ -1,7 +1,8 @@
 
-import {getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5} from './service'
-import {deepClone} from '../../../utils/custom'
-import {message} from 'antd'
+import { getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5 } from './service'
+import { deepClone } from '../../../utils/custom'
+import { graph1SendData, graph23SendData, graph4SendData, graph5SendData, filterData } from './utils'
+import { message } from 'antd'
 import moment from 'moment'
 
 let Model = {
@@ -275,7 +276,7 @@ let Model = {
         setQuickSearch: (state, { payload }) => { // 设置快速搜索的条件
             return { ...state, anomalousGraph: { ...state.anomalousGraph, quickSearch: { ...state.anomalousGraph.quickSearch, ...payload } } };
         },
-        
+
         setAdvancedSearchOfBuAndRegion: (state, { payload }) => { // 设置高级搜索中前两个tab内容（按BU 和 按发生区域查询）
             return { ...state, anomalousGraph: { ...state.anomalousGraph, advancedSearch: { ...state.anomalousGraph.advancedSearch, ...payload } } };
         },
@@ -289,9 +290,9 @@ let Model = {
             newState.anomalousGraph.advancedSearch.causeAnalysis[classify] = payload;
             return newState;
         },
-        
+
         setGraphData: (state, { graphName, data }) => {   // 设置统计图数据 (graph1, graph2, graph3, graph4, graph5)
-            let graphData = {...state.anomalousGraph.graphData};
+            let graphData = { ...state.anomalousGraph.graphData };
             graphData[graphName] = data;
             return {
                 ...state,
@@ -303,38 +304,38 @@ let Model = {
         }
     },
     effects: {
-        *getAllMfg(_, {call, put, select}) {
-            let {Status, Message, Data} = yield call(getAllMfg);
+        *getAllMfg(_, { call, put, select }) {
+            let { Status, Message, Data } = yield call(getAllMfg);
             // console.log(Status, Message, Data);
-            if(Status == 'Pass'){
-                yield put({ 
-                    type: 'setGlobalSearch', 
+            if (Status == 'Pass') {
+                yield put({
+                    type: 'setGlobalSearch',
                     payload: { allMFG: Data.Mfg, MFG: Data.Mfg[0] }
                 })
-            }else{
+            } else {
                 message.error(Message);
             }
         },
 
-        *getBU({MFG}, {call, put}) {
-            let {Status, Message, Data} = yield call(getBU, MFG);
-            if(Status == 'Pass'){
+        *getBU({ MFG }, { call, put }) {
+            let { Status, Message, Data } = yield call(getBU, MFG);
+            if (Status == 'Pass') {
                 yield put({
                     type: 'setAdvancedSearchOfBuAndRegion',
                     payload: { allBU: Data.BU }
                 })
-            }else{
+            } else {
                 message.error(Message);
             }
         },
 
-        *initQuickSearch(_, {call, put, select}) {  //初始化快速搜索条件
+        *initQuickSearch(_, { call, put, select }) {  //初始化快速搜索条件
             let currentDate = moment();
-            let year = currentDate.year(), month = currentDate.month() + 1, week = currentDate.week(), time, allYear = [], season; 
-            for(var i = 2017; i <= year; i++ ) allYear.push(i);
-            season = month <= 3 ? '第一季度' : month <=6 ? '第二季度' : month <= 9 ? '第三季度' : '第四季度';
-            time = [ currentDate.subtract(1, 'days').format('YYYY-MM-DD'), currentDate.add(1, 'days').format('YYYY-MM-DD')];
-
+            let year = currentDate.year(), month = currentDate.month() + 1, week = currentDate.week(), time, allYear = [], season;
+            for (var i = 2017; i <= year; i++) allYear.push(i);
+            season = month <= 3 ? '第一季度' : month <= 6 ? '第二季度' : month <= 9 ? '第三季度' : '第四季度';
+            time = [currentDate.subtract(1, 'days').format('YYYY-MM-DD'), currentDate.add(1, 'days').format('YYYY-MM-DD')];
+            console.log(allYear, year, season, month, week, time);
             yield put({
                 type: 'setQuickSearch',
                 payload: {
@@ -343,71 +344,98 @@ let Model = {
             })
         },
 
+        // getGraph1: [
+        //     function* renderGraph1(_, { call, put, select }) {
+        //         let anomalousGraph = yield select(state => state.AbnormalDecision.anomalousGraph);
+        //         let sendData = filterData(anomalousGraph, graph1SendData);
+        //         // select...
+        //         let { Status, Message, Data } = yield call(getGraph1, sendData);
+        //         if (Status == 'Pass') {
+        //             yield put({
+        //                 type: 'setGraphData',
+        //                 graphName: 'graph1',
+        //                 data: Data
+        //             });
+        //         } else {
+        //             message.error(Message);
+        //         }
+        //     },
+        //     { type: 'throttle', ms: 1500 }
+        // ],
 
-        *getGraph1(_, {call, put, select}) {
+        *getGraph1(_, { call, put, select }) {
+            let anomalousGraph = yield select(state => state.AbnormalDecision.anomalousGraph);
+            let sendData = filterData(anomalousGraph, graph1SendData);
             // select...
-            let {Status, Message, Data} = yield call(getGraph1, {});
-            // console.log(Status, Message, Data);
-            if(Status == 'Pass'){
+            let { Status, Message, Data } = yield call(getGraph1, sendData);
+            if (Status == 'Pass') {
                 yield put({
                     type: 'setGraphData',
                     graphName: 'graph1',
                     data: Data
                 });
-            }else{
+            } else {
                 message.error(Message);
             }
         },
-        *getGraph2(_, {call, put, select}) {
+        *getGraph2(_, { call, put, select }) {
+            let anomalousGraph = yield select(state => state.AbnormalDecision.anomalousGraph);
+            let sendData = filterData(anomalousGraph, graph23SendData);
             // select...
-            let {Status, Message, Data} = yield call(getGraph2, {});
-            console.log(Status, Message, Data);
-            if(Status == 'Pass'){
+            let { Status, Message, Data } = yield call(getGraph2, sendData);
+            // console.log(Status, Message, Data);
+            if (Status == 'Pass') {
                 yield put({
                     type: 'setGraphData',
                     graphName: 'graph2',
                     data: Data
                 });
-            }else{
+            } else {
                 message.error(Message);
             }
         },
-        *getGraph3(_, {call, put, select}) {
+        *getGraph3(_, { call, put, select }) {
+            let anomalousGraph = yield select(state => state.AbnormalDecision.anomalousGraph);
+            let sendData = filterData(anomalousGraph, graph23SendData);
             // select...
-            let {Status, Message, Data} = yield call(getGraph3, {});
-            if(Status == 'Pass'){
+            let { Status, Message, Data } = yield call(getGraph3, sendData);
+            if (Status == 'Pass') {
                 yield put({
                     type: 'setGraphData',
                     graphName: 'graph3',
                     data: Data
                 });
-            }else{
+            } else {
                 message.error(Message);
             }
         },
-        *getGraph4(_, {call, put, select}) {
+        *getGraph4(_, { call, put, select }) {
+            let anomalousGraph = yield select(state => state.AbnormalDecision.anomalousGraph);
+            let sendData = filterData(anomalousGraph, graph4SendData);
             // select...
-            let {Status, Message, Data} = yield call(getGraph4, {});
-            if(Status == 'Pass'){
+            let { Status, Message, Data } = yield call(getGraph4, sendData);
+            if (Status == 'Pass') {
                 yield put({
                     type: 'setGraphData',
                     graphName: 'graph4',
                     data: Data
                 });
-            }else{
+            } else {
                 message.error(Message);
             }
         },
-        *getGraph5(_, {call, put, select}) {
+        *getGraph5(_, { call, put, select }) {
+            let anomalousGraph = yield select(state => state.AbnormalDecision.anomalousGraph);
+            let sendData = filterData(anomalousGraph, graph5SendData);
             // select...
-            let {Status, Message, Data} = yield call(getGraph5, {});
-            if(Status == 'Pass'){
+            let { Status, Message, Data } = yield call(getGraph5, sendData);
+            if (Status == 'Pass') {
                 yield put({
                     type: 'setGraphData',
                     graphName: 'graph5',
                     data: Data
                 });
-            }else{
+            } else {
                 message.error(Message);
             }
         }

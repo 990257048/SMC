@@ -11,44 +11,61 @@ export async function getAllMfg () {
     });
 }
 
-export async function getBU () {
+export async function getBU (MFG) {
     return requestReal('/api/getBU', {
         method: 'GET',
         params: {
-            MFG: 'MFGII'
+            MFG
         }
     });
 }
 
-export async function getGraph1 () {
+export async function getGraph1 (sendData) {
+    console.log(sendData);
     return requestReal('/api/abnormalDecision/getGraph1', {
         method: 'GET',
         params: {
-            mfg: 'MFGII'
+            data: sendData
         }
     });
 };
 
-export async function getGraph2 () {
+export async function getGraph2 (sendData) {
+    console.log(sendData);
     return requestReal('/api/abnormalDecision/getGraph2', {
-        method: 'GET'
+        method: 'GET',
+        params: {
+            data: sendData
+        }
     });
 }
 
-export async function getGraph3 () {
+export async function getGraph3 (sendData) {
+    console.log(sendData);
     return requestReal('/api/abnormalDecision/getGraph3', {
-        method: 'GET'
+        method: 'GET',
+        params: {
+            data: sendData
+        }
     });
 }
 
-export async function getGraph4 () {
+export async function getGraph4 (sendData) {
+    console.log(sendData);
     return requestReal('/api/abnormalDecision/getGraph4', {
-        method: 'GET'
+        method: 'GET',
+        params: {
+            data: sendData
+        }
     });
 }
 
-export async function getGraph5 () {
+export async function getGraph5 (sendData) {
+    console.log(sendData);
     return requestReal('/api/abnormalDecision/getGraph5', {
-        method: 'GET'
+        method: 'GET',
+        params: {
+            data: sendData
+        }
     });
 }

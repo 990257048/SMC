@@ -144,7 +144,7 @@ let ret_option = (xAxisData, seriesData1, seriesData2, seriesData3) => {
 
 let Tab5 = props => {
 
-    let { dispatch, collapsed, loading, activeKey, graph5: { xAxisData, seriesData1, seriesData2, seriesData3 } } = props;
+    let { dispatch, collapsed, loading, activeKey, globalSearch, quickSearch, graph5: { xAxisData, seriesData1, seriesData2, seriesData3 } } = props;
     let [w, setW] = useState(100);
     let chartWrap = useRef();
 
@@ -156,10 +156,10 @@ let Tab5 = props => {
     }, [props.graph5]);
 
     useMemo(() => {
-        dispatch({
+        activeKey == 'tab5' && dispatch({
             type: 'AbnormalDecision/getGraph5'
         });
-    }, []);
+    }, [activeKey, globalSearch, quickSearch]);
 
     useEffect(() => {
         isReady && activeKey === 'tab5' && setW(chartWrap.current.clientWidth);
@@ -187,6 +187,8 @@ let mapStateToProps = state => ({
     collapsed: state.global.collapsed,
     loading: state.loading.AbnormalDecision,
     activeKey: state.AbnormalDecision.anomalousGraph.activeKey,
+    globalSearch: state.AbnormalDecision.anomalousGraph.globalSearch,
+    quickSearch: state.AbnormalDecision.anomalousGraph.quickSearch,
     graph5: state.AbnormalDecision.anomalousGraph.graphData.graph5
 })
 

@@ -48,7 +48,7 @@ let option = {
 
 let ret_option = (tit, num, seriesData) => {
     return {
-        backgroundColor: '#2c343c',
+        backgroundColor: '#012140',
         color: ['#52c41a', '#13c2c2', '#87e8de', '#91d5ff', '#722ed1', '#eb2f96', '#f5222d', '#d4380d', '#fa8c16', '#faad14', '#ffec3d'],
         title: {
             text: tit + '（' + num + '）',
@@ -128,7 +128,12 @@ let ret_option = (tit, num, seriesData) => {
 }
 
 let Tab1 = props => {   // 异常状态
-    let { dispatch, collapsed, loading, activeKey, graph1: { left, center, right } } = props;  // {sum, seriesData}
+    let {
+        dispatch, 
+        collapsed, loading, activeKey, 
+        globalSearch, quickSearch, advancedSearch,
+        graph1: { left, center, right } 
+    } = props;  // {sum, seriesData}
 
     let graph1 = useRef();
     let graph2 = useRef();
@@ -146,10 +151,10 @@ let Tab1 = props => {   // 异常状态
     }, [props.graph1]);
 
     useMemo(() => {
-        dispatch({
+        activeKey === 'tab1' && globalSearch.MFG && dispatch({  // tab,条件发生变化时 1.当前在tab1 2.全局条件必须有，再去拿数据
             type: 'AbnormalDecision/getGraph1'
         });
-    }, []);
+    }, [activeKey, globalSearch, quickSearch, advancedSearch]);
 
     useEffect(() => {
         isReady && activeKey === 'tab1' && setW(graph1.current.clientWidth);   // 未准备好就没有graph1.current.clientWidth, 会报错
@@ -196,6 +201,9 @@ let mapStateToProps = state => ({
     collapsed: state.global.collapsed,
     loading: state.loading.AbnormalDecision,
     activeKey: state.AbnormalDecision.anomalousGraph.activeKey,
+    globalSearch: state.AbnormalDecision.anomalousGraph.globalSearch,
+    quickSearch: state.AbnormalDecision.anomalousGraph.quickSearch,
+    advancedSearch: state.AbnormalDecision.anomalousGraph.advancedSearch,
     graph1: state.AbnormalDecision.anomalousGraph.graphData.graph1
 })
 export default connect(mapStateToProps)(Tab1);
