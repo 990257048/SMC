@@ -14,13 +14,13 @@ let TableToolBar = () => {
 
         <Space size="middle" style={{ float: 'right' }}>
             <Tooltip title="显示已收藏">
-                <Button type="default" icon={<StarOutlined />}></Button>
+                <Button type="default" shape='circle' icon={<StarOutlined />}></Button>
             </Tooltip>
             <Tooltip title="Download Excel">
-                <Button type="primary" icon={<DownloadOutlined />}></Button>
+                <Button type="primary" shape='circle' icon={<DownloadOutlined />}></Button>
             </Tooltip>
             <Tooltip title="选择显示栏位">
-                <Button type="primary" icon={<BarsOutlined />}></Button>
+                <Button type="primary" shape='circle' icon={<BarsOutlined />}></Button>
             </Tooltip>
             <Input type="primary" placeholder="快速筛选" prefix={<SearchOutlined />} style={{ width: '200px' }} />
         </Space>

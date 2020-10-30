@@ -1,8 +1,7 @@
 // AnomalousGraph 异常统计图（上面的部分 ： 一行控件 快速搜索 异常统计图（引）  高级搜索（引） 新增异常（引））
-import React, { memo, useEffect, useCallback, useMemo } from 'react';
-import { connect, FormattedMessage, formatMessage } from 'umi';
-import { Button, Space, Input, Tabs, Popover, Row, Col, Divider, Select, Radio, DatePicker, Tooltip } from 'antd';
-// import { useDispatch, useSelector } from 'react-redux'
+import React, { memo, useEffect, useCallback, useMemo } from 'react'
+import { connect, FormattedMessage, formatMessage } from 'umi'
+import { Button, Space, Input, Tabs, Popover, Row, Col, Divider, Select, Radio, DatePicker, Tooltip } from 'antd'
 import { useSelector, useDispatch } from 'dva'
 import { SearchOutlined, PlusOutlined, ProfileOutlined, BarsOutlined, ZoomInOutlined } from '@ant-design/icons'
 import { PageLoading } from '@ant-design/pro-layout';
@@ -30,6 +29,7 @@ let TabControls = props => {   // 标签页控件
     let {
         MFGChange, classifyChange,
         getAllMfg, getBU,
+        initQuickSearch,
         activeKey, globalSearch: { allMFG, allCategories, MFG, classify }
     } = props;
 
@@ -39,11 +39,13 @@ let TabControls = props => {   // 标签页控件
 
     // 获取制造处
     useMemo(() => {
-        getAllMfg();
+        getAllMfg();  // 获取所有制造处
+        initQuickSearch(); //初始化快速搜索条件（时间条件）
     }, []);
 
     // 获取BU
     useEffect(() => {
+        // console.log('mfg change');
         MFG && getBU(MFG);
     }, [MFG]);
     
@@ -72,14 +74,14 @@ let TabControls = props => {   // 标签页控件
             <Tooltip title="快速搜索">
                 {/* QuickSearch */}
                 <Popover placement="bottomRight" content={<QuickSearch />} trigger="click">
-                    <Button type="primary" icon={<SearchOutlined />}></Button>
+                    <Button type="primary" shape='circle' icon={<SearchOutlined />}></Button>
                 </Popover>
             </Tooltip>
             {
                 activeKey === 'tab1' ? (
                     <Tooltip title="高级搜索">
                         <Popover placement="bottomRight" content={<AdvancedSearch />} trigger="click">
-                            <Button type="primary" icon={<ZoomInOutlined />}></Button>
+                            <Button type="primary" shape='circle' icon={<ZoomInOutlined />}></Button>
                         </Popover>
                     </Tooltip>
                 ) : <></>
@@ -87,7 +89,7 @@ let TabControls = props => {   // 标签页控件
             <Tooltip title="新增异常">
                 {/* NewAbnormal */}
                 <Popover placement="bottomRight" content={<NewAbnormal />} trigger="click">
-                    <Button type="primary" icon={<PlusOutlined />}></Button>
+                    <Button type="primary" shape='circle' icon={<PlusOutlined />}></Button>
                 </Popover>
             </Tooltip>
         </Space>
@@ -112,6 +114,9 @@ TabControls = connect(({ AbnormalDecision }) => {
         },
         getBU: MFG => {
             dispatch({ type: 'AbnormalDecision/getBU', MFG })
+        },
+        initQuickSearch: () => {
+            dispatch({ type: 'AbnormalDecision/initQuickSearch' })
         }
     }
 })(memo(TabControls));
@@ -119,8 +124,8 @@ TabControls = connect(({ AbnormalDecision }) => {
 
 
 let AnomalousGraph = props => {  // 异常统计图
-    let { dispatch, activeKey, classify } = props;
-
+    let { dispatch, activeKey, globalSearch, quickSearch } = props;
+    let { classify } = quickSearch;
     let tabChange = useCallback((activeKey) => {
         dispatch({
             type: 'AbnormalDecision/setActiveKey', activeKey
@@ -146,6 +151,18 @@ let AnomalousGraph = props => {  // 异常统计图
             payload: { allCategories, classify: newClassify }
         });
     }, [classify]);
+
+    // let d = useMemo(() => {
+    //     let {MFG} = globalSearch;
+    //     let {classify, year, season, month, week, time} = quickSearch;
+
+    //     let desc = [MFG];
+    //     switch(classify){
+    //         case 'year':
+    //             desc.push(year + '年')
+    //     }
+    //     desc.push();
+    // }, [activeKey, globalSearch, quickSearch]);
 
     return <div className={styles['anomalous-graph']}>
         <Tabs size="middle" type='line' activeKey={activeKey} onChange={ tabChange } className={styles.tabs} >
@@ -192,7 +209,9 @@ let AnomalousGraph = props => {  // 异常统计图
 
 let mapStateToProps = ({ AbnormalDecision }) => ({
     activeKey: AbnormalDecision.anomalousGraph.activeKey,
-    classify: AbnormalDecision.anomalousGraph.quickSearch.classify
+    // classify: AbnormalDecision.anomalousGraph.quickSearch.classify,
+    globalSearch: AbnormalDecision.anomalousGraph.globalSearch,
+    quickSearch: AbnormalDecision.anomalousGraph.quickSearch,
 });
 
 export default connect(mapStateToProps)(AnomalousGraph);

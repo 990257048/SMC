@@ -13,14 +13,13 @@ let AbnormalDecision = props => {   // 异常决策中心
     // console.log(props);
     return <div className={ styles['abnormal-decision'] }>
         {/* <PageContainer /> */}
-        <h3> 
+        <h3>
             <LineChartOutlined /> 
             <b> 异常决策中心</b>
         </h3>
         <AnomalousGraph />
         <ExceptionList />
-    </div>   
-    
+    </div>
 }
 
 export default AbnormalDecision;

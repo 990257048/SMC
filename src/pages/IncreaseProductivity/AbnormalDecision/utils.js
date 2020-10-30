@@ -17,7 +17,6 @@ let graph1SendData = { // 异常统计图组件
         BU: [], //按BU
         region: [], //按发生区域
         abnormalClassify: {   //按异常分类
-            currentClassify: '',  //当前分类
             equipment: { //设备异常
                 desc: [],  //异常描述
                 category: [], //機器類別
@@ -53,7 +52,6 @@ let graph1SendData = { // 异常统计图组件
             }
         },
         causeAnalysis: {   //按原因分析
-            currentClassify: '',  //当前分类
             parson: {   //人
                 chargePerson: '', //责任人
                 decision: '', //处理决定

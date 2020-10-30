@@ -13,7 +13,7 @@ const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 
 let AdvancedSearch = props => {  // 高级搜索
-    console.log('AdvancedSearch render');
+    // console.log('AdvancedSearch render');
     return <div className={styles['advanced-search']}>
         <Tabs size="small" type='line' defaultActiveKey="1" className={styles['tabs-query']} >
             <TabPane tab="按BU" key="1">

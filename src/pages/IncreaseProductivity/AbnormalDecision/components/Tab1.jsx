@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useMeno, useCallback, useMemo } from 'react';
 import { connect, FormattedMessage, formatMessage } from 'umi';
 import echarts from 'echarts';
-import { Button, Space, Input, Tabs, Popover, Row, Col, Divider, Select, Spin } from 'antd';
+import { Button, Space, Input, Tabs, Popover, Row, Col, Statistic, Divider, Select, Spin } from 'antd';
 import { PageLoading } from '@ant-design/pro-layout';
 import { SearchOutlined, TagsOutlined, ProfileOutlined, BarsOutlined } from '@ant-design/icons'
 import styles from '../style.less';
@@ -17,6 +17,14 @@ let option = {
         trigger: 'item',
         formatter: '{a} <br/>{b} : {c} ({d}%)'
     },
+    // toolbox: {
+    //     feature: {
+    //         dataView: { show: true, readOnly: false },
+    //         magicType: { show: true, type: ['pie'] },
+    //         restore: { show: true },
+    //         saveAsImage: { show: true }
+    //     }
+    // },
     // legend: {
     //     orient: 'vertical',
     //     left: 'left',
@@ -48,14 +56,15 @@ let option = {
 
 let ret_option = (tit, num, seriesData) => {
     return {
-        backgroundColor: '#012140',
-        color: ['#52c41a', '#13c2c2', '#87e8de', '#91d5ff', '#722ed1', '#eb2f96', '#f5222d', '#d4380d', '#fa8c16', '#faad14', '#ffec3d'],
+        backgroundColor: '#fff', //'#012140',
+        // color: ['#52c41a', '#13c2c2', '#87e8de', '#91d5ff', '#722ed1', '#eb2f96', '#f5222d', '#d4380d', '#fa8c16', '#faad14', '#ffec3d'],
+        color: ['#798ffc', '#6f9efc', '#65bbfc', '#5bd1fc', '#47fca2', '#56fc7d', '#6afc6c', '#fce560', '#fcc360', '#fc9468', '#fc7779', '#fc79a1'],
         title: {
-            text: tit + '（' + num + '）',
+            text: tit, // + '（' + num + '）',
             left: 'center',
             top: 20,
             textStyle: {
-                color: '#eee'
+                color: '#000'
             }
         },
         tooltip: {
@@ -65,7 +74,7 @@ let ret_option = (tit, num, seriesData) => {
         // visualMap: {
         //     show: false,
         //     min: 20,
-        //     max: 600,
+        //     max: 1000,
         //     inRange: {
         //         colorLightness: [0, 1]
         //     }
@@ -74,8 +83,8 @@ let ret_option = (tit, num, seriesData) => {
             {
                 name: tit,
                 type: 'pie',
-                radius: '50%',
-                center: ['50%', '50%'],
+                radius: ['33%', '50%'],
+                center: ['50%', '55%'],
                 data: seriesData,
                 // [
                 //     // { value: 335, name: '设备异常' },
@@ -129,10 +138,10 @@ let ret_option = (tit, num, seriesData) => {
 
 let Tab1 = props => {   // 异常状态
     let {
-        dispatch, 
-        collapsed, loading, activeKey, 
+        dispatch,
+        collapsed, loading, activeKey,
         globalSearch, quickSearch, advancedSearch,
-        graph1: { left, center, right } 
+        graph1: { left, center, right }
     } = props;  // {sum, seriesData}
 
     let graph1 = useRef();
@@ -181,16 +190,19 @@ let Tab1 = props => {   // 异常状态
         return <PageLoading size="large" />
     }
     return <div className={styles.tab1}>
-        <Row gutter={[16, 16]}>
+        <Row gutter={[24, 24]}>
             <Col span={8}>
+                <div className={styles['graph-total']}> <p style={{ color: '#47fca2' }}>1076</p> </div>
                 <div ref={graph1} className={styles.graph}></div>
             </Col>
             <Col span={8} style={{ position: 'relative' }}>
-                <div className={styles['graph-status']} style={{ background: center.status }}></div>
+                {/* <div className={styles['graph-status']} style={{ background: center.status }}></div> */}
+                <div className={styles['graph-total']}> <p style={{ color: '#fc79a1' }}>475</p> </div>
                 <div ref={graph2} className={styles.graph}></div>
             </Col>
             <Col span={8} style={{ position: 'relative' }}>
-                <div className={styles['graph-status']} style={{ background: right.status }}></div>
+                {/* <div className={styles['graph-status']} style={{ background: right.status }}></div> */}
+                <div className={styles['graph-total']}> <p style={{ color: '#fce560' }}>675</p> </div>
                 <div ref={graph3} className={styles.graph}></div>
             </Col>
         </Row>

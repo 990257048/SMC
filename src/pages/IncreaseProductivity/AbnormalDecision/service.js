@@ -12,6 +12,7 @@ export async function getAllMfg () {
 }
 
 export async function getBU (MFG) {
+    console.log(MFG);
     return requestReal('/api/getBU', {
         method: 'GET',
         params: {

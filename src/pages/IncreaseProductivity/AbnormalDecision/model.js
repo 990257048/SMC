@@ -25,7 +25,7 @@ let Model = {
                 season: '', // 当前季
                 month: '', //当前月份
                 week: '', //当前周
-                time: ['2020-01-01', '2020-01-02'] //时间段
+                time: [] //时间段
             },
             advancedSearch: {   // 高级搜索（选项卡 位置 控件值 ）
                 allBU: [], // 所有BU
@@ -322,7 +322,7 @@ let Model = {
             if (Status == 'Pass') {
                 yield put({
                     type: 'setAdvancedSearchOfBuAndRegion',
-                    payload: { allBU: Data.BU }
+                    payload: { allBU: Data.BU, BU: [] } //得到新的BU 之前的BU要置空
                 })
             } else {
                 message.error(Message);
@@ -335,7 +335,7 @@ let Model = {
             for (var i = 2017; i <= year; i++) allYear.push(i);
             season = month <= 3 ? '第一季度' : month <= 6 ? '第二季度' : month <= 9 ? '第三季度' : '第四季度';
             time = [currentDate.subtract(1, 'days').format('YYYY-MM-DD'), currentDate.add(1, 'days').format('YYYY-MM-DD')];
-            console.log(allYear, year, season, month, week, time);
+            // console.log(allYear, year, season, month, week, time);
             yield put({
                 type: 'setQuickSearch',
                 payload: {

@@ -11,16 +11,14 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 let QuickSearch = props => {  // 快速搜索
-    console.log('QuickSearch render');
-    let { dispatch, quickSearch: { allYear, allCategories, classify, year, season, month, week, time } } = props;
-    // console.log(allYear, allCategories, classify, year, season, month, week, time);
-    // console.log(<div>1234</div>);
-    const v = <div>1234</div>
-    useMemo(() => {
-        dispatch({
-            type: 'AbnormalDecision/initQuickSearch'
-        });
-    }, []);
+    // console.log('QuickSearch render');
+    let { 
+        dispatch, 
+        quickSearch: { 
+            allYear, allCategories, classify, year, season, month, week, time 
+        } 
+    } = props;
+    
 
     let changeClassify = useCallback((classify) => {
         // console.log(v);
