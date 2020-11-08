@@ -70,3 +70,12 @@ export async function getGraph5 (sendData) {
         }
     });
 }
+
+export async function getTableData (sendData) {
+    return requestReal('/api/abnormalDecision/getTable', {
+        method: 'GET',
+        params: {
+            data: sendData
+        }
+    });
+}

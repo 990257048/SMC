@@ -152,17 +152,34 @@ let AnomalousGraph = props => {  // 异常统计图
         });
     }, [classify]);
 
-    // let d = useMemo(() => {
-    //     let {MFG} = globalSearch;
-    //     let {classify, year, season, month, week, time} = quickSearch;
+    let desc = useMemo(() => {   // 拼接条件（实时）
+        let {MFG} = globalSearch;
+        let {classify, year, season, month, week, time} = quickSearch;
 
-    //     let desc = [MFG];
-    //     switch(classify){
-    //         case 'year':
-    //             desc.push(year + '年')
-    //     }
-    //     desc.push();
-    // }, [activeKey, globalSearch, quickSearch]);
+        let desc = [MFG];   // 制造处 
+        if( activeKey == 'tab1' ){
+            desc.push(globalSearch.classify + '分类'); // 当前查询类别
+        }
+        switch(classify){
+            case 'year':
+                desc.push(year + '年');
+                break;
+            case 'season':
+                desc.push(year + '年', season);
+                break;
+            case 'month':
+                desc.push(year + '年', month + '月份');
+                break;
+            case 'week':
+                desc.push(year + '年', '第' + week + '周');
+                break;
+            case 'time':
+                desc.push('时间段：' + time[0] + ' 到 ' + time[1]);
+                break;
+        }
+        desc.push('含细分条件（高级条件）', '异常汇总');
+        return desc;
+    }, [activeKey, globalSearch, quickSearch]);
 
     return <div className={styles['anomalous-graph']}>
         <Tabs size="middle" type='line' activeKey={activeKey} onChange={ tabChange } className={styles.tabs} >
@@ -196,8 +213,13 @@ let AnomalousGraph = props => {  // 异常统计图
         <Space size="small" style={{ float: 'right', marginRight: '25px' }}>
             <b>当前数据：</b>
             <span>
-                {
+                {/* {
                     ['MFGII', '按发生区域汇总', '2020年', '第2季度', '含细分条件（高级条件）', '异常汇总'].map((text, i) => {
+                        return i === 0 ? <span key={'span' + i}>{text}</span> : <span key={'span' + i}>{' · ' + text}</span>
+                    })
+                } */}
+                {
+                    desc.map((text, i) => {
                         return i === 0 ? <span key={'span' + i}>{text}</span> : <span key={'span' + i}>{' · ' + text}</span>
                     })
                 }

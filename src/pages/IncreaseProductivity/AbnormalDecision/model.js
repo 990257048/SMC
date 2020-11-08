@@ -1,5 +1,5 @@
 
-import { getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5 } from './service'
+import { getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5, getTableData } from './service'
 import { deepClone } from '../../../utils/custom'
 import { graph1SendData, graph23SendData, graph4SendData, graph5SendData, filterData } from './utils'
 import { message } from 'antd'
@@ -261,9 +261,10 @@ let Model = {
             }
         },
         anomalousTable: {  // 异常列表
-            tableData: {
-
-            }
+            all: [],   //所有表数据
+            current: [],  //当前显示的表数据
+            collectFlag: false, //是否显示已经收藏的数据
+            like: ""  //模糊搜索条件
         }
     },
     reducers: {
@@ -290,7 +291,6 @@ let Model = {
             newState.anomalousGraph.advancedSearch.causeAnalysis[classify] = payload;
             return newState;
         },
-
         setGraphData: (state, { graphName, data }) => {   // 设置统计图数据 (graph1, graph2, graph3, graph4, graph5)
             let graphData = { ...state.anomalousGraph.graphData };
             graphData[graphName] = data;
@@ -301,7 +301,17 @@ let Model = {
                     graphData
                 }
             }
+        },
+        setAnomalousTableData: (state, {payload}) => {  //设置异常列表数据
+            return {
+                ...state,
+                anomalousTable: {
+                    ...state.anomalousTable,
+                    ...payload
+                }
+            }
         }
+
     },
     effects: {
         *getAllMfg(_, { call, put, select }) {
@@ -438,7 +448,51 @@ let Model = {
             } else {
                 message.error(Message);
             }
-        }
+        },
+        
+
+        // =========================================================================================================================
+
+        *getTableData(_, { call, put, select }) {
+            let { Status, Message, Data } = yield call(getTableData);
+            if (Status == 'Pass') {
+                let d = Data.map((row, i) => ({...row, key: 'row' + i}));
+                yield put({
+                    type: 'setAnomalousTableData',
+                    payload: { all: d, current: d}
+                });
+                message.success(Message);
+            } else {
+                message.error(Message);
+            }
+        },
+
+        filterTable: [
+            function* (_, { select, put }) {
+                let { all, like, collectFlag } = yield select(state => state.AbnormalDecision.anomalousTable);
+                let d = [];
+                if(like != ''){
+                    d = collectFlag ? all.filter(row => row.collect) : all;
+                    d = d.filter(row => {
+                        let flag = false;
+                        for(var prop in row){
+                            if(typeof row[prop] == 'string' && row[prop].includes(like)){  // 符合条件的筛出，同时退出当前循环，提高性能
+                                flag = true;
+                                break;
+                            }
+                        }
+                        return flag;
+                    });
+                }else{
+                    d = collectFlag ? all.filter(row => row.collect) : all;
+                }
+                yield put({
+                    type: 'setAnomalousTableData',
+                    payload: { current: deepClone(d) }
+                })
+            },
+            {type: 'throttle', ms: 800}
+        ]
     }
 }
 

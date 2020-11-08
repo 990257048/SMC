@@ -12,7 +12,7 @@ let option = {
     title: {
         text: '原因類別統計（单位:個）',
         left: 'center',
-        top: '5%',
+        top: '3%',
         textStyle: {
             fontSize: 16
         }
@@ -26,16 +26,15 @@ let option = {
         formatter: '原因类别: {b}<br>异常数量: {c}个'
     },
     grid: {
-        top: '20%',
+        top: '18%',
         left: '5%',
         right: '6%',
-        bottom: '5%',
+        bottom: '0%',
         containLabel: true
     },
     xAxis: [
         {
             type: 'category',
-            // data: ['74-104761-03', '74-104761-04', '74-104761-05', '74-104761-06', '74-104761-07'],
             data: ['环', '机', '法', '料', '人', '量检测'],
             axisTick: {
                 alignWithLabel: true
@@ -54,7 +53,7 @@ let option = {
         {
             name: '实时产出',
             type: 'bar',
-            barWidth: '40%',
+            barWidth: '30%',
             label: {
                 show: true,
                 position: 'top',
@@ -84,8 +83,9 @@ let ret_option = (xAxisData, seriesData) => {
 }
 
 let Tab3 = props => {
-
-    let { dispatch, collapsed, loading, activeKey, globalSearch, quickSearch, graph3: {xAxisData, seriesData} } = props;
+    let { dispatch, collapsed, width, loading, activeKey, globalSearch, quickSearch, graph3: {xAxisData, seriesData} } = props;
+    
+    let [myCharts, setMyCharts] = useState(null);
     let [w, setW] = useState(100);
     let chartWrap = useRef();
 
@@ -104,16 +104,44 @@ let Tab3 = props => {
 
     useEffect(() => {
         isReady && activeKey === 'tab3' && setW(chartWrap.current.clientWidth);
-    }, [isReady, collapsed, activeKey]);
+    }, [isReady, collapsed, width, activeKey]);
 
-    useEffect(() => {
-        if(isReady && activeKey === 'tab3'){
-            let myChart = echarts.init(chartWrap.current);
-            let option = ret_option(xAxisData, seriesData);
-            myChart.resize({ width: w });
-            myChart.setOption(option);
+    //================================================================================================================
+
+    useEffect(() => { //设置实例
+        if(activeKey == 'tab3'){
+            setTimeout(() => {
+                let chart = echarts.init(chartWrap.current);
+                setMyCharts(chart);
+            }, 600);
         }
-    }, [isReady, w, activeKey, props.graph3]);
+    }, [activeKey]);
+
+    useEffect(() => {  //渲染
+        if(myCharts && isReady){
+            let option = ret_option(xAxisData, seriesData);
+            myCharts.setOption(option);
+        }
+    }, [myCharts, isReady , props.graph3]);
+
+    useEffect(() => {  //宽度响应
+        myCharts && myCharts.resize({ width: w });
+    }, [myCharts, w]);
+
+    useEffect(() => {   //绑定事件
+        if(myCharts){
+            myCharts.on('click', e => {
+                console.log(e);
+            });
+        }
+        return () => {
+            if(myCharts){
+                myCharts.off('click');
+            }
+        }
+    }, [myCharts]);
+
+    //================================================================================================================
 
     if(loading || !isReady){
         return <PageLoading size='large' />
@@ -130,6 +158,7 @@ let Tab3 = props => {
 
 let mapStateToProps = state => ({
     collapsed: state.global.collapsed,
+    width: state.global.width,
     loading: state.loading.AbnormalDecision,
     activeKey: state.AbnormalDecision.anomalousGraph.activeKey,
     globalSearch: state.AbnormalDecision.anomalousGraph.globalSearch,

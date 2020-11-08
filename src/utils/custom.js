@@ -4,7 +4,7 @@ let debounce = function (fn, delay) {  // 防抖 （输入框自动完成 onresi
     let timer = null;
     return function (...args) {
         let _this = this;
-        if(timer !== null){
+        if(timer !== null){   //有任务在等待执行时直接清掉，建立新的任务等待执行
             clearTimeout(timer);
         }
         timer = setTimeout(function () {
@@ -17,7 +17,7 @@ let throttle = function (fn, delay) { // 节流 （防止多次点击按钮）
     let timer = null;
     return function (...args) {
         let _this = this;
-        !timer && setTimeout(function () {
+        !timer && setTimeout(function () {   //有任务在等待执行时不管，不做任何处理，没有任务时再建立任务等待执行。
             fn.apply(_this, args);
             timer = null;
         }, delay);

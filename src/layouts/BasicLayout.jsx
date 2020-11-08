@@ -102,7 +102,7 @@ const BasicLayout = props => {
 
   useEffect(() => {
     resize();
-    window.onresize = debounce(resize, 100);
+    window.onresize = debounce(resize, 200);
     return () => {
       window.onresize = null;
     }

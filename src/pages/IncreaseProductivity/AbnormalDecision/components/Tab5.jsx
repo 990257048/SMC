@@ -13,16 +13,16 @@ let option = {
     title: {
         text: '结案状态统计',
         left: 'center',
-        top: '5%',
+        top: '3%',
         textStyle: {
             fontSize: 16
         }
     },
     grid: {
-        top: '20%',
+        top: '18%',
         left: '5%',
         right: '6%',
-        bottom: '5%',
+        bottom: '0%',
         containLabel: true
     },
     tooltip: {
@@ -144,7 +144,9 @@ let ret_option = (xAxisData, seriesData1, seriesData2, seriesData3) => {
 
 let Tab5 = props => {
 
-    let { dispatch, collapsed, loading, activeKey, globalSearch, quickSearch, graph5: { xAxisData, seriesData1, seriesData2, seriesData3 } } = props;
+    let { dispatch, collapsed, width, loading, activeKey, globalSearch, quickSearch, graph5: { xAxisData, seriesData1, seriesData2, seriesData3 } } = props;
+    
+    let [myCharts, setMyCharts] = useState(null);
     let [w, setW] = useState(100);
     let chartWrap = useRef();
 
@@ -163,16 +165,57 @@ let Tab5 = props => {
 
     useEffect(() => {
         isReady && activeKey === 'tab5' && setW(chartWrap.current.clientWidth);
-    }, [isReady, collapsed, activeKey]);
+    }, [isReady, collapsed, width, activeKey]);
 
+    // =====================================================================================================
+
+    //创建实例
     useEffect(() => {
-        if (isReady && activeKey === 'tab5') {
-            let myChart = echarts.init(chartWrap.current);
-            let option = ret_option(xAxisData, seriesData1, seriesData2, seriesData3);
-            myChart.resize({ width: w });
-            myChart.setOption(option);
+        if(activeKey == 'tab5'){
+            setTimeout(() => {
+                let chart = echarts.init(chartWrap.current);
+                setMyCharts(chart);
+            }, 600);
         }
-    }, [isReady, w, activeKey, props.graph5]);
+    }, [activeKey]);
+
+    //渲染
+    useEffect(() => {
+        if(isReady && myCharts){
+            let option = ret_option(xAxisData, seriesData1, seriesData2, seriesData3);
+            myCharts.setOption(option);
+        }
+    }, [isReady, myCharts, props.graph5]);
+
+    //宽度响应
+    useEffect(() => {
+        myCharts && myCharts.resize({ width: w });
+    }, [myCharts, w]);
+
+    //绑定事件
+    useEffect(() => {
+        if(myCharts){
+            myCharts.on('click', e => {
+                console.log(e);
+            });
+        }
+        return () => {
+            if(myCharts){
+                myCharts.off('click');
+            }
+        }
+    }, [myCharts]);
+
+    // useEffect(() => {
+    //     if (isReady && activeKey === 'tab5') {
+    //         let myChart = echarts.init(chartWrap.current);
+    //         let option = ret_option(xAxisData, seriesData1, seriesData2, seriesData3);
+    //         myChart.resize({ width: w });
+    //         myChart.setOption(option);
+    //     }
+    // }, [isReady, w, activeKey, props.graph5]);
+
+    // =====================================================================================================
 
     if (loading || !isReady) {
         return <PageLoading size='large' />
@@ -185,6 +228,7 @@ let Tab5 = props => {
 
 let mapStateToProps = state => ({
     collapsed: state.global.collapsed,
+    width: state.global.width,
     loading: state.loading.AbnormalDecision,
     activeKey: state.AbnormalDecision.anomalousGraph.activeKey,
     globalSearch: state.AbnormalDecision.anomalousGraph.globalSearch,

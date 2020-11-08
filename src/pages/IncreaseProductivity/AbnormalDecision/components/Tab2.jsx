@@ -13,7 +13,7 @@ let option = {
     title: {
         text: '異常類別統計（单位:個）',
         left: 'center',
-        top: '5%',
+        top: '3%',
         textStyle: {
             fontSize: 16
         }
@@ -27,10 +27,10 @@ let option = {
         formatter: '异常类别: {b}<br>异常数量: {c}个'
     },
     grid: {
-        top: '20%',
+        top: '18%',
         left: '5%',
         right: '6%',
-        bottom: '5%',
+        bottom: '0%',
         containLabel: true
     },
     xAxis: [
@@ -55,7 +55,7 @@ let option = {
         {
             name: '实时产出',
             type: 'bar',
-            barWidth: '40%',
+            barWidth: '30%',
             label: {
                 show: true,
                 position: 'top',
@@ -65,7 +65,6 @@ let option = {
         }
     ]
 };
-
 
 let ret_option = (xAxisData, seriesData) => {
     return {
@@ -85,46 +84,69 @@ let ret_option = (xAxisData, seriesData) => {
     }
 }
 
-
 let Tab2 = props => {
-
-    let { 
-        dispatch, 
-        collapsed, loading, activeKey, 
+    let {
+        dispatch,
+        collapsed, width, loading, activeKey,
         globalSearch, quickSearch,
-        graph2: {xAxisData, seriesData} 
+        graph2: { xAxisData, seriesData }
     } = props;
 
+    let [myCharts, setMyCharts] = useState(null);
     let [w, setW] = useState(100);
     let chartWrap = useRef();
 
     let isReady = useMemo(() => {
-        if(xAxisData.length > 0 && seriesData.length > 0){
+        if (xAxisData.length > 0 && seriesData.length > 0) {
             return true;
         }
         return false;
     }, [props.graph2]);
 
-    useMemo(() => {
+    useMemo(() => {   //拿数据
         activeKey == 'tab2' && dispatch({
             type: 'AbnormalDecision/getGraph2'
         });
     }, [activeKey, globalSearch, quickSearch]);
 
-    useEffect(() => {
+    useEffect(() => {  //设置宽度
         isReady && activeKey === 'tab2' && setW(chartWrap.current.clientWidth);
-    }, [isReady, collapsed, activeKey]);
+    }, [isReady, collapsed, width, activeKey]);
 
-    useEffect(() => {
-        if (isReady && activeKey === 'tab2') {
-            let myChart = echarts.init(chartWrap.current);
-            let option = ret_option(xAxisData, seriesData);
-            myChart.resize({ width: w });
-            myChart.setOption(option);
+    useEffect(() => {  //设置实例
+        if (activeKey == 'tab2') {
+            setTimeout(() => {
+                let chart = echarts.init(chartWrap.current);
+                setMyCharts(chart);
+            }, 600);
         }
-    }, [isReady, w, activeKey, props.graph2]);
+    }, [activeKey]);
 
-    if(loading || !isReady){
+    useEffect(() => {  //渲染
+        if (myCharts && isReady) {
+            let option = ret_option(xAxisData, seriesData);
+            myCharts.setOption(option);
+        }
+    }, [myCharts, isReady, props.graph2]);
+
+    useEffect(() => {   //宽度调整
+        myCharts && myCharts.resize({ width: w });
+    }, [myCharts, w]);
+
+    useEffect(() => {   //绑定事件
+        if (myCharts) {
+            myCharts.on('click', e => {
+                console.log(e);
+            });
+        }
+        return () => {
+            if (myCharts) {
+                myCharts.off('click');
+            }
+        }
+    }, [myCharts]);
+
+    if (loading || !isReady) {
         return <PageLoading size='large' />
     }
     return <div className={styles.tab2}>
@@ -133,6 +155,7 @@ let Tab2 = props => {
 }
 let mapStateToProps = state => ({
     collapsed: state.global.collapsed,
+    width: state.global.width,
     loading: state.loading.AbnormalDecision,
     activeKey: state.AbnormalDecision.anomalousGraph.activeKey,
     globalSearch: state.AbnormalDecision.anomalousGraph.globalSearch,
