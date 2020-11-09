@@ -1,5 +1,5 @@
 
-import { getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5, getTableData } from './service'
+import { getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5, getTableData, toggerCollect } from './service'
 import { deepClone } from '../../../utils/custom'
 import { graph1SendData, graph23SendData, graph4SendData, graph5SendData, filterData } from './utils'
 import { message } from 'antd'
@@ -265,7 +265,93 @@ let Model = {
             current: [],  //当前显示的表数据
             collectFlag: false, //是否显示已经收藏的数据
             like: ""  //模糊搜索条件
-        }
+        },
+        abnormalMaintenance: {  // 异常维护
+            type: '异常', // 通知单类型  异常 | 停线
+            emergencyDegree: '一般', // 紧急程度  一般 | 紧急
+            baseMsg: { //基本信息
+                issuer: '', // 發文人員
+                units: '', // 發文單位
+                date: '', // 發文日期
+                time: '', // 异常时期
+                class: '', // 异常班别
+                BU: '', // 异常BU
+                area: '', //异常区域
+                station: '', //异常工站
+                skuName: '', //机种名称
+                skuno: '', //机种料号
+                WO: '', //工單編號
+                stage: '' // 产品阶段
+            },
+            report: { //上报机制
+                sectionManager: '', //课级
+                minister: '', //部级
+                sectionChief: '', //处级
+            },
+            Problem: { //問題描述
+                handler: [],  //異常處理人
+                noticeTime: '', //異常通知時間
+                emailTitle: '', // 郵件標題
+                abnormalClassify: {   //按异常分类
+                    currentClassify: 'equipment',  //当前分类
+                    equipment: { //设备异常
+                        desc: '',  //异常描述
+                        category: '', //异常类别
+                        name: '',  // 设备名称
+                        equipmentNumber: '', // 设备编号
+                        equipmentModel: '' // 設備型號
+                    },
+                    material: { //物料异常
+                        desc: '', //异常描述
+                        partNo: '', //零件料号
+                        rejectRatio: '', //不良率
+                        supplier: '', //供应商
+                        DC: '',
+                        LC: ''
+                    },
+                    person: { //人员异常
+                        desc: '' //异常描述
+                    },
+                    quality: { //品质异常
+                        process: '', //制程段
+                        BadPhenomenon: '', //不良现象
+                        scope: '', //影响范围
+                        station: '', //发生站位
+                        measures: '' //当前措施
+                    },
+                    tools: { //治工具异常
+                        desc: '',   //异常描述
+                        skuno: '',  //涉及的产品料号
+                        station: '' //使用站位
+                    },
+                    system: { //系统异常
+                        category: '', //异常类别
+                        desc: '', //異常描述
+                        startTime: '' //異常開始時間
+                    }
+                },
+                countermeasures: { //临时对策
+                    lostWorkTime: '', //损失工时
+                    idleHuman: '', //闲置人力
+                    manpowerArrangement: '', //闲置人力安排
+                    lostOutput: '', //损失产出
+                    lostYield: '', //良率損失
+                    measures: '' //臨時解決措施
+                },
+                causeAnalysis: {  // 原因分析(只有填寫原因分析才能申請結案)
+                    chargePerson: '', // 負責人
+                    sectionManager: [], //負責人课级
+                    minister: [], //負責人部级
+                    sectionChief: [], //負責人处级
+                    notifier: [] // 異常知會人
+                },
+                remarksAndAttachments: {  // 備註與附件
+                    problemStatus: '', // 問題狀態
+                    remarks: '', // 備註
+                    attachments: {} // 附件
+                }
+            }
+        },
     },
     reducers: {
         setActiveKey: (state, { activeKey }) => { // 设置当前活动的tab页：activeKey： tab1 | tab2 | tab3 | tab4 | tab5
@@ -384,6 +470,7 @@ let Model = {
                     graphName: 'graph1',
                     data: Data
                 });
+                message.success('getGraph1' + Message);
             } else {
                 message.error(Message);
             }
@@ -400,6 +487,7 @@ let Model = {
                     graphName: 'graph2',
                     data: Data
                 });
+                message.success('getGraph2' + Message);
             } else {
                 message.error(Message);
             }
@@ -415,6 +503,7 @@ let Model = {
                     graphName: 'graph3',
                     data: Data
                 });
+                message.success('getGraph3' + Message);
             } else {
                 message.error(Message);
             }
@@ -430,6 +519,7 @@ let Model = {
                     graphName: 'graph4',
                     data: Data
                 });
+                message.success('getGraph4' + Message);
             } else {
                 message.error(Message);
             }
@@ -445,6 +535,7 @@ let Model = {
                     graphName: 'graph5',
                     data: Data
                 });
+                message.success('getGraph5' + Message);
             } else {
                 message.error(Message);
             }
@@ -454,14 +545,21 @@ let Model = {
         // =========================================================================================================================
 
         *getTableData(_, { call, put, select }) {
+            
+            // yield select(...)  重点********
+
             let { Status, Message, Data } = yield call(getTableData);
             if (Status == 'Pass') {
-                let d = Data.map((row, i) => ({...row, key: 'row' + i}));
+                // let d = Data.map((row, i) => ({...row, key: 'row' + i}));
+                let d = Data.map((row) => ({...row, key: row.id}));
                 yield put({
                     type: 'setAnomalousTableData',
-                    payload: { all: d, current: d}
+                    payload: { all: d} // { all: d, current: d}
                 });
-                message.success(Message);
+                yield put({    // 设置筛选后的 current
+                    type: 'filterTable'
+                })
+                message.success('getTableData' + Message);
             } else {
                 message.error(Message);
             }
@@ -492,7 +590,20 @@ let Model = {
                 })
             },
             {type: 'throttle', ms: 800}
-        ]
+        ],
+
+        *toggerCollect ({id}, {select, put, call }) {
+            let {Status, Message} = yield call(toggerCollect, id);
+            if(Status == 'Pass'){
+                // message.success(Message);
+                yield put({
+                    type: 'getTableData'
+                })
+            }else{
+                message.error(Mesage)
+            }
+
+        }
     }
 }
 

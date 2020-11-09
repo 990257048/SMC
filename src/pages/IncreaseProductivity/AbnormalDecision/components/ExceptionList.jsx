@@ -1,14 +1,17 @@
 // ExceptionList  异常列表
-import React, {useState, useEffect, useMemo, useCallback } from 'react';
-import { Button, Table, Tooltip, Space, Input } from 'antd';
-import { StarOutlined, EditOutlined, PlusOutlined, TableOutlined, DownloadOutlined, SearchOutlined, BarsOutlined } from '@ant-design/icons';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Button, Table, Tooltip, Space, Input, Modal } from 'antd';
+import { StarOutlined, EditOutlined, PlusOutlined, TableOutlined, DownloadOutlined, SearchOutlined, ToolOutlined, BarsOutlined } from '@ant-design/icons';
 import { connect, FormattedMessage, formatMessage } from 'umi';
+import { useDispatch, useSelector } from 'dva';
+import downExcel from '../../../../utils/down-excel';
 import { PageLoading } from '@ant-design/pro-layout';
 import styles from '../style.less';
 
+import ModalWrap from './ModalWrap';
 
 let TableToolBar = props => {
-    let {collectFlag, like, setAnomalousTableData, filterTable} = props;
+    let { collectFlag, like, current, setAnomalousTableData, filterTable } = props;
 
     let toggerCollectFlag = useCallback(() => {
         setAnomalousTableData({ collectFlag: !collectFlag });
@@ -17,6 +20,10 @@ let TableToolBar = props => {
     let setLike = useCallback((e) => {
         setAnomalousTableData({ like: e.target.value });
     }, []);
+
+    let downLoadHandle = useCallback(() => {
+        downExcel(current, '异常列表', 'downExcel')
+    }, [current]);
 
     //防抖处理
     useEffect(() => {
@@ -30,23 +37,25 @@ let TableToolBar = props => {
         </Space>
 
         <Space size="middle" style={{ float: 'right' }}>
-            <Tooltip title="显示已收藏">
-                <Button type={ collectFlag ? 'primary' : 'default' } shape='circle' icon={<StarOutlined />} onClick={ toggerCollectFlag }></Button>
+            <Tooltip title="只显示已收藏">
+                <Button type={collectFlag ? 'primary' : 'default'} shape='circle' icon={<StarOutlined />} onClick={toggerCollectFlag}></Button>
+                <a id="downExcel" href="" download=""></a>
             </Tooltip>
             <Tooltip title="Download Excel">
-                <Button type="primary" shape='circle' icon={<DownloadOutlined />}></Button>
+                <Button type="primary" shape='circle' icon={<DownloadOutlined />} onClick={downLoadHandle}></Button>
             </Tooltip>
             {/* <Tooltip title="选择显示栏位">
                 <Button type="primary" shape='circle' icon={<BarsOutlined />}></Button>
             </Tooltip> */}
-            <Input type="primary" placeholder="快速筛选" prefix={<SearchOutlined />} value={ like } onChange={ setLike } style={{ width: '200px' }} />
+            <Input type="primary" placeholder="快速筛选" prefix={<SearchOutlined />} value={like} onChange={setLike} style={{ width: '200px' }} />
         </Space>
     </div>
 }
 TableToolBar = connect(state => {
     return {
         collectFlag: state.AbnormalDecision.anomalousTable.collectFlag,
-        like: state.AbnormalDecision.anomalousTable.like
+        like: state.AbnormalDecision.anomalousTable.like,
+        current: state.AbnormalDecision.anomalousTable.current
     }
 }, dispatch => {
     return {
@@ -88,236 +97,16 @@ TableToolBar = connect(state => {
 // 显示的 {date, className, skuno, region, question, title, 会议记录, person, duty, status, timediff, 操作}
 
 
-
-
-
-
-
-let tableData = [
-    {
-        key: '001',
-        date: '2020-11-03 13:20',
-        className: '白班',
-        skuno: '74-104458-03',
-        region: 'BST',
-        question: '設備異常',
-        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-        person: '段李波(F1321607)',
-        duty: 'TE:張天福(F1335343)',
-        status: '等待處理',
-        timediff: '26H'
-    },
-    {
-        key: '002',
-        date: '2020-11-04 13:20',
-        className: '白班',
-        skuno: '74-104458-03',
-        region: 'BST',
-        question: '設備異常',
-        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-        person: '段李波(F1321607)',
-        duty: 'TE:張天福(F1335343)',
-        status: '等待處理',
-        timediff: '26H'
-    },
-    {
-        key: '003',
-        date: '2020-11-05 13:20',
-        className: '白班',
-        skuno: '74-104458-03',
-        region: 'BST',
-        question: '設備異常',
-        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-        person: '段李波(F1321607)',
-        duty: 'TE:張天福(F1335343)',
-        status: '等待處理',
-        timediff: '26H'
-    },
-    {
-        key: '004',
-        date: '2020-11-06 13:20',
-        className: '白班',
-        skuno: '74-104458-03',
-        region: 'BST',
-        question: '設備異常',
-        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-        person: '段李波(F1321607)',
-        duty: 'TE:張天福(F1335343)',
-        status: '等待處理',
-        timediff: '26H'
-    },
-    {
-        key: '005',
-        date: '2020-11-07 13:20',
-        className: '白班',
-        skuno: '74-104458-03',
-        region: 'BST',
-        question: '設備異常',
-        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-        person: '段李波(F1321607)',
-        duty: 'TE:張天福(F1335343)',
-        status: '等待處理',
-        timediff: '26H'
-    },
-    {
-        key: '006',
-        date: '2020-11-03 13:20',
-        className: '白班',
-        skuno: '74-104458-03',
-        region: 'BST',
-        question: '設備異常',
-        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-        person: '段李波(F1321607)',
-        duty: 'TE:張天福(F1335343)',
-        status: '等待處理',
-        timediff: '26H'
-    },
-    {
-        key: '007',
-        date: '2020-11-04 13:20',
-        className: '白班',
-        skuno: '74-104458-03',
-        region: 'BST',
-        question: '設備異常',
-        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-        person: '段李波(F1321607)',
-        duty: 'TE:張天福(F1335343)',
-        status: '等待處理',
-        timediff: '26H'
-    },
-    {
-        key: '008',
-        date: '2020-11-05 13:20',
-        className: '白班',
-        skuno: '74-104458-03',
-        region: 'BST',
-        question: '設備異常',
-        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-        person: '段李波(F1321607)',
-        duty: 'TE:張天福(F1335343)',
-        status: '等待處理',
-        timediff: '26H'
-    },
-    {
-        key: '009',
-        date: '2020-11-06 13:20',
-        className: '白班',
-        skuno: '74-104458-03',
-        region: 'BST',
-        question: '設備異常',
-        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-        person: '段李波(F1321607)',
-        duty: 'TE:張天福(F1335343)',
-        status: '等待處理',
-        timediff: '26H'
-    },
-    {
-        key: '010',
-        date: '2020-11-07 13:20',
-        className: '白班',
-        skuno: '74-104458-03',
-        region: 'BST',
-        question: '設備異常',
-        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-        person: '段李波(F1321607)',
-        duty: 'TE:張天福(F1335343)',
-        status: '等待處理',
-        timediff: '26H'
-    }
-];
-
-
-
-let retTableConfig = (tableData) => {
-    return {
-        size: 'small',
-        scroll: { y: 380, x: 1450 },
-        bordered: true,
-        pagination: {
-            size: 'small',
-            defaultPageSize: 50
-        },
-        // rowSelection: {
-        //     type: "checkbox", // "checkbox" "radio"
-        //     onChange: (selectKey, selectData) => {
-        //         store.dispatch(bindEvent.table.onChange(selectData));
-        //     }
-        // },
-        dataSource: tableData,
-        // 显示的 {date, className, skuno, region, question, title, 会议记录, person, duty, status, timediff, 操作}
-        columns: [
-            {
-                title: '日期',
-                dataIndex: 'date',
-                width: 140,
-                fixed: 'left'
-            },
-            {
-                title: '邮件标题',
-                dataIndex: 'title',
-                width: 340
-            },
-            {
-                title: '料号',
-                dataIndex: 'skuno',
-                width: 140,
-            },
-            {
-                title: '班别',
-                dataIndex: 'className'
-            },
-            {
-                title: '发生区域',
-                dataIndex: 'region'
-            },
-            {
-                title: '问题分类',
-                dataIndex: 'question'
-            },
-            {
-                title: '发文人',
-                dataIndex: 'person',
-                width: 150,
-            },
-            {
-                title: '责任人',
-                dataIndex: 'duty',
-                width: 160,
-            },
-            {
-                title: '状态',
-                dataIndex: 'status'
-            },
-            {
-                title: '时间差',
-                dataIndex: 'timediff'
-            },
-            {
-                title: '操作',
-                dataIndex: '',
-                width: 100,//88,
-                fixed: 'right',
-                render: (d1, d2, no) => {
-                    return <div>
-                        <Tooltip title="修改">
-                            <Button type="primary" shape="circle" size="small" icon={<EditOutlined />} style={{ marginRight: '10px' }}
-                                onClick={() => { }}
-                            />
-                        </Tooltip>
-                        <Tooltip title="收藏">
-                            <Button type="default" shape="circle" size="small" icon={<StarOutlined />} style={{ marginRight: '10px' }}
-                                onClick={() => { }}
-                            />
-                        </Tooltip>
-                    </div>
-                }
-            }
-        ]
-    };
-}
-
-
 let useTableConfig = (initTableData) => {
+    let dispatch = useDispatch();
+    let toggerCollect = row => {
+        // console.log(row.id);
+        dispatch({
+            type: 'AbnormalDecision/toggerCollect',
+            id: row.id
+        });
+    }
+
     let initTableConfig = {
         size: 'small',
         scroll: { y: 380, x: 1450 },
@@ -387,8 +176,8 @@ let useTableConfig = (initTableData) => {
                             />
                         </Tooltip>
                         <Tooltip title="收藏">
-                            <Button type={ d.collect ? 'primary' : 'default' } shape="circle" size="small" icon={<StarOutlined />} style={{ marginRight: '10px' }}
-                                onClick={() => { }}
+                            <Button type={d.collect ? 'primary' : 'default'} shape="circle" size="small" icon={<StarOutlined />} style={{ marginRight: '10px' }}
+                                onClick={() => { toggerCollect(d) }}
                             />
                         </Tooltip>
                     </div>
@@ -398,16 +187,16 @@ let useTableConfig = (initTableData) => {
     };
     let [tableConfig, setTableConfig] = useState(initTableConfig);
     let setTableData = (dataSource) => {
-        setTableConfig({...tableConfig, dataSource});
+        setTableConfig({ ...tableConfig, dataSource });
     }
     return [tableConfig, setTableData];
 }
 
 
 let TableWrap = props => {
-    let {dispatch, current} = props;
+    let { dispatch, current } = props;
     let [tableConfig, setTableData] = useTableConfig(null);
-    
+
     useMemo(() => {
         dispatch({
             type: 'AbnormalDecision/getTableData'
@@ -434,10 +223,42 @@ TableWrap = connect(state => {
 
 
 let ExceptionList = props => {
+    let {dispatch, width, height } = props;
+
+    let size = useMemo(() => {
+        return {
+            w: width - 260,
+            h: height - 220
+        }
+    }, [width, height]);
+
+    console.log(width, height);
     return <div className={styles['exception-list']}>
         <TableToolBar />
         <TableWrap />
+        <Modal
+            title={ <div> <EditOutlined /> 异常维护</div> }
+            centered
+            visible={false}
+            onOk={() => { }}
+            onCancel={() => { }}
+            width={size.w}
+            bodyStyle={{padding: '0px 20px 0px 25px'}}
+        >
+            <div style={{ width: '100%', height: size.h }}>
+                <ModalWrap />
+            </div>
+        </Modal>
     </div>
 }
+
+ExceptionList = connect(state => {
+    return {
+        width: state.global.width,
+        height: state.global.height
+    }
+})(ExceptionList);
+
+
 
 export default ExceptionList;

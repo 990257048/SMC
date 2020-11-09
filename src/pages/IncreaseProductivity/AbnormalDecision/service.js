@@ -79,3 +79,12 @@ export async function getTableData (sendData) {
         }
     });
 }
+
+export async function toggerCollect (id) {
+    return requestReal('/api/abnormalDecision/toggerCollect', {
+        method: 'GET',
+        params: {
+            id
+        }
+    });
+}

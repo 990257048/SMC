@@ -1,4 +1,148 @@
 
+let tableData = [
+    {
+        id: '00001',
+        date: '2020-11-03 13:20',
+        className: '白班',
+        skuno: '74-104458-03',
+        region: 'BST',
+        question: '設備異常',
+        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
+        person: '段李波(F1321607)',
+        duty: 'TE:張天福(F1335343)',
+        status: '等待處理',
+        timediff: '26H',
+        collect: true
+    },
+    {
+        id: '00002',
+        date: '2020-11-04 13:20',
+        className: '白班',
+        skuno: '74-104458-03',
+        region: 'BST',
+        question: '設備異常',
+        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
+        person: '段李波(F1321607)',
+        duty: 'TE:張天福(F1335343)',
+        status: '等待處理',
+        timediff: '26H',
+        collect: true
+    },
+    {
+        id: '00003',
+        date: '2020-11-05 13:20',
+        className: '白班',
+        skuno: '74-104458-03',
+        region: 'BST',
+        question: '設備異常',
+        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
+        person: '段李波(F1321607)',
+        duty: 'TE:張天福(F1335343)',
+        status: '等待處理',
+        timediff: '26H',
+        collect: true
+    },
+    {
+        id: '00004',
+        date: '2020-11-06 13:20',
+        className: '白班',
+        skuno: '74-104458-03',
+        region: 'BST',
+        question: '設備異常',
+        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
+        person: '段李波(F1321607)',
+        duty: 'TE:張天福(F1335343)',
+        status: '等待處理',
+        timediff: '26H',
+        collect: true
+    },
+    {
+        id: '00005',
+        date: '2020-11-07 13:20',
+        className: '白班',
+        skuno: '74-104458-03',
+        region: 'BST',
+        question: '設備異常',
+        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
+        person: '段李波(F1321607)',
+        duty: 'TE:張天福(F1335343)',
+        status: '等待處理',
+        timediff: '26H',
+        collect: true
+    },
+    {
+        id: '00006',
+        date: '2020-11-03 13:20',
+        className: '白班',
+        skuno: '74-104458-03',
+        region: 'BST',
+        question: '設備異常',
+        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
+        person: '段李波(F1321607)',
+        duty: 'TE:張天福(F1335343)',
+        status: '等待處理',
+        timediff: '26H',
+        collect: true
+    },
+    {
+        id: '00007',
+        date: '2020-11-04 13:20',
+        className: '白班',
+        skuno: '74-104458-03',
+        region: 'BST',
+        question: '設備異常',
+        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
+        person: '段李波(F1321607)',
+        duty: 'TE:張天福(F1335343)',
+        status: '等待處理',
+        timediff: '26H',
+        collect: true
+    },
+    {
+        id: '00008',
+        date: '2020-11-05 13:20',
+        className: '白班',
+        skuno: '74-104458-03',
+        region: 'BST',
+        question: '設備異常',
+        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
+        person: '段李波(F1321607)',
+        duty: 'TE:張天福(F1335343)',
+        status: '等待處理',
+        timediff: '26H',
+        collect: false
+    },
+    {
+        id: '00009',
+        date: '2020-11-06 13:20',
+        className: '白班',
+        skuno: '74-104458-03',
+        region: 'BST',
+        question: '設備異常',
+        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
+        person: '段李波(F1321607)',
+        duty: 'TE:張天福(F1335343)',
+        status: '等待處理',
+        timediff: '26H',
+        collect: false
+    },
+    {
+        id: '00010',
+        date: '2020-11-07 13:20',
+        className: '白班',
+        skuno: '74-104458-03',
+        region: 'BST',
+        question: '設備異常',
+        title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
+        person: '段李波(F1321607)',
+        duty: 'TE:張天福(F1335343)',
+        status: '等待處理',
+        timediff: '26H',
+        collect: false
+    }
+];
+
+
 export default {
     'GET /api/abnormalDecision/getGraph1': (req, res) => {
         // console.log(req.query.mfg);
@@ -118,143 +262,20 @@ export default {
     },
     //=============================================================================================================================================
     'GET /api/abnormalDecision/getTable': (req, res) => {
-        let tableData = [
-            {
-                date: '2020-11-03 13:20',
-                className: '白班',
-                skuno: '74-104458-03',
-                region: 'BST',
-                question: '設備異常',
-                title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-                person: '段李波(F1321607)',
-                duty: 'TE:張天福(F1335343)',
-                status: '等待處理',
-                timediff: '26H',
-                collect: true
-            },
-            {
-                date: '2020-11-04 13:20',
-                className: '白班',
-                skuno: '74-104458-03',
-                region: 'BST',
-                question: '設備異常',
-                title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-                person: '段李波(F1321607)',
-                duty: 'TE:張天福(F1335343)',
-                status: '等待處理',
-                timediff: '26H',
-                collect: true
-            },
-            {
-                date: '2020-11-05 13:20',
-                className: '白班',
-                skuno: '74-104458-03',
-                region: 'BST',
-                question: '設備異常',
-                title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-                person: '段李波(F1321607)',
-                duty: 'TE:張天福(F1335343)',
-                status: '等待處理',
-                timediff: '26H',
-                collect: true
-            },
-            {
-                date: '2020-11-06 13:20',
-                className: '白班',
-                skuno: '74-104458-03',
-                region: 'BST',
-                question: '設備異常',
-                title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-                person: '段李波(F1321607)',
-                duty: 'TE:張天福(F1335343)',
-                status: '等待處理',
-                timediff: '26H',
-                collect: true
-            },
-            {
-                date: '2020-11-07 13:20',
-                className: '白班',
-                skuno: '74-104458-03',
-                region: 'BST',
-                question: '設備異常',
-                title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-                person: '段李波(F1321607)',
-                duty: 'TE:張天福(F1335343)',
-                status: '等待處理',
-                timediff: '26H',
-                collect: true
-            },
-            {
-                date: '2020-11-03 13:20',
-                className: '白班',
-                skuno: '74-104458-03',
-                region: 'BST',
-                question: '設備異常',
-                title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-                person: '段李波(F1321607)',
-                duty: 'TE:張天福(F1335343)',
-                status: '等待處理',
-                timediff: '26H',
-                collect: true
-            },
-            {
-                date: '2020-11-04 13:20',
-                className: '白班',
-                skuno: '74-104458-03',
-                region: 'BST',
-                question: '設備異常',
-                title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-                person: '段李波(F1321607)',
-                duty: 'TE:張天福(F1335343)',
-                status: '等待處理',
-                timediff: '26H',
-                collect: true
-            },
-            {
-                date: '2020-11-05 13:20',
-                className: '白班',
-                skuno: '74-104458-03',
-                region: 'BST',
-                question: '設備異常',
-                title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-                person: '段李波(F1321607)',
-                duty: 'TE:張天福(F1335343)',
-                status: '等待處理',
-                timediff: '26H',
-                collect: false
-            },
-            {
-                date: '2020-11-06 13:20',
-                className: '白班',
-                skuno: '74-104458-03',
-                region: 'BST',
-                question: '設備異常',
-                title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-                person: '段李波(F1321607)',
-                duty: 'TE:張天福(F1335343)',
-                status: '等待處理',
-                timediff: '26H',
-                collect: false
-            },
-            {
-                date: '2020-11-07 13:20',
-                className: '白班',
-                skuno: '74-104458-03',
-                region: 'BST',
-                question: '設備異常',
-                title: 'PCBU BST生產74-104458-03時DIAG-POE-TEST和DIAG-GE-TEST Fail影響良率異常通知單！',
-                person: '段李波(F1321607)',
-                duty: 'TE:張天福(F1335343)',
-                status: '等待處理',
-                timediff: '26H',
-                collect: false
-            }
-        ];
         res.send({
             Status: 'Pass',
             Message: 'OK!',
             Data: tableData
         });
+    },
+    'GET /api/abnormalDecision/toggerCollect': (req, res) => {
+        tableData = tableData.map(row => {
+            return row.id == req.query.id ? {...row, collect: !row.collect} : row;
+        });
+        res.send({
+            Status: 'Pass',
+            Message: '切换收藏状态成功!',
+            Data: {}
+        });
     }
-
 }
