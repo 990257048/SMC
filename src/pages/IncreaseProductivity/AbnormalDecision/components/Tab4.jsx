@@ -180,9 +180,16 @@ let Tab4 = props => {
     //绑定事件
     useEffect(() => {
         if(myCharts){
-            myCharts.on('click', e => {
-                console.log(e);
-            });
+            let link = e => {
+                dispatch({
+                    type: 'AbnormalDecision/getTableData',
+                    graphLink: { 
+                        seriesName: e.seriesName, 
+                        name: e.name 
+                    }
+                });
+            }
+            myCharts.on('click', link);
         }
         return () => {
             if(myCharts){

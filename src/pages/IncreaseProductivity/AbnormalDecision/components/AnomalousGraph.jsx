@@ -9,7 +9,7 @@ import moment from 'moment';
 
 import QuickSearch from './QuickSearch';
 import AdvancedSearch from './AdvancedSearch';
-import NewAbnormal from './NewAbnormal';
+// import NewAbnormal from './NewAbnormal';
 import Tab1 from './Tab1';
 import Tab2 from './Tab2';
 import Tab3 from './Tab3';
@@ -29,7 +29,8 @@ let TabControls = props => {   // 标签页控件
     let {
         MFGChange, classifyChange,
         getAllMfg, getBU,
-        initQuickSearch,
+        initQuickSearch, 
+        setNewAbnormal,
         activeKey, globalSearch: { allMFG, allCategories, MFG, classify }
     } = props;
 
@@ -48,6 +49,10 @@ let TabControls = props => {   // 标签页控件
         // console.log('mfg change');
         MFG && getBU(MFG);
     }, [MFG]);
+
+    let showNewAbnormal = useCallback(() => {
+        setNewAbnormal(true)
+    }, []);
     
     return <div className={styles['tab-controls']}>
         <Space size="middle" align="baseline">
@@ -88,10 +93,13 @@ let TabControls = props => {   // 标签页控件
             }
             <Tooltip title="新增异常">
                 {/* NewAbnormal */}
-                <Popover placement="bottomRight" content={<NewAbnormal />} trigger="click">
+                {/* <Popover placement="bottomRight" content={<NewAbnormal />} trigger="click">
                     <Button type="primary" shape='circle' icon={<PlusOutlined />}></Button>
-                </Popover>
+                </Popover> */}
+                <Button type="primary" shape='circle' onClick={ showNewAbnormal } icon={<PlusOutlined />}></Button>
             </Tooltip>
+
+
         </Space>
     </div>
 }
@@ -117,6 +125,9 @@ TabControls = connect(({ AbnormalDecision }) => {
         },
         initQuickSearch: () => {
             dispatch({ type: 'AbnormalDecision/initQuickSearch' })
+        },
+        setNewAbnormal: newAbnormalVisible => {
+            dispatch({ type: 'AbnormalDecision/setNewAbnormalVisible', newAbnormalVisible });
         }
     }
 })(memo(TabControls));

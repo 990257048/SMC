@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMeno, useCallback, useMemo } from 'react';
+import React, { useRef, useState, useLayoutEffect, useEffect, useMeno, useCallback, useMemo } from 'react';
 import { connect, FormattedMessage, formatMessage } from 'umi';
 import echarts from 'echarts';
 import { Button, Space, Input, Tabs, Popover, Row, Col, Statistic, Divider, Select, Spin } from 'antd';
@@ -59,6 +59,7 @@ let ret_option = (tit, seriesData) => {
         backgroundColor: '#fff', //'#012140',
         // color: ['#52c41a', '#13c2c2', '#87e8de', '#91d5ff', '#722ed1', '#eb2f96', '#f5222d', '#d4380d', '#fa8c16', '#faad14', '#ffec3d'],
         color: ['#798ffc', '#6f9efc', '#65bbfc', '#5bd1fc', '#47fca2', '#56fc7d', '#6afc6c', '#fce560', '#fcc360', '#fc9468', '#fc7779', '#fc79a1'],
+        // color: ['#576b95', '#6467f0', '#1485ee', '#10aeff', '#07c160', '#95ec69', '#91d300', '#ffc300', '#fa9d3b', '#fa5151', '#fc7779', '#fc79a1'],
         title: {
             text: tit, // + '（' + num + '）',
             left: 'center',
@@ -177,7 +178,7 @@ let Tab1 = props => {   // 异常状态
                     chart3: echarts.init(graph3.current)
                 }
                 setMyCharts(charts);     // set 3个echarts实例
-            }, 600);
+            }, 800);
         }
     }, [activeKey]);   // 只有activeKey变化会引起图表重新创建或销毁
 
@@ -225,15 +226,18 @@ let Tab1 = props => {   // 异常状态
 
     useEffect(() => {  //图表绑定事件
         if(myCharts){
-            myCharts.chart1.on('click', e => {
-                console.log(e);
-            })
-            myCharts.chart2.on('click', e => {
-                console.log(e);
-            })
-            myCharts.chart3.on('click', e => {
-                console.log(e);
-            })
+            let link = e => {
+                dispatch({
+                    type: 'AbnormalDecision/getTableData',
+                    graphLink: { 
+                        seriesName: e.seriesName, 
+                        name: e.name 
+                    }
+                });
+            }
+            myCharts.chart1.on('click', link);
+            myCharts.chart2.on('click', link);
+            myCharts.chart3.on('click', link);
         }
         return () => {  //组件卸载前先取消绑定事件
             if(myCharts){

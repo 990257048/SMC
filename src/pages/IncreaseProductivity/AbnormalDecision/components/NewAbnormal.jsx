@@ -17,7 +17,7 @@ const { Step } = Steps
 let NewAbnormalContext = createContext();
 
 let NewAbnormal = props => {  // 新增异常
-    // console.log('render NewAbnormal');
+    console.log('render NewAbnormal');
     let w = useSelector(state => state.global.width);
     let h = useSelector(state => state.global.height);
 
@@ -50,12 +50,13 @@ let NewAbnormal = props => {  // 新增异常
 
     // 基本信息 上報機制 問題描述 臨時對策 原因分析 備註與附件
 
-    return <div style={size}>
+    return <div className={ styles['modal-wrap'] }>
         {/* direction="vertical" */}
         <div className={styles['new-abnormal-steps']}>
-            <div style={{ padding: '0 0 15px 15px' }}>
+            {/* <div style={{ padding: '0 0 15px 15px' }}>
                 <h4><b><OrderedListOutlined />  新增异常</b> </h4>
-            </div>
+            </div> */}
+            <p></p>
             <Steps size='small' current={current} direction="vertical" onChange={setpChange}>
                 <Step title="基本信息"></Step>
                 <Step title="上報機制"></Step>
@@ -112,6 +113,7 @@ let Step1 = () => {
 
     return <div className={styles['step1']}>
         <div style={{ textAlign: 'center' }}>
+            <p></p>
             <h3><b>NSDI 【通知单】</b></h3>
             <Space size="middle">
                 <b>类型：</b>

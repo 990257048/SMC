@@ -72,6 +72,7 @@ export async function getGraph5 (sendData) {
 }
 
 export async function getTableData (sendData) {
+    console.log(sendData);
     return requestReal('/api/abnormalDecision/getTable', {
         method: 'GET',
         params: {

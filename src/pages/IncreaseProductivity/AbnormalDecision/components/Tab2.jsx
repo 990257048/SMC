@@ -18,6 +18,14 @@ let option = {
             fontSize: 16
         }
     },
+    toolbox: {
+        feature: {
+            dataView: { show: true, readOnly: false },
+            magicType: { show: true, type: ['line', 'bar'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+        }
+    },
     tooltip: {
         trigger: 'axis',
         axisPointer: {            // 坐标轴指示器，坐标轴触发有效
@@ -135,9 +143,16 @@ let Tab2 = props => {
 
     useEffect(() => {   //绑定事件
         if (myCharts) {
-            myCharts.on('click', e => {
-                console.log(e);
-            });
+            let link = e => {
+                dispatch({
+                    type: 'AbnormalDecision/getTableData',
+                    graphLink: { 
+                        seriesName: e.seriesName, 
+                        name: e.name 
+                    }
+                });
+            }
+            myCharts.on('click', link);
         }
         return () => {
             if (myCharts) {

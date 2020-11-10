@@ -11,6 +11,7 @@ let Model = {
         // 图（1 [1,2,3]，2，3，4，5，6）控件行状态　快速搜索　高级搜索　新增异常 表  
         anomalousGraph: { // 异常统计图组件
             activeKey: 'tab1', // 当前活动的tab页： tab1 | tab2 | tab3 | tab4 | tab5
+            newAbnormalVisible: false,  // 新增异常对话框是否显示
             globalSearch: {    // 全局条件搜索（当前制造处 分类标准）
                 allMFG: [], // ['ALL', 'MFGI', 'MFGII', 'MFGIII', 'MFGV'], //所有制造处
                 allCategories: ['按發生區域', '按責任單位', '按責任人員', '按問題分類'], //所有查询类别
@@ -127,6 +128,7 @@ let Model = {
                 }
             },
             newAbnormal: {  // 新增异常 状态
+                // visible: false,  // 新增异常对话框是否显示
                 type: '异常', // 通知单类型  异常 | 停线
                 emergencyDegree: '一般', // 紧急程度  一般 | 紧急
                 baseMsg: { //基本信息
@@ -264,7 +266,8 @@ let Model = {
             all: [],   //所有表数据
             current: [],  //当前显示的表数据
             collectFlag: false, //是否显示已经收藏的数据
-            like: ""  //模糊搜索条件
+            like: "",  //模糊搜索条件
+            modalVisible: false
         },
         abnormalMaintenance: {  // 异常维护
             type: '异常', // 通知单类型  异常 | 停线
@@ -357,6 +360,9 @@ let Model = {
         setActiveKey: (state, { activeKey }) => { // 设置当前活动的tab页：activeKey： tab1 | tab2 | tab3 | tab4 | tab5
             return { ...state, anomalousGraph: { ...state.anomalousGraph, activeKey } };
         },
+        setNewAbnormalVisible: (state, { newAbnormalVisible }) => { // 设置新增异常对话框是否显示
+            return { ...state, anomalousGraph: { ...state.anomalousGraph, newAbnormalVisible } };
+        },
         setGlobalSearch: (state, { payload }) => { // 设置全局搜索条件
             return { ...state, anomalousGraph: { ...state.anomalousGraph, globalSearch: { ...state.anomalousGraph.globalSearch, ...payload } } };
         },
@@ -388,7 +394,7 @@ let Model = {
                 }
             }
         },
-        setAnomalousTableData: (state, {payload}) => {  //设置异常列表数据
+        setAnomalousTableData: (state, { payload }) => {  //设置异常列表数据
             return {
                 ...state,
                 anomalousTable: {
@@ -396,6 +402,14 @@ let Model = {
                     ...payload
                 }
             }
+        },
+        //-----------------------------------------------------------------------------------------------------------------------------------------
+        // 新增异常 维护异常 (尝试用新的方式改变状态，不用payload, 太麻烦) retNewState：fn, 用于返回新的状态，返回的状态直接作为改变后的状态来更新状态，重要！*****
+        setNewAbnormal: (state, { retNewState }) => { //设置新增异常的状态
+            let newState = deepClone(state);
+            let newAbnormal = retNewState(newState.anomalousGraph.newAbnormal);
+            newState.anomalousGraph.newAbnormal = newAbnormal;
+            return newState;
         }
 
     },
@@ -540,21 +554,46 @@ let Model = {
                 message.error(Message);
             }
         },
-        
+
 
         // =========================================================================================================================
 
-        *getTableData(_, { call, put, select }) {
-            
-            // yield select(...)  重点********
+        *getTableData({ graphLink }, { call, put, select }) {
 
-            let { Status, Message, Data } = yield call(getTableData);
+            // yield select(...)  整合發送數據，適應所有情況（①切換tab時 ②改變收藏狀態時 ③統計圖點擊時） 重点********
+            let anomalousGraph = yield select(state => state.AbnormalDecision.anomalousGraph);
+            let { activeKey } = anomalousGraph;
+            let sendData;
+            switch (activeKey) {
+                case 'tab1':
+                    sendData = filterData(anomalousGraph, graph1SendData);
+                    sendData = { ...sendData, graphLink: { ...graphLink, tab: '異常狀態統計' } }
+                    break;
+                case 'tab2':
+                    sendData = filterData(anomalousGraph, graph23SendData);
+                    sendData = { ...sendData, graphLink: { ...graphLink, tab: '異常類別統計' } }
+                    break;
+                case 'tab3':
+                    sendData = filterData(anomalousGraph, graph23SendData);
+                    sendData = { ...sendData, graphLink: { ...graphLink, tab: '原因類別統計' } }
+                    break;
+                case 'tab4':
+                    sendData = filterData(anomalousGraph, graph4SendData);
+                    sendData = { ...sendData, graphLink: { ...graphLink, tab: '異常工時統計' } }
+                    break;
+                case 'tab5':
+                    sendData = filterData(anomalousGraph, graph5SendData);
+                    sendData = { ...sendData, graphLink: { ...graphLink, tab: '結案狀態統計' } }
+                    break;
+            }
+
+            let { Status, Message, Data } = yield call(getTableData, sendData);  //請求表數據
             if (Status == 'Pass') {
                 // let d = Data.map((row, i) => ({...row, key: 'row' + i}));
-                let d = Data.map((row) => ({...row, key: row.id}));
-                yield put({
+                let d = Data.map((row) => ({ ...row, key: row.id }));     // 加上key
+                yield put({    // 設置 all
                     type: 'setAnomalousTableData',
-                    payload: { all: d} // { all: d, current: d}
+                    payload: { all: d } // { all: d, current: d}
                 });
                 yield put({    // 设置筛选后的 current
                     type: 'filterTable'
@@ -569,19 +608,19 @@ let Model = {
             function* (_, { select, put }) {
                 let { all, like, collectFlag } = yield select(state => state.AbnormalDecision.anomalousTable);
                 let d = [];
-                if(like != ''){
+                if (like != '') {
                     d = collectFlag ? all.filter(row => row.collect) : all;
                     d = d.filter(row => {
                         let flag = false;
-                        for(var prop in row){
-                            if(typeof row[prop] == 'string' && row[prop].includes(like)){  // 符合条件的筛出，同时退出当前循环，提高性能
+                        for (var prop in row) {
+                            if (typeof row[prop] == 'string' && row[prop].includes(like)) {  // 符合条件的筛出，同时退出当前循环，提高性能
                                 flag = true;
                                 break;
                             }
                         }
                         return flag;
                     });
-                }else{
+                } else {
                     d = collectFlag ? all.filter(row => row.collect) : all;
                 }
                 yield put({
@@ -589,17 +628,17 @@ let Model = {
                     payload: { current: deepClone(d) }
                 })
             },
-            {type: 'throttle', ms: 800}
+            { type: 'throttle', ms: 800 }
         ],
 
-        *toggerCollect ({id}, {select, put, call }) {
-            let {Status, Message} = yield call(toggerCollect, id);
-            if(Status == 'Pass'){
+        *toggerCollect({ id }, { select, put, call }) {
+            let { Status, Message } = yield call(toggerCollect, id);
+            if (Status == 'Pass') {
                 // message.success(Message);
                 yield put({
                     type: 'getTableData'
                 })
-            }else{
+            } else {
                 message.error(Mesage)
             }
 

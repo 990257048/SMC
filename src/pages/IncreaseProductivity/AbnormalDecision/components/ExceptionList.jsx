@@ -8,6 +8,7 @@ import downExcel from '../../../../utils/down-excel';
 import { PageLoading } from '@ant-design/pro-layout';
 import styles from '../style.less';
 
+import NewAbnormal from './NewAbnormal';
 import ModalWrap from './ModalWrap';
 
 let TableToolBar = props => {
@@ -107,6 +108,13 @@ let useTableConfig = (initTableData) => {
         });
     }
 
+    let edit = row => {
+        dispatch({
+            type: 'AbnormalDecision/setAnomalousTableData',
+            payload: { modalVisible: true }
+        })
+    }
+
     let initTableConfig = {
         size: 'small',
         scroll: { y: 380, x: 1450 },
@@ -172,7 +180,7 @@ let useTableConfig = (initTableData) => {
                     return <div>
                         <Tooltip title="修改">
                             <Button type="primary" shape="circle" size="small" icon={<EditOutlined />} style={{ marginRight: '10px' }}
-                                onClick={() => { }}
+                                onClick={() => { edit(d) }}
                             />
                         </Tooltip>
                         <Tooltip title="收藏">
@@ -194,14 +202,14 @@ let useTableConfig = (initTableData) => {
 
 
 let TableWrap = props => {
-    let { dispatch, current } = props;
+    let { dispatch, current, activeKey, globalSearch, quickSearch, advancedSearch } = props;
     let [tableConfig, setTableData] = useTableConfig(null);
 
-    useMemo(() => {
+    useMemo(() => {   // tab切換時 所有統計圖的條件發生變化時 再去拿表數據
         dispatch({
             type: 'AbnormalDecision/getTableData'
         });
-    }, []);
+    }, [activeKey, globalSearch, quickSearch, advancedSearch]);
 
     useEffect(() => {
         setTableData(current);
@@ -218,12 +226,16 @@ let TableWrap = props => {
 TableWrap = connect(state => {
     return {
         current: state.AbnormalDecision.anomalousTable.current,
+        activeKey: state.AbnormalDecision.anomalousGraph.activeKey,
+        globalSearch: state.AbnormalDecision.anomalousGraph.globalSearch,
+        quickSearch: state.AbnormalDecision.anomalousGraph.quickSearch,
+        advancedSearch: state.AbnormalDecision.anomalousGraph.advancedSearch,
     }
 })(TableWrap);
 
 
 let ExceptionList = props => {
-    let {dispatch, width, height } = props;
+    let { dispatch, width, height, newAbnormalVisible, modalVisible } = props;
 
     let size = useMemo(() => {
         return {
@@ -232,18 +244,45 @@ let ExceptionList = props => {
         }
     }, [width, height]);
 
-    console.log(width, height);
+
+    let cancel1 = useCallback(() => {
+        dispatch({
+            type: 'AbnormalDecision/setNewAbnormalVisible',
+            newAbnormalVisible: false
+        })
+    }, []);
+
+    let cancel2 = useCallback(() => {
+        dispatch({
+            type: 'AbnormalDecision/setAnomalousTableData',
+            payload: { modalVisible: false }
+        })
+    }, []);
+
     return <div className={styles['exception-list']}>
         <TableToolBar />
         <TableWrap />
         <Modal
-            title={ <div> <EditOutlined /> 异常维护</div> }
+            title={<div> <PlusOutlined /> 新增异常</div>}
             centered
-            visible={false}
-            onOk={() => { }}
-            onCancel={() => { }}
+            visible={newAbnormalVisible}
+            onOk={() => { console.log('ok') }}
+            onCancel={cancel1}
             width={size.w}
-            bodyStyle={{padding: '0px 20px 0px 25px'}}
+            bodyStyle={{ padding: '0px 20px 0px 25px' }}
+        >
+            <div style={{ width: '100%', height: size.h }}>
+                <NewAbnormal />
+            </div>
+        </Modal>
+        <Modal
+            title={<div> <EditOutlined /> 异常维护</div>}
+            centered
+            visible={modalVisible}
+            onOk={() => { console.log('ok') }}
+            onCancel={cancel2}
+            width={size.w}
+            bodyStyle={{ padding: '0px 20px 0px 25px' }}
         >
             <div style={{ width: '100%', height: size.h }}>
                 <ModalWrap />
@@ -255,7 +294,9 @@ let ExceptionList = props => {
 ExceptionList = connect(state => {
     return {
         width: state.global.width,
-        height: state.global.height
+        height: state.global.height,
+        newAbnormalVisible: state.AbnormalDecision.anomalousGraph.newAbnormalVisible, //新增
+        modalVisible: state.AbnormalDecision.anomalousTable.modalVisible  //修改
     }
 })(ExceptionList);
 
