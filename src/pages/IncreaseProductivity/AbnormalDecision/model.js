@@ -132,18 +132,22 @@ let Model = {
                 type: '异常', // 通知单类型  异常 | 停线
                 emergencyDegree: '一般', // 紧急程度  一般 | 紧急
                 baseMsg: { //基本信息
-                    issuer: '', // 發文人員
-                    units: '', // 發文單位
-                    date: '', // 發文日期
-                    time: '', // 异常时期
-                    class: '', // 异常班别
-                    BU: '', // 异常BU
-                    area: '', //异常区域
+                    allAbnormalClass: ['白班', '晚班'],
+                    allBU: ['SRGBU', 'PCBU'],
+                    allRegion: ['Kitting', 'SMT', 'ICT', 'Packing', '5DX', '壓合', 'PTH', 'RE', 'MCEBU', '分板', 'BST', '其它'],  //所有异常区域
+                    allStage: ['量產', '試產', '外包'],
+                    issuer: '劉龍飛(F1320854)', // 發文人員
+                    units: 'IT', // 發文單位
+                    date: '2020/11/11 08:34', // 發文日期
+                    abnormalTime: '2020/11/11 08:34', // 异常时间
+                    abnormalClass: '白班', // 异常班别
+                    BU: 'SRGBU', // 异常BU
+                    region: 'SMT', //异常区域
                     station: '', //异常工站
                     skuName: '', //机种名称
                     skuno: '', //机种料号
                     WO: '', //工單編號
-                    stage: '' // 产品阶段
+                    stage: '量產' // 产品阶段
                 },
                 report: { //上报机制
                     sectionManager: '', //课级
@@ -408,8 +412,10 @@ let Model = {
         setNewAbnormal: (state, { retNewState }) => { //设置新增异常的状态
             let newState = deepClone(state);
             let newAbnormal = retNewState(newState.anomalousGraph.newAbnormal);
-            newState.anomalousGraph.newAbnormal = newAbnormal;
-            return newState;
+            console.log(newAbnormal);
+            return {
+                ...state, anomalousGraph: {...state.anomalousGraph, newAbnormal}
+            };
         }
 
     },

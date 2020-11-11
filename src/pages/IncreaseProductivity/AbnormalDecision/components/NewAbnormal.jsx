@@ -16,41 +16,31 @@ const { Step } = Steps
 
 let NewAbnormalContext = createContext();
 
-let NewAbnormal = props => {  // 新增异常
+let NewAbnormal = () => {  // 新增异常
     console.log('render NewAbnormal');
-    let w = useSelector(state => state.global.width);
-    let h = useSelector(state => state.global.height);
-
-    // console.log(w, h)
-
+    let dispatch = useDispatch();
     let [current, setCurrent] = useState(0);
-
-    let size = useMemo(() => {
-        // console.log(w, h);
-        return {
-            width: w - 355 + 'px',
-            height: h - 245 + 'px',
-            padding: '15px',
-            overflow: 'auto'
-            // border: '1px solid red'
-        }
-    }, [w, h]);
-
     let setpChange = useCallback((step) => {
         setCurrent(step);
     }, []);
-
-    let prevStep = useCallback(() => {  // 上一步
+    let prevStep = useCallback(() => {  // 上一步(共享)
         setCurrent(current - 1);
     }, [current]);
 
-    let nextStep = useCallback(() => {  // 下一步
+    let nextStep = useCallback(() => {  // 下一步(共享)
         setCurrent(current + 1);
     }, [current]);
 
+    let setNewAbnormal = useCallback(retNewState => {  //設置本模塊數據
+        dispatch({
+            type: 'AbnormalDecision/setNewAbnormal',
+            retNewState
+        });
+    }, []);
+
     // 基本信息 上報機制 問題描述 臨時對策 原因分析 備註與附件
 
-    return <div className={ styles['modal-wrap'] }>
+    return <div className={styles['modal-wrap']}>
         {/* direction="vertical" */}
         <div className={styles['new-abnormal-steps']}>
             {/* <div style={{ padding: '0 0 15px 15px' }}>
@@ -67,19 +57,12 @@ let NewAbnormal = props => {  // 新增异常
             </Steps>
         </div>
         <div className={styles['new-abnormal-steps-right']}>
-            <NewAbnormalContext.Provider value={{ current, setCurrent, prevStep, nextStep }}>
+            <NewAbnormalContext.Provider value={{ current, setCurrent, prevStep, nextStep, setNewAbnormal }}>
                 <StepContent current={current} />
             </NewAbnormalContext.Provider>
         </div>
     </div>
 }
-
-// export default connect(() => {
-//     return {
-//         w: state.global.width,
-//         h: state.global.height
-//     }
-// })(NewAbnormal);
 
 export default NewAbnormal;
 
@@ -107,9 +90,26 @@ let StepContent = ({ current }) => {
 
 // ==================================================================================================================================
 
-let Step1 = () => {
+let Step1 = props => {
+    let { nextStep, setNewAbnormal } = useContext(NewAbnormalContext);
+    let { dispatch, type, emergencyDegree, baseMsg } = props;
+    let {
+        allAbnormalClass, allBU, allRegion, allStage,
+        issuer, units, date, abnormalTime, abnormalClass, BU, region, station, skuName, skuno, WO, stage
+    } = baseMsg;
 
-    let { nextStep } = useContext(NewAbnormalContext);
+    let retSetNewAbnormalByEvent = useCallback(key => e => {  //按事件來
+        setNewAbnormal(_ => ({ ..._, [key]: e.target.value }));
+    }, []);
+
+    let retSetNewAbnormalByValue = useCallback(key => value => {  //按值來
+        setNewAbnormal(_ => ({ ..._, [key]: value }));
+    }, []);
+
+    let retSetNewAbnormalByMoment = useCallback(key => time => {  //按moment來
+        console.log(time.format('YYYY/MM/DD hh:mm'));
+        setNewAbnormal(_ => ({ ..._, [key]: time.format('YYYY/MM/DD hh:mm') }));
+    }, []);
 
     return <div className={styles['step1']}>
         <div style={{ textAlign: 'center' }}>
@@ -117,13 +117,13 @@ let Step1 = () => {
             <h3><b>NSDI 【通知单】</b></h3>
             <Space size="middle">
                 <b>类型：</b>
-                <Radio.Group defaultValue="异常">
+                <Radio.Group value={type} onChange={retSetNewAbnormalByEvent('type')}>
                     <Radio value="异常"> 异常 </Radio>
                     <Radio value="停线"> 停线 </Radio>
                 </Radio.Group>
                 <span>  </span>
                 <b>紧急程度：</b>
-                <Radio.Group defaultValue="正常">
+                <Radio.Group value={emergencyDegree} onChange={retSetNewAbnormalByEvent('emergencyDegree')}>
                     <Radio value="正常"> 正常 </Radio>
                     <Radio value="紧急"> 紧急 </Radio>
                 </Radio.Group>
@@ -134,19 +134,19 @@ let Step1 = () => {
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>發文人員</Col>
-                    <Col span={15}><Input /></Col>
+                    <Col span={15}><Input disabled={true} value={issuer} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>發文單位</Col>
-                    <Col span={15}><Input /></Col>
+                    <Col span={15}><Input disabled={true} value={units} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>發文日期</Col>
-                    <Col span={15}><Input /></Col>
+                    <Col span={15}><Input disabled={true} value={date} /></Col>
                 </Row>
             </Col>
         </Row>
@@ -155,7 +155,11 @@ let Step1 = () => {
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常時間</Col>
-                    <Col span={15}><Input /></Col>
+                    <Col span={15}>
+                        <DatePicker onChange={ retSetNewAbnormalByMoment('abnormalTime') } className={styles.w100}
+                            value={ moment(abnormalTime, 'YYYY/MM/DD hh:mm') } format='YYYY/MM/DD hh:mm' showTime
+                        />
+                    </Col>
                 </Row>
             </Col>
             <Col span={8}>
@@ -223,6 +227,17 @@ let Step1 = () => {
         </Row>
     </div>
 }
+
+Step1 = connect(state => {
+    return {
+        type: state.AbnormalDecision.anomalousGraph.newAbnormal.type,
+        emergencyDegree: state.AbnormalDecision.anomalousGraph.newAbnormal.emergencyDegree,
+        baseMsg: state.AbnormalDecision.anomalousGraph.newAbnormal.baseMsg
+    }
+})(Step1)
+
+
+
 
 let Step2 = () => {
 
@@ -676,7 +691,7 @@ let Step6 = () => {
     }, []);
 
     return <div className={styles['step6']}>
-        <Row gutter={[0, 24]} justify="center" style={{marginTop: '20px'}}>
+        <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={18}>
                 <Row>
                     <Col span={4} style={{ textAlign: 'center' }}>問題狀態</Col>
