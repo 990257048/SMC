@@ -132,7 +132,7 @@ let graph5SendData = { // 异常统计图组件
     }
 }
 
-let filterData = (origin, target) => {   // 从Model筛选数据（用于整合请求参数）
+let filterData = (origin, target) => {   // 从Model筛选数据（用于整合请求参数）还需要改进
     if(target === null) return null;
     if(Object.prototype.toString.call(target) != '[object Object]') return origin; // 不是字面量对象时，直接赋值过去即可，不影响Model,因为后续不会对数据操作
     for(let key in target){

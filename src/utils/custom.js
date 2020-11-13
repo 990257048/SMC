@@ -1,3 +1,6 @@
+import { PropertySafetyFilled } from "@ant-design/icons";
+import { tsPropertySignature } from "@babel/types";
+
 // 自定义工具函数 20200824 add by gch
 
 let debounce = function (fn, delay) {  // 防抖 （输入框自动完成 onresize ...）
@@ -43,4 +46,46 @@ let deepClone = function (obj) { //比较标准的深克隆（基本类型 对�
     return newObj;
 }
 
-export {debounce, throttle, deepClone}
+let findValueByProp = (origin, prop) => {  // 从origin找prop属性值
+    if(prop == ''){
+        return origin;
+    }
+    return prop.split('.').reduce((prev, nextProp) => {
+        return prev ? prev[nextProp] ? prev[nextProp] : null : null;
+    }, origin);
+}
+
+let retNewStateByProp = (origin, prop, value) => { // origin的prop属性值设置成value
+    // 有，替换  没有，超纲了
+    let propArr = prop.split('.');
+    let includeProp = []; //记录origin包含的属性
+    let noProp = []; //记录origin不包含的属性
+    let res = propArr.reduce((prev, nextProp, i) => {
+        if(prev == 'err' || !prev){
+            noProp.push(propArr[i-1]);
+            return 'err';
+        }
+        if(prev.hasOwnProperty(nextProp)){
+            includeProp.push(propArr[i - 1])
+            return prev[nextProp];
+        }else{
+            noProp.push(propArr[i-1]);
+            return 'err';
+        }
+        // return prev.hasOwnProperty(nextProp) ? prev[nextProp] : 'err';
+    }, origin);
+
+    if(res != 'err'){   // 设置值
+        propArr.reduce((prev, nextProp, i) => {
+            if(i == propArr.length - 1){
+                prev[nextProp] = value;
+            }
+            return prev[nextProp]
+        }, origin);
+    }else{
+        //prop超纲了
+    }
+    return origin;
+}
+
+export {debounce, throttle, deepClone, findValueByProp, retNewStateByProp}

@@ -6,6 +6,7 @@ import { connect, FormattedMessage, formatMessage } from 'umi';
 import { Button, Space, Input, Tabs, Steps, Popover, Row, Col, Divider, Select, Radio, DatePicker, InputNumber, Tooltip } from 'antd';
 import { SearchOutlined, PlusOutlined, ProfileOutlined, BarsOutlined, ZoomInOutlined, OrderedListOutlined, SaveOutlined, BorderBottomOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { findValueByProp } from '../../../../utils/custom'
 import styles from '../style.less';
 
 const { TabPane } = Tabs;
@@ -31,12 +32,20 @@ let NewAbnormal = () => {  // 新增异常
         setCurrent(current + 1);
     }, [current]);
 
-    let setNewAbnormal = useCallback(retNewState => {  //設置本模塊數據
+    let setNewAbnormal = useCallback((prop, value) => {  //設置本模塊數據
         dispatch({
-            type: 'AbnormalDecision/setNewAbnormal',
-            retNewState
+            type: 'AbnormalDecision/setNewAbnormalByProp',
+            prop, value
         });
     }, []);
+
+    let retSetNewAbnormalByPlaneObj = (stateProp, eProp) => e => {   //平面Obj
+        setNewAbnormal(stateProp, findValueByProp(e, eProp));
+    }
+
+    let retSetNewAbnormalByMoment = prop => moment => {
+        setNewAbnormal(prop, moment.format('YYYY/MM/DD hh:mm'));
+    }
 
     // 基本信息 上報機制 問題描述 臨時對策 原因分析 備註與附件
 
@@ -57,7 +66,7 @@ let NewAbnormal = () => {  // 新增异常
             </Steps>
         </div>
         <div className={styles['new-abnormal-steps-right']}>
-            <NewAbnormalContext.Provider value={{ current, setCurrent, prevStep, nextStep, setNewAbnormal }}>
+            <NewAbnormalContext.Provider value={{ current, setCurrent, prevStep, nextStep, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment }}>
                 <StepContent current={current} />
             </NewAbnormalContext.Provider>
         </div>
@@ -91,25 +100,12 @@ let StepContent = ({ current }) => {
 // ==================================================================================================================================
 
 let Step1 = props => {
-    let { nextStep, setNewAbnormal } = useContext(NewAbnormalContext);
-    let { dispatch, type, emergencyDegree, baseMsg } = props;
+    let { nextStep, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment } = useContext(NewAbnormalContext);
+    let { type, emergencyDegree, baseMsg } = props;
     let {
         allAbnormalClass, allBU, allRegion, allStage,
         issuer, units, date, abnormalTime, abnormalClass, BU, region, station, skuName, skuno, WO, stage
     } = baseMsg;
-
-    let retSetNewAbnormalByEvent = useCallback(key => e => {  //按事件來
-        setNewAbnormal(_ => ({ ..._, [key]: e.target.value }));
-    }, []);
-
-    let retSetNewAbnormalByValue = useCallback(key => value => {  //按值來
-        setNewAbnormal(_ => ({ ..._, [key]: value }));
-    }, []);
-
-    let retSetNewAbnormalByMoment = useCallback(key => time => {  //按moment來
-        console.log(time.format('YYYY/MM/DD hh:mm'));
-        setNewAbnormal(_ => ({ ..._, [key]: time.format('YYYY/MM/DD hh:mm') }));
-    }, []);
 
     return <div className={styles['step1']}>
         <div style={{ textAlign: 'center' }}>
@@ -117,13 +113,13 @@ let Step1 = props => {
             <h3><b>NSDI 【通知单】</b></h3>
             <Space size="middle">
                 <b>类型：</b>
-                <Radio.Group value={type} onChange={retSetNewAbnormalByEvent('type')}>
+                <Radio.Group value={type} onChange={retSetNewAbnormalByPlaneObj('type', 'target.value')}>
                     <Radio value="异常"> 异常 </Radio>
                     <Radio value="停线"> 停线 </Radio>
                 </Radio.Group>
                 <span>  </span>
                 <b>紧急程度：</b>
-                <Radio.Group value={emergencyDegree} onChange={retSetNewAbnormalByEvent('emergencyDegree')}>
+                <Radio.Group value={emergencyDegree} onChange={retSetNewAbnormalByPlaneObj('emergencyDegree', 'target.value')}>
                     <Radio value="正常"> 正常 </Radio>
                     <Radio value="紧急"> 紧急 </Radio>
                 </Radio.Group>
@@ -156,8 +152,8 @@ let Step1 = props => {
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常時間</Col>
                     <Col span={15}>
-                        <DatePicker onChange={ retSetNewAbnormalByMoment('abnormalTime') } className={styles.w100}
-                            value={ moment(abnormalTime, 'YYYY/MM/DD hh:mm') } format='YYYY/MM/DD hh:mm' showTime
+                        <DatePicker className={styles.w100} onChange={retSetNewAbnormalByMoment('baseMsg.abnormalTime')}
+                            value={moment(abnormalTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
                         />
                     </Col>
                 </Row>
@@ -165,13 +161,25 @@ let Step1 = props => {
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常班別</Col>
-                    <Col span={15}><Input /></Col>
+                    <Col span={15}>
+                        <Select className={styles.w100} value={abnormalClass} onChange={retSetNewAbnormalByPlaneObj('baseMsg.abnormalClass', '')}>
+                            {
+                                allAbnormalClass.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select>
+                    </Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常BU</Col>
-                    <Col span={15}><Input /></Col>
+                    <Col span={15}>
+                        <Select className={styles.w100} value={BU} onChange={retSetNewAbnormalByPlaneObj('baseMsg.BU', '')}>
+                            {
+                                allBU.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select>
+                    </Col>
                 </Row>
             </Col>
         </Row>
@@ -180,19 +188,25 @@ let Step1 = props => {
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常區域</Col>
-                    <Col span={15}><Input /></Col>
+                    <Col span={15}>
+                        <Select className={styles.w100} value={region} onChange={retSetNewAbnormalByPlaneObj('baseMsg.region', '')}>
+                            {
+                                allRegion.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select>
+                    </Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常工站</Col>
-                    <Col span={15}><Input /></Col>
+                    <Col span={15}><Input value={station} onChange={retSetNewAbnormalByPlaneObj('baseMsg.station', 'target.value')} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>機種名稱</Col>
-                    <Col span={15}><Input /></Col>
+                    <Col span={15}><Input value={skuName} onChange={retSetNewAbnormalByPlaneObj('baseMsg.skuName', 'target.value')} /></Col>
                 </Row>
             </Col>
         </Row>
@@ -201,19 +215,25 @@ let Step1 = props => {
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>機種料號</Col>
-                    <Col span={15}><Input /></Col>
+                    <Col span={15}><Input value={skuno} onChange={retSetNewAbnormalByPlaneObj('baseMsg.skuno', 'target.value')} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>工單編號</Col>
-                    <Col span={15}><Input /></Col>
+                    <Col span={15}><Input value={WO} onChange={retSetNewAbnormalByPlaneObj('baseMsg.WO', 'target.value')} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>產品階段</Col>
-                    <Col span={15}><Input /></Col>
+                    <Col span={15}>
+                        <Select className={styles.w100} value={stage} onChange={retSetNewAbnormalByPlaneObj('baseMsg.stage', '')}>
+                            {
+                                allStage.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select>
+                    </Col>
                 </Row>
             </Col>
         </Row>
@@ -239,28 +259,56 @@ Step1 = connect(state => {
 
 
 
-let Step2 = () => {
+let Step2 = props => {
+    // allSectionManager: [],
+    //                 allMinister: [],
+    //                 sectionChief: [],
+    //                 sectionManager: '', //课级
+    //                 minister: '', //部级
+    //                 sectionChief: '', //处级
+    let { prevStep, nextStep, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
 
-    let { prevStep, nextStep } = useContext(NewAbnormalContext);
+    let {
+        allSectionManager, allMinister, allSectionChief,
+        sectionManager, minister, sectionChief
+    } = props.report;
 
     return <div className={styles['step2']}>
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={8}>
                 <Row>
                     <Col span={10} style={{ textAlign: 'center' }}>課級（>30m）</Col>
-                    <Col span={14}><Input /></Col>
+                    <Col span={14}>
+                        <Select className={styles.w100} value={sectionManager} onChange={retSetNewAbnormalByPlaneObj('report.sectionManager', '')}>
+                            {
+                                allSectionManager.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select>
+                    </Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={10} style={{ textAlign: 'center' }}>部級（0.5~1h）</Col>
-                    <Col span={14}><Input /></Col>
+                    <Col span={14}>
+                        <Select className={styles.w100} value={minister} onChange={retSetNewAbnormalByPlaneObj('report.minister', '')}>
+                            {
+                                allMinister.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select>
+                    </Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={10} style={{ textAlign: 'center' }}>處級（>1h）</Col>
-                    <Col span={14}><Input /></Col>
+                    <Col span={14}>
+                        <Select className={styles.w100} value={sectionChief} onChange={retSetNewAbnormalByPlaneObj('report.sectionChief', '')}>
+                            {
+                                allSectionChief.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select>
+                    </Col>
                 </Row>
             </Col>
         </Row>
@@ -276,33 +324,53 @@ let Step2 = () => {
     </div>
 }
 
-let Step3 = () => {
-    let { prevStep, nextStep } = useContext(NewAbnormalContext);
+Step2 = connect(state => {
+    return {
+        report: state.AbnormalDecision.anomalousGraph.newAbnormal.report
+    }
+})(Step2);
+
+
+
+let Step3 = props => {
+    let { prevStep, nextStep, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment } = useContext(NewAbnormalContext);
+    let { currentClassify, allHandler, handler, noticeTime, emailTitle } = props;
+
     return <div className={styles['step3']}>
         <Row gutter={[0, 16]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={16}>
                 <Row>
                     <Col span={6} style={{ textAlign: 'right', paddingRight: '15px' }}>異常處理人</Col>
-                    <Col span={18}><TextArea /></Col>
+                    <Col span={18}>
+                        {/* 多选 */}
+                        <Select mode="multiple" className={styles.w100} showArrow value={handler}
+                            onChange={retSetNewAbnormalByPlaneObj('problem.handler', '')}
+                            options={allHandler.map(v => ({ value: v }))}
+                        />
+                    </Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>通知時間</Col>
-                    <Col span={13}><Input /></Col>
+                    <Col span={13}>
+                        <DatePicker className={styles.w100} onChange={retSetNewAbnormalByMoment('problem.noticeTime')}
+                            value={moment(noticeTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
+                        />
+                    </Col>
                 </Row>
             </Col>
         </Row>
-
         <Row gutter={[0, 16]} justify="center">
             <Col span={24}>
                 <Row>
                     <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>郵件標題</Col>
-                    <Col span={19}><TextArea /></Col>
+                    <Col span={19}>
+                        <TextArea value={emailTitle} onChange={retSetNewAbnormalByPlaneObj('problem.emailTitle', 'target.value')} />
+                    </Col>
                 </Row>
             </Col>
         </Row>
-
         <Row gutter={[0, 16]} justify="center">
             <Col span={24}>
                 <Row>
@@ -312,220 +380,27 @@ let Step3 = () => {
                         {/* ====================================================================================================================================== */}
 
                         {/* 設備異常 物料異常 人員異常 品質異常 治工具異常 系統異常     */}
-                        <Tabs size="small" type='card' defaultActiveKey="1" style={{ width: '100%', border: '1px solid #ddd' }} >
-                            <TabPane tab="設備異常" key="1">
-                                <div style={{ width: '100%' }}>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>機器類別</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>設備名稱</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>設備編號</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>設備型號</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}></Col>
-                                    </Row>
-
-                                </div>
+                        <Tabs size="small" type='card' activeKey={currentClassify}
+                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.currentClassify', '')}
+                            style={{ width: '100%', border: '1px solid #ddd' }}
+                        >
+                            <TabPane tab="設備異常" key="equipment">
+                                <ProblemEquipment />
                             </TabPane>
-                            <TabPane tab="物料異常" key="2">
-                                <div style={{ width: '100%' }}>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>DC</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>LC</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>零件料號</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>不良率</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>供應商</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-
-                                </div>
+                            <TabPane tab="物料異常" key="material">
+                                <ProblemMaterial />
                             </TabPane>
-                            <TabPane tab="人員異常" key="3">
-                                <div style={{ width: '100%' }}>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}></Col>
-                                    </Row>
-
-                                </div>
+                            <TabPane tab="人員異常" key="person">
+                                <ProblemPerson />
                             </TabPane>
-                            <TabPane tab="品質異常" key="4">
-                                <div style={{ width: '100%' }}>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>制程段</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>不良現象</Col>
-                                                <Col span={14}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>發生站位</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>影響范圍</Col>
-                                                <Col span={14}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={24}>
-                                            <Row>
-                                                <Col span={4} style={{ textAlign: 'center' }}>當前措施</Col>
-                                                <Col span={19}><TextArea size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-
-                                </div>
+                            <TabPane tab="品質異常" key="quality">
+                                <ProblemQuality />
                             </TabPane>
-                            <TabPane tab="治工具異常" key="5">
-                                <div style={{ width: '100%' }}>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>涉及的產品料號</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>使用站位</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}></Col>
-                                    </Row>
-
-                                </div>
+                            <TabPane tab="治工具異常" key="tools">
+                                <ProblemTools />
                             </TabPane>
-                            <TabPane tab="系統異常" key="6">
-                                <div style={{ width: '100%' }}>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>異常類別</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-
-                                    <Row gutter={[0, 12]} justify="center">
-                                        <Col span={12}>
-                                            <Row>
-                                                <Col span={8} style={{ textAlign: 'center' }}>異常開始時間</Col>
-                                                <Col span={15}><Input size="small" /></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col span={12}></Col>
-                                    </Row>
-
-                                </div>
+                            <TabPane tab="系統異常" key="system">
+                                <ProblemSystem />
                             </TabPane>
                         </Tabs>
 
@@ -546,6 +421,269 @@ let Step3 = () => {
         </Row>
     </div>
 }
+
+Step3 = connect(state => {
+    return {
+        currentClassify: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.abnormalClassify.currentClassify,
+        allHandler: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.allHandler,
+        handler: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.handler,
+        noticeTime: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.noticeTime,
+        emailTitle: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.emailTitle
+    }
+})(Step3);
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+let ProblemEquipment = props => {  //設備異常
+    // equipment: { //设备异常
+    //     allDesc: [],
+    //     allCategory: [],
+    //     desc: [],  //异常描述
+    //     category: [], //异常类别
+    //     name: '',  // 设备名称
+    //     equipmentNumber: '', // 设备编号
+    //     equipmentModel: '' // 設備型號
+    // },
+    let { retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let {
+        allDesc, allCategory,
+        desc, category, name, equipmentNumber, equipmentModel
+    } = props.equipment;
+
+    return <div style={{ width: '100%' }}>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={15}>
+                        <Select size='small' className={styles.w100} value={desc}
+                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.desc', '')}
+                        >
+                            {
+                                allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select>
+                    </Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>機器類別</Col>
+                    <Col span={15}>
+                        <Select size='small' className={styles.w100} value={category}
+                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.category', '')}
+                        >
+                            {
+                                allCategory.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select>
+                    </Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>設備名稱</Col>
+                    <Col span={15}>
+                        <Input size="small" value={ name } onChange={ retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.name', 'target.value') } />
+                    </Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>設備編號</Col>
+                    <Col span={15}>
+                        <Input size="small" value={ equipmentNumber } onChange={ retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.equipmentNumber', 'target.value') } />
+                    </Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>設備型號</Col>
+                    <Col span={15}>
+                    <Input size="small" value={ equipmentModel } onChange={ retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.equipmentModel', 'target.value') } />
+                    </Col>
+                </Row>
+            </Col>
+            <Col span={12}></Col>
+        </Row>
+    </div>
+}
+
+ProblemEquipment = connect(state => {
+    return {
+        equipment: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.abnormalClassify.equipment
+    }
+})(ProblemEquipment);
+
+
+
+
+let ProblemMaterial = props => {  //物料異常
+    return <div style={{ width: '100%' }}>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>DC</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>LC</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>零件料號</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>不良率</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>供應商</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+        </Row>
+    </div>
+}
+
+let ProblemPerson = props => {  //人員異常
+    return <div style={{ width: '100%' }}>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+            <Col span={12}></Col>
+        </Row>
+    </div>
+}
+
+let ProblemQuality = props => {  //品質異常
+    return <div style={{ width: '100%' }}>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>制程段</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>不良現象</Col>
+                    <Col span={14}><Input size="small" /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>發生站位</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>影響范圍</Col>
+                    <Col span={14}><Input size="small" /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={24}>
+                <Row>
+                    <Col span={4} style={{ textAlign: 'center' }}>當前措施</Col>
+                    <Col span={19}><TextArea size="small" /></Col>
+                </Row>
+            </Col>
+        </Row>
+    </div>
+}
+
+let ProblemTools = props => {  //治工具異常
+    return <div style={{ width: '100%' }}>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>涉及的產品料號</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>使用站位</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+            <Col span={12}></Col>
+        </Row>
+    </div>
+}
+
+let ProblemSystem = props => {  //系統異常
+    return <div style={{ width: '100%' }}>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>異常類別</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>異常開始時間</Col>
+                    <Col span={15}><Input size="small" /></Col>
+                </Row>
+            </Col>
+            <Col span={12}></Col>
+        </Row>
+    </div>
+}
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 let Step4 = () => {
     let { prevStep, nextStep } = useContext(NewAbnormalContext);

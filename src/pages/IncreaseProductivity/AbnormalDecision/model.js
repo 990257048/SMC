@@ -1,6 +1,6 @@
 
 import { getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5, getTableData, toggerCollect } from './service'
-import { deepClone } from '../../../utils/custom'
+import { deepClone, retNewStateByProp } from '../../../utils/custom'
 import { graph1SendData, graph23SendData, graph4SendData, graph5SendData, filterData } from './utils'
 import { message } from 'antd'
 import moment from 'moment'
@@ -150,19 +150,25 @@ let Model = {
                     stage: '量產' // 产品阶段
                 },
                 report: { //上报机制
-                    sectionManager: '', //课级
-                    minister: '', //部级
-                    sectionChief: '', //处级
+                    allSectionManager: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],
+                    allMinister: ['洪永祥(F1300147)', '段杰君(F1301264)'],
+                    allSectionChief: ['劉慶公(100056)'],
+                    sectionManager: '劉日紅(F1300825)', //课级
+                    minister: '洪永祥(F1300147)', //部级
+                    sectionChief: '劉日紅(F1300825)' //处级
                 },
-                Problem: { //問題描述
-                    handler: [],  //異常處理人
-                    noticeTime: '', //異常通知時間
+                problem: { //問題描述
+                    allHandler: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],
+                    handler: ['梁俏麗(F1313632)', '李濤(F1302833)'],  //異常處理人
+                    noticeTime: '2020/11/12 18:19', //異常通知時間
                     emailTitle: '', // 郵件標題
                     abnormalClassify: {   //按异常分类
                         currentClassify: 'equipment',  //当前分类
                         equipment: { //设备异常
-                            desc: '',  //异常描述
-                            category: '', //异常类别
+                            allDesc: ['設備檔機', '保養超時', '低效生產', '安全隱患', '功能缺失', '帶病運行', '其它'],
+                            allCategory: ['SMT設備', 'PTH設備', '測試設備', '流水線', 'SFC設備', '公務設備', '其它'],
+                            desc: '設備檔機',  //异常描述
+                            category: 'SMT設備', //异常类别
                             name: '',  // 设备名称
                             equipmentNumber: '', // 设备编号
                             equipmentModel: '' // 設備型號
@@ -195,27 +201,27 @@ let Model = {
                             desc: '', //異常描述
                             startTime: '' //異常開始時間
                         }
-                    },
-                    countermeasures: { //临时对策
-                        lostWorkTime: '', //损失工时
-                        idleHuman: '', //闲置人力
-                        manpowerArrangement: '', //闲置人力安排
-                        lostOutput: '', //损失产出
-                        lostYield: '', //良率損失
-                        measures: '' //臨時解決措施
-                    },
-                    causeAnalysis: {  // 原因分析(只有填寫原因分析才能申請結案)
-                        chargePerson: '', // 負責人
-                        sectionManager: [], //負責人课级
-                        minister: [], //負責人部级
-                        sectionChief: [], //負責人处级
-                        notifier: [] // 異常知會人
-                    },
-                    remarksAndAttachments: {  // 備註與附件
-                        problemStatus: '', // 問題狀態
-                        remarks: '', // 備註
-                        attachments: {} // 附件
                     }
+                },
+                countermeasures: { //临时对策
+                    lostWorkTime: '', //损失工时
+                    idleHuman: '', //闲置人力
+                    manpowerArrangement: '', //闲置人力安排
+                    lostOutput: '', //损失产出
+                    lostYield: '', //良率損失
+                    measures: '' //臨時解決措施
+                },
+                causeAnalysis: {  // 原因分析(只有填寫原因分析才能申請結案)
+                    chargePerson: '', // 負責人
+                    sectionManager: [], //負責人课级
+                    minister: [], //負責人部级
+                    sectionChief: [], //負責人处级
+                    notifier: [] // 異常知會人
+                },
+                remarksAndAttachments: {  // 備註與附件
+                    problemStatus: '', // 問題狀態
+                    remarks: '', // 備註
+                    attachments: {} // 附件
                 }
             },
             graphData: {
@@ -409,14 +415,21 @@ let Model = {
         },
         //-----------------------------------------------------------------------------------------------------------------------------------------
         // 新增异常 维护异常 (尝试用新的方式改变状态，不用payload, 太麻烦) retNewState：fn, 用于返回新的状态，返回的状态直接作为改变后的状态来更新状态，重要！*****
-        setNewAbnormal: (state, { retNewState }) => { //设置新增异常的状态
+        // setNewAbnormal: (state, { retNewState }) => { //设置新增异常的状态
+        //     let newState = deepClone(state);
+        //     let newAbnormal = retNewState(newState.anomalousGraph.newAbnormal);
+        //     return {
+        //         ...state, anomalousGraph: {...state.anomalousGraph, newAbnormal}
+        //     };
+        // },
+        setNewAbnormalByProp: (state, { prop, value }) => {  //设置新增异常的状态, 更簡單好用（適合修改超級複雜（多層級）的狀態）
             let newState = deepClone(state);
-            let newAbnormal = retNewState(newState.anomalousGraph.newAbnormal);
-            console.log(newAbnormal);
+            let newAbnormal = retNewStateByProp(newState.anomalousGraph.newAbnormal, prop, value); 
             return {
                 ...state, anomalousGraph: {...state.anomalousGraph, newAbnormal}
             };
         }
+
 
     },
     effects: {
