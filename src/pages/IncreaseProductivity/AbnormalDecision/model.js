@@ -167,13 +167,14 @@ let Model = {
                         equipment: { //设备异常
                             allDesc: ['設備檔機', '保養超時', '低效生產', '安全隱患', '功能缺失', '帶病運行', '其它'],
                             allCategory: ['SMT設備', 'PTH設備', '測試設備', '流水線', 'SFC設備', '公務設備', '其它'],
-                            desc: '設備檔機',  //异常描述
-                            category: 'SMT設備', //异常类别
+                            desc: '',  //异常描述
+                            category: '', //异常类别
                             name: '',  // 设备名称
                             equipmentNumber: '', // 设备编号
                             equipmentModel: '' // 設備型號
                         },
                         material: { //物料异常
+                            allDesc: ['來料短缺', '物料Delay', '錯料', '混料', '物料包裝異常', '特采過期', '包裝信息與實物不符', '有帳無務', '其它'],
                             desc: '', //异常描述
                             partNo: '', //零件料号
                             rejectRatio: '', //不良率
@@ -182,44 +183,62 @@ let Model = {
                             LC: ''
                         },
                         person: { //人员异常
+                            allDesc: ['人力不足', '新人技能不足', '外借人力技能不足', '其它'],
                             desc: '' //异常描述
                         },
                         quality: { //品质异常
+                            allProcess: ['SMT製程不良', 'PTH製程不良', '組裝製程不良', '測試製程不良', '維修製程不良', '壓合製程不良'], //所有制程段
+                            allBadPhenomenon: ['批量損件', '燒機', '批量錯件', '批量少料', '批量反向', '不良率超標', '其它'], //所有不良现象
+                            allScope: ['當前工站', '前置工站', '後續工站'], //所有影响范围
                             process: '', //制程段
-                            BadPhenomenon: '', //不良现象
-                            scope: '', //影响范围
+                            badPhenomenon: '', //不良现象
                             station: '', //发生站位
+                            scope: '', //影响范围
                             measures: '' //当前措施
                         },
                         tools: { //治工具异常
+                            allDesc: ['治工具損壞', '治工具不足', '治工具功能不良', '治工具未點檢', '治工具要求不符', '其它'], //所有异常描述
                             desc: '',   //异常描述
                             skuno: '',  //涉及的产品料号
                             station: '' //使用站位
                         },
                         system: { //系统异常
+                            allCategory: [
+                                '測試系統異常', 'SFC系統異常', '氮氣供應系統異常', '電力系統異常', '壓縮空氣系統異常', '真空供氣系統異常', '冰水供應系統異常',
+                                'ALL Parts系統異常', 'Beacon系統異常', 'Agile系統異常', 'Dom系統異常', 'SAP系統異常', '其它'
+                            ], //所有异常类别
                             category: '', //异常类别
                             desc: '', //異常描述
-                            startTime: '' //異常開始時間
+                            startTime: '2020/11/13 09:20' //異常開始時間
                         }
                     }
                 },
                 countermeasures: { //临时对策
+                    allManpowerArrangement: ['教育訓練', '5S整理', '下早班', 'Sortting', '支援'],
                     lostWorkTime: '', //损失工时
                     idleHuman: '', //闲置人力
-                    manpowerArrangement: '', //闲置人力安排
+                    manpowerArrangement: '支援', //闲置人力安排
                     lostOutput: '', //损失产出
                     lostYield: '', //良率損失
                     measures: '' //臨時解決措施
                 },
                 causeAnalysis: {  // 原因分析(只有填寫原因分析才能申請結案)
-                    chargePerson: '', // 負責人
+                    allChargePerson: ['5DX:李貽剛 (F1304158)', '5DX:羅志濤(F1301571)', '5DX:馮海平(F1219611)', '5DX:區劍(F1331116)', '5DX:陳飛鵬(F1319614)'], // 所有負責人
+                    allSectionManager: ['SMT:劉日紅(F1300825)', 'ME:柳界明(F1313143)', 'PE:梁俏麗(F1313632)', 'PD:張強(F1303904)'], //所有負責人课级
+                    allMinister: ['ME:熊豐(F1300296)', 'RE:洪永祥(F1300147)', 'ME:段杰君(F1301264)'], //所有負責人部级
+                    allSectionChief: ['PIE:劉慶公(100056)'], //所有負責人处级
+                    allNotifier: [
+                        '5DX:李貽剛 (esd-5dx-d10@mail.foxconn.com)', '5DX:羅志濤(zhi-tao.luo@mail.foxconn.com)', '5DX:馮海平(hardy.hp.feng@mail.foxconn.com)',
+                        '5DX:區劍(oden.j.ou@mail.foxconn.com)', '5DX:陳飛鵬(nick.fp.chen@mail.foxconn.com)', 'APP:劉照亮(eason.zl.liu@mail.foxconn.com)'
+                    ], // 所有異常知會人
+                    chargePerson: [], // 負責人
                     sectionManager: [], //負責人课级
                     minister: [], //負責人部级
                     sectionChief: [], //負責人处级
                     notifier: [] // 異常知會人
                 },
                 remarksAndAttachments: {  // 備註與附件
-                    problemStatus: '', // 問題狀態
+                    problemStatus: '等待处理', // 問題狀態
                     remarks: '', // 備註
                     attachments: {} // 附件
                 }
