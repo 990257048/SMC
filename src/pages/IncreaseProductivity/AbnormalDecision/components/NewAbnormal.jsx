@@ -6,7 +6,7 @@ import { connect, FormattedMessage, formatMessage } from 'umi';
 import { Button, Space, Input, Tabs, Steps, message, Popover, Row, Col, Divider, Select, Radio, DatePicker, InputNumber, Tooltip, Upload } from 'antd';
 import { SearchOutlined, PlusOutlined, ProfileOutlined, BarsOutlined, ZoomInOutlined, OrderedListOutlined, UploadOutlined, SaveOutlined, BorderBottomOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { findValueByProp } from '../../../../utils/custom'
+import { findValueByProp, getBase64 } from '../../../../utils/custom'
 import styles from '../style.less';
 
 const { TabPane } = Tabs;
@@ -20,7 +20,11 @@ let NewAbnormalContext = createContext();
 let NewAbnormal = () => {  // 新增异常
     console.log('render NewAbnormal');
     let dispatch = useDispatch();
+    let newAbnormalVisible = useSelector(state => state.AbnormalDecision.anomalousGraph.newAbnormalVisible);
+    let abnormalId = useSelector(state => state.AbnormalDecision.anomalousGraph.newAbnormal.abnormalId);
+
     let [current, setCurrent] = useState(0);
+
     let setpChange = useCallback((step) => {
         setCurrent(step);
     }, []);
@@ -47,6 +51,23 @@ let NewAbnormal = () => {  // 新增异常
         setNewAbnormal(prop, moment.format('YYYY/MM/DD hh:mm'));
     }
 
+
+    //获取新增异常需要的附带信息 getNewAbnormalMsg
+    useMemo(() => {
+        dispatch({
+            type: 'AbnormalDecision/getNewAbnormalMsg'
+        });
+    }, []);
+
+    //生成ID
+    useEffect(() => {
+        if (abnormalId == '' && newAbnormalVisible) {
+            let timeStamp = moment().format('YYYYMMDDhhmmssms');
+            console.log(timeStamp);
+            setNewAbnormal('abnormalId', timeStamp);
+        }
+    }, [abnormalId, newAbnormalVisible]);
+
     // 基本信息 上報機制 問題描述 臨時對策 原因分析 備註與附件
 
     return <div className={styles['modal-wrap']}>
@@ -66,7 +87,7 @@ let NewAbnormal = () => {  // 新增异常
             </Steps>
         </div>
         <div className={styles['new-abnormal-steps-right']}>
-            <NewAbnormalContext.Provider value={{ current, setCurrent, prevStep, nextStep, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment }}>
+            <NewAbnormalContext.Provider value={{ current, setCurrent, prevStep, nextStep, setNewAbnormal, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment }}>
                 <StepContent current={current} />
             </NewAbnormalContext.Provider>
         </div>
@@ -1047,31 +1068,16 @@ let Step6 = props => {
     // remarksAndAttachments: {  // 備註與附件
     //     problemStatus: '', // 問題狀態
     //     remarks: '', // 備註
-    //     attachments: {} // 附件
+    //     attachments: [] // 附件
     // }
-    let { prevStep, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
-    let { problemStatus, remarks } = props.remarksAndAttachments;
+    let { prevStep, setNewAbnormal, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let dispatch = props.dispatch;
+    let { problemStatus, remarks, attachments } = props.remarksAndAttachments;
 
-    let submit = useCallback(() => {
-        console.log("submit");
-    }, []);
-
-    const prop = {
-        name: 'file',
-        action: '../../../../file/',
-        headers: {
-            authorization: 'authorization-text',
-        },
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
-            }
-            if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-            }
-        },
+    let prop = {
+        fileList: attachments.length > 0 ? attachments : null,
+        // action: '/api/xxxx',
+        multiple: true,
         progress: {
             strokeColor: {
                 '0%': '#108ee9',
@@ -1080,7 +1086,30 @@ let Step6 = props => {
             strokeWidth: 3,
             format: percent => `${parseFloat(percent.toFixed(2))}%`,
         },
-    };
+        onChange: info => {  //status变化时执行 fileList内容不是Blob对象，被代理了
+            // console.log(info);
+            let attachments = info.fileList.map(({ name, uid }) => {
+                return { name, uid }
+            });
+            setNewAbnormal('remarksAndAttachments.attachments', attachments);
+        },
+        // beforeUpload: (file, fileList) => {  //上传前执行
+        //     return false;  //阻止上传
+        // },
+        customRequest: (e) => {
+            // console.log(e);
+            dispatch({
+                type: 'AbnormalDecision/uploadFile',
+                file: e.file
+            });
+        }  //覆盖默认上传操作
+    }
+
+    let submit = useCallback(() => {
+        dispatch({
+            type: 'AbnormalDecision/newAbnormal'
+        });
+    }, []);
 
     return <div className={styles['step6']}>
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
@@ -1114,7 +1143,7 @@ let Step6 = props => {
                     <Col span={4} style={{ textAlign: 'center' }}>附件</Col>
                     <Col span={20}>
                         <Upload {...prop}>
-                            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                            <Button size='small' icon={<UploadOutlined />}>Click to Upload</Button>
                         </Upload>
                     </Col>
                 </Row>

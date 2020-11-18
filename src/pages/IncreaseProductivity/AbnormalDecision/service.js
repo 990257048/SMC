@@ -71,7 +71,7 @@ export async function getGraph5 (sendData) {
     });
 }
 
-export async function getTableData (sendData) {
+export async function getTableData (sendData) {   //获取异常列表
     console.log(sendData);
     return requestReal('/api/abnormalDecision/getTable', {
         method: 'GET',
@@ -81,11 +81,37 @@ export async function getTableData (sendData) {
     });
 }
 
-export async function toggerCollect (id) {
+export async function toggerCollect (id) {   //切换收藏操作
     return requestReal('/api/abnormalDecision/toggerCollect', {
         method: 'GET',
         params: {
             id
+        }
+    });
+}
+
+export async function getNewAbnormalMsg (sendData) {   //获取新增异常需要的附带信息
+    return requestReal('/api/abnormalDecision/getNewAbnormalMsg', {
+        method: 'GET',
+        params: {
+            data: sendData
+        }
+    });
+}
+
+export async function uploadFile (sendData) {  //上传文件操作
+    return requestReal('/api/abnormalDecision/uploadFile', {
+        method: 'POST',
+        data: sendData
+    })
+}
+
+export async function newAbnormal (sendData) {   //新增异常操作
+    console.log(sendData);
+    return requestReal('/api/abnormalDecision/newAbnormal', {
+        method: 'GET',
+        params: {
+            data: sendData
         }
     });
 }

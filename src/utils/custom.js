@@ -87,4 +87,23 @@ let retNewStateByProp = (origin, prop, value) => { // origin的prop属性值设�
     return origin;
 }
 
-export {debounce, throttle, deepClone, findValueByProp, retNewStateByProp}
+// let getBase64 = (file, callback) => {
+//     const reader = new FileReader()
+//     reader.addEventListener('load', () => callback(reader.result))
+//     reader.readAsDataURL(file);
+// }
+
+let getBase64 = (file, name, uid) => {
+    return new Promise((res) => {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+            res({
+                base64: reader.result,
+                name, uid
+            });
+        });
+        reader.readAsDataURL(file);
+    });
+}
+
+export {debounce, throttle, deepClone, findValueByProp, retNewStateByProp, getBase64}

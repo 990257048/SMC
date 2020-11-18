@@ -1,7 +1,7 @@
 
-import { getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5, getTableData, toggerCollect } from './service'
+import { getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5, getTableData, toggerCollect, getNewAbnormalMsg, uploadFile, newAbnormal } from './service'
 import { deepClone, retNewStateByProp } from '../../../utils/custom'
-import { graph1SendData, graph23SendData, graph4SendData, graph5SendData, filterData } from './utils'
+import { graph1SendData, graph23SendData, graph4SendData, graph5SendData, newAbnormalSendData, newAbnormal_empty, filterData, combineData } from './utils'
 import { message } from 'antd'
 import moment from 'moment'
 
@@ -129,6 +129,7 @@ let Model = {
             },
             newAbnormal: {  // 新增异常 状态
                 // visible: false,  // 新增异常对话框是否显示
+                abnormalId: '',   //异常ID
                 type: '异常', // 通知单类型  异常 | 停线
                 emergencyDegree: '一般', // 紧急程度  一般 | 紧急
                 baseMsg: { //基本信息
@@ -159,7 +160,7 @@ let Model = {
                 },
                 problem: { //問題描述
                     allHandler: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],
-                    handler: ['梁俏麗(F1313632)', '李濤(F1302833)'],  //異常處理人
+                    handler: [],  //異常處理人
                     noticeTime: '2020/11/12 18:19', //異常通知時間
                     emailTitle: '', // 郵件標題
                     abnormalClassify: {   //按异常分类
@@ -240,7 +241,7 @@ let Model = {
                 remarksAndAttachments: {  // 備註與附件
                     problemStatus: '等待处理', // 問題狀態
                     remarks: '', // 備註
-                    attachments: {} // 附件
+                    attachments: [] // 附件
                 }
             },
             graphData: {
@@ -380,7 +381,7 @@ let Model = {
                 remarksAndAttachments: {  // 備註與附件
                     problemStatus: '', // 問題狀態
                     remarks: '', // 備註
-                    attachments: {} // 附件
+                    attachments: [] // 附件
                 }
             }
         },
@@ -434,13 +435,13 @@ let Model = {
         },
         //-----------------------------------------------------------------------------------------------------------------------------------------
         // 新增异常 维护异常 (尝试用新的方式改变状态，不用payload, 太麻烦) retNewState：fn, 用于返回新的状态，返回的状态直接作为改变后的状态来更新状态，重要！*****
-        // setNewAbnormal: (state, { retNewState }) => { //设置新增异常的状态
-        //     let newState = deepClone(state);
-        //     let newAbnormal = retNewState(newState.anomalousGraph.newAbnormal);
-        //     return {
-        //         ...state, anomalousGraph: {...state.anomalousGraph, newAbnormal}
-        //     };
-        // },
+        setNewAbnormalByFn: (state, { retNewState }) => { //设置新增异常的状态
+            let newState = deepClone(state);
+            let newAbnormal = retNewState(newState.anomalousGraph.newAbnormal);
+            return {
+                ...state, anomalousGraph: {...state.anomalousGraph, newAbnormal}
+            };
+        },
         setNewAbnormalByProp: (state, { prop, value }) => {  //设置新增异常的状态, 更簡單好用（適合修改超級複雜（多層級）的狀態）
             let newState = deepClone(state);
             let newAbnormal = retNewStateByProp(newState.anomalousGraph.newAbnormal, prop, value); 
@@ -679,7 +680,66 @@ let Model = {
             } else {
                 message.error(Mesage)
             }
+        },
+        *getNewAbnormalMsg(_, {select, call, put}) {    //获取新增异常需要的附带信息
+            // select...
+            // let newAbnormal = yield select(state => state.AbnormalDecision.anomalousGraph.newAbnormal);
+            let {Status, Message, Data} = yield call(getNewAbnormalMsg);   //后台需要的数据未定
+            if(Status == 'Pass'){
+                yield put({
+                    type: 'setNewAbnormalByFn',
+                    retNewState: state => combineData(state, Data)
+                });
+                message.success(Message);
+            }
+        },
 
+        *uploadFile({ file }, {select, put, call}) {   // 上传文件操作
+            let {abnormalId, remarksAndAttachments: {attachments}} = yield select(state => state.AbnormalDecision.anomalousGraph.newAbnormal);
+            let formData = new FormData();
+            formData.append('file', file);
+            formData.append('abnormalId', abnormalId);
+            let {Status, Message} = yield call(uploadFile, formData);
+            if(Status == 'Pass'){
+                // console.log(attachments, file, formData);
+                put({
+                    type: 'setNewAbnormalByFn',
+                    retNewState: state => {
+                        state.remarksAndAttachments.attachments.forEach(f => {
+                            if(f.uid == file.uid){
+                                f.status = 'done'
+                            }
+                        })
+                        return state;
+                    }
+                })
+                message.success(Message);
+            }
+        },
+        *newAbnormal(_, {select, put, call}) {    //新增异常操作
+            // select ....
+            let newAbnormalState = yield select(state => state.AbnormalDecision.anomalousGraph.newAbnormal);
+            let sendData = filterData(newAbnormalState, newAbnormalSendData);
+            let {Status, Message, Data} = yield call(newAbnormal, sendData);
+            if(Status == 'Pass'){
+                yield put({   //关掉对话框
+                    type: 'setNewAbnormalVisible',
+                    newAbnormalVisible: false
+                });
+                yield put({   //清除新增异常信息
+                    type: 'clearNewAbnormalData'
+                })
+                yield put({   //重新获取异常列表
+                    type: 'getTableData'
+                });
+                message.success(Message);
+            }
+        },
+        *clearNewAbnormalData(_, {select, put, call}) {   //清空新增异常的状态(关闭弹出框时; 提交数据后;)
+            yield put({
+                type: 'setNewAbnormalByFn',
+                retNewState: state => combineData(state, newAbnormal_empty)
+            })
         }
     }
 }

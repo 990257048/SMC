@@ -246,9 +246,17 @@ let ExceptionList = props => {
 
 
     let cancel1 = useCallback(() => {
-        dispatch({
+        dispatch({   //关掉对话框
             type: 'AbnormalDecision/setNewAbnormalVisible',
             newAbnormalVisible: false
+        });
+        // dispatch({   //清除ID
+        //     type: 'AbnormalDecision/setNewAbnormalByProp',
+        //     prop: 'abnormalId',
+        //     value: ''
+        // });
+        dispatch({   //清除新增异常信息
+            type: 'AbnormalDecision/clearNewAbnormalData'
         })
     }, []);
 
