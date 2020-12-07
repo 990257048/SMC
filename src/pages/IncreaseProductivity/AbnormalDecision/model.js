@@ -129,8 +129,7 @@ let Model = {
                 }
             },
             newAbnormal: {  // 新增异常 状态
-                // visible: false,  // 新增异常对话框是否显示
-                abnormalId: '',   //异常ID
+                // abnormalId: '',   //异常ID (可以不用了)
                 type: '异常', // 通知单类型  异常 | 停线
                 emergencyDegree: '一般', // 紧急程度  一般 | 紧急
                 baseMsg: { //基本信息
@@ -242,7 +241,9 @@ let Model = {
                 remarksAndAttachments: {  // 備註與附件
                     problemStatus: '等待处理', // 問題狀態
                     remarks: '', // 備註
-                    attachments: [] // 附件
+                    attachments: [],
+                    // attachmentsName: [], //组件显示已选择的附件
+                    // attachmentsFile: [], //文件内容（File对象）
                 }
             },
             graphData: {
@@ -301,6 +302,7 @@ let Model = {
             modalVisible: false
         },
         // ---------------------------------------------------------------------------------------------------------------------------------------------
+        
         abnormalMaintenance: {  // 异常维护 状态
             type: '异常', // 通知单类型  异常 | 停线
             emergencyDegree: '一般', // 紧急程度  一般 | 紧急
@@ -409,6 +411,7 @@ let Model = {
                 minister: [], //負責人部级
                 sectionChief: [], //負責人处级
                 notifier: [], // 異常知會人
+                
                 //异常维护里面特有的***原因分析模块**********************************************************************************************
                 cause: {
                     allCause: ['parson', 'equipment', 'material', 'function', 'annulus', 'detection'],  //涉及的所有原因
@@ -461,6 +464,7 @@ let Model = {
                         result: '' // 測試結果
                     }
                 }
+                
                 // ***********************************************************************************************************************
             },
             remarksAndAttachments: {  // 備註與附件
@@ -521,23 +525,32 @@ let Model = {
             }
         },
         //-----------------------------------------------------------------------------------------------------------------------------------------
-        // 新增异常 维护异常 (尝试用新的方式改变状态，不用payload, 太麻烦) retNewState：fn, 用于返回新的状态，返回的状态直接作为改变后的状态来更新状态，重要！*****
+        // 新增异常 维护异常 (尝试用新的方式改变状态，不用传统办法, 太麻烦) retNewState：fn, 用于返回新的状态，返回的状态直接作为改变后的状态来更新状态，重要！*****
         setNewAbnormalByFn: (state, { retNewState }) => { //设置新增异常的状态
-            let newState = deepClone(state);
-            let newAbnormal = retNewState(newState.anomalousGraph.newAbnormal);
+            let newAbnormal = deepClone(state.anomalousGraph.newAbnormal);
+            newAbnormal = retNewState(newAbnormal);
             return {
                 ...state, anomalousGraph: {...state.anomalousGraph, newAbnormal}
             };
         },
         setNewAbnormalByProp: (state, { prop, value }) => {  //设置新增异常的状态, 更簡單好用（適合修改超級複雜（多層級）的狀態）
-            let newState = deepClone(state);
-            let newAbnormal = retNewStateByProp(newState.anomalousGraph.newAbnormal, prop, value); 
+            let newAbnormal = deepClone(state.anomalousGraph.newAbnormal);
+            newAbnormal = retNewStateByProp(newAbnormal, prop, value); 
             return {
                 ...state, anomalousGraph: {...state.anomalousGraph, newAbnormal}
             };
+        },
+        // 异常维护（修改）
+        setAbnormalMaintenanceByFn: (state, {retNewState}) => {  //设置异常维护的状态, 用回调函数改变状态
+            let abnormalMaintenance = deepClone(state.abnormalMaintenance);
+            abnormalMaintenance = retNewState(abnormalMaintenance);
+            return { ...state, abnormalMaintenance }
+        },
+        setAbnormalMaintenanceByProp: (state, {prop, value}) => {  //设置异常维护的状态，用prop字符串
+            let abnormalMaintenance = deepClone(state.abnormalMaintenance);
+            abnormalMaintenance = retNewStateByProp(abnormalMaintenance, prop, value);
+            return { ...state, abnormalMaintenance}
         }
-
-
     },
     effects: {
         *getAllMfg(_, { call, put, select }) {
@@ -781,32 +794,45 @@ let Model = {
             }
         },
 
-        *uploadFile({ file }, {select, put, call}) {   // 上传文件操作
-            let {abnormalId, remarksAndAttachments: {attachments}} = yield select(state => state.AbnormalDecision.anomalousGraph.newAbnormal);
-            let formData = new FormData();
-            formData.append('file', file);
-            formData.append('abnormalId', abnormalId);
-            let {Status, Message} = yield call(uploadFile, formData);
-            if(Status == 'Pass'){
-                // console.log(attachments, file, formData);
-                put({
-                    type: 'setNewAbnormalByFn',
-                    retNewState: state => {
-                        state.remarksAndAttachments.attachments.forEach(f => {
-                            if(f.uid == file.uid){
-                                f.status = 'done'
-                            }
-                        })
-                        return state;
-                    }
-                })
-                message.success(Message);
-            }
-        },
+        // *uploadFile({ file }, {select, put, call}) {   // 上传文件操作--不好用
+        //     let {abnormalId, remarksAndAttachments: {attachments}} = yield select(state => state.AbnormalDecision.anomalousGraph.newAbnormal);
+        //     let formData = new FormData();
+        //     formData.append('file', file);
+        //     formData.append('abnormalId', abnormalId);
+        //     let {Status, Message} = yield call(uploadFile, formData);
+        //     if(Status == 'Pass'){
+        //         // console.log(attachments, file, formData);
+        //         yield put({
+        //             type: 'setNewAbnormalByFn',
+        //             retNewState: state => {
+        //                 state.remarksAndAttachments.attachments.forEach(f => {
+        //                     if(f.uid == file.uid){
+        //                         f.status = 'done'
+        //                     }
+        //                 })
+        //                 return state;
+        //             }
+        //         })
+        //         message.success(Message);
+        //     }
+        // },
         *newAbnormal(_, {select, put, call}) {    //新增异常操作
             // select ....
             let newAbnormalState = yield select(state => state.AbnormalDecision.anomalousGraph.newAbnormal);
-            let sendData = filterData(newAbnormalState, newAbnormalSendData);
+            // let sendData = filterData(newAbnormalState, newAbnormalSendData);
+            // // 加上文件
+            // sendData.remarksAndAttachments.attachments = newAbnormalState.remarksAndAttachments.attachments.map(file => {
+            //     let formData = new FormData();
+            //     formData.append('file', file);
+            //     return formData;
+            // });
+            let data = filterData(newAbnormalState, newAbnormalSendData);
+            let sendData = new FormData();
+            newAbnormalState.remarksAndAttachments.attachments.forEach(file => {
+                sendData.append(file.name, file);
+            });
+            sendData.append('data', JSON.stringify(data));
+
             let {Status, Message, Data} = yield call(newAbnormal, sendData);
             if(Status == 'Pass'){
                 yield put({   //关掉对话框

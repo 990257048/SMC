@@ -160,7 +160,7 @@ let Tab1 = props => {   // 异常状态
         activeKey === 'tab1' && globalSearch.MFG && dispatch({  // tab,条件发生变化时 1.当前在tab1 2.全局条件必须有，再去拿数据
             type: 'AbnormalDecision/getGraph1'
         });
-    }, [activeKey, globalSearch, quickSearch, advancedSearch]);
+    }, [activeKey, globalSearch, quickSearch, advancedSearch]);  // BUG：advancedSearch上存在个别状态发生变化时，也不需要重新请求数据
 
     useEffect(() => {   // 设置宽度
         isReady && activeKey === 'tab1' && setW(graph1.current.clientWidth);   // 未准备好就没有graph1.current.clientWidth, 会报错

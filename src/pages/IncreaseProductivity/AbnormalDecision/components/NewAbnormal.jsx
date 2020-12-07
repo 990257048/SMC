@@ -59,14 +59,14 @@ let NewAbnormal = () => {  // 新增异常
         });
     }, []);
 
-    //生成ID
-    useEffect(() => {
-        if (abnormalId == '' && newAbnormalVisible) {
-            let timeStamp = moment().format('YYYYMMDDhhmmssms');
-            console.log(timeStamp);
-            setNewAbnormal('abnormalId', timeStamp);
-        }
-    }, [abnormalId, newAbnormalVisible]);
+    //生成ID（可以不用了，批量上传文件问题已经解决！）
+    // useEffect(() => {
+    //     if (abnormalId == '' && newAbnormalVisible) {
+    //         let timeStamp = moment().format('YYYYMMDDhhmmssms');
+    //         console.log(timeStamp);
+    //         setNewAbnormal('abnormalId', timeStamp);
+    //     }
+    // }, [abnormalId, newAbnormalVisible]);
 
     // 基本信息 上報機制 問題描述 臨時對策 原因分析 備註與附件
 
@@ -296,10 +296,11 @@ let Step2 = props => {
 
     return <div className={styles['step2']}>
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
-            <Col span={8}>
+            <Col span={24}>
                 <Row>
-                    <Col span={10} style={{ textAlign: 'center' }}>課級（>30m）</Col>
-                    <Col span={14}>
+                    <Col span={4}></Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>課級（>30m）</Col>
+                    <Col span={10}>
                         <Select className={styles.w100} value={sectionManager} onChange={retSetNewAbnormalByPlaneObj('report.sectionManager', '')}>
                             {
                                 allSectionManager.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -308,10 +309,11 @@ let Step2 = props => {
                     </Col>
                 </Row>
             </Col>
-            <Col span={8}>
+            <Col span={24}>
                 <Row>
-                    <Col span={10} style={{ textAlign: 'center' }}>部級（0.5~1h）</Col>
-                    <Col span={14}>
+                    <Col span={4}></Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>部級（0.5~1h）</Col>
+                    <Col span={10}>
                         <Select className={styles.w100} value={minister} onChange={retSetNewAbnormalByPlaneObj('report.minister', '')}>
                             {
                                 allMinister.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -320,10 +322,11 @@ let Step2 = props => {
                     </Col>
                 </Row>
             </Col>
-            <Col span={8}>
+            <Col span={24}>
                 <Row>
-                    <Col span={10} style={{ textAlign: 'center' }}>處級（>1h）</Col>
-                    <Col span={14}>
+                    <Col span={4}></Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>處級（>1h）</Col>
+                    <Col span={10}>
                         <Select className={styles.w100} value={sectionChief} onChange={retSetNewAbnormalByPlaneObj('report.sectionChief', '')}>
                             {
                                 allSectionChief.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -358,7 +361,7 @@ let Step3 = props => {
     let { currentClassify, allHandler, handler, noticeTime, emailTitle } = props;
 
     return <div className={styles['step3']}>
-        <Row gutter={[0, 16]} justify="center" style={{ marginTop: '20px' }}>
+        <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={16}>
                 <Row>
                     <Col span={6} style={{ textAlign: 'right', paddingRight: '15px' }}>異常處理人</Col>
@@ -382,7 +385,7 @@ let Step3 = props => {
                 </Row>
             </Col>
         </Row>
-        <Row gutter={[0, 16]} justify="center">
+        <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
                     <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>郵件標題</Col>
@@ -392,7 +395,7 @@ let Step3 = props => {
                 </Row>
             </Col>
         </Row>
-        <Row gutter={[0, 16]} justify="center">
+        <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
                     <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>問題分類</Col>
@@ -982,10 +985,10 @@ let Step5 = props => {
     } = props.causeAnalysis;
     return <div className={styles['step5']}>
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
-            <Col span={18}>
+            <Col span={24}>
                 <Row>
                     <Col span={4} style={{ textAlign: 'center' }}>責任人</Col>
-                    <Col span={20}>
+                    <Col span={10}>
                         <Select mode="multiple" className={styles.w100} showArrow value={chargePerson}
                             options={allChargePerson.map(v => ({ value: v }))}
                             onChange={retSetNewAbnormalByPlaneObj('causeAnalysis.chargePerson', '')}
@@ -995,11 +998,11 @@ let Step5 = props => {
             </Col>
         </Row>
 
-        <Row gutter={[0, 12]} justify="center">
-            <Col span={9}>
+        <Row gutter={[0, 24]} justify="center">
+            <Col span={24}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>責任人課級(>3d)</Col>
-                    <Col span={16}>
+                    <Col span={4} style={{ textAlign: 'center' }}>責任人課級(>3d)</Col>
+                    <Col span={10}>
                         <Select mode="multiple" className={styles.w100} showArrow value={sectionManager}
                             options={allSectionManager.map(v => ({ value: v }))}
                             onChange={retSetNewAbnormalByPlaneObj('causeAnalysis.sectionManager', '')}
@@ -1007,10 +1010,10 @@ let Step5 = props => {
                     </Col>
                 </Row>
             </Col>
-            <Col span={9}>
+            <Col span={24}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>責任人部級(>5d)</Col>
-                    <Col span={16}>
+                    <Col span={4} style={{ textAlign: 'center' }}>責任人部級(>5d)</Col>
+                    <Col span={10}>
                         <Select mode="multiple" className={styles.w100} showArrow value={minister}
                             options={allMinister.map(v => ({ value: v }))}
                             onChange={retSetNewAbnormalByPlaneObj('causeAnalysis.minister', '')}
@@ -1020,11 +1023,11 @@ let Step5 = props => {
             </Col>
         </Row>
 
-        <Row gutter={[0, 12]} justify="center">
-            <Col span={9}>
+        <Row gutter={[0, 24]} justify="center">
+            <Col span={24}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>責任人處級(>10d)</Col>
-                    <Col span={16}>
+                    <Col span={4} style={{ textAlign: 'center' }}>責任人處級(>10d)</Col>
+                    <Col span={10}>
                         <Select mode="multiple" className={styles.w100} showArrow value={sectionChief}
                             options={allSectionChief.map(v => ({ value: v }))}
                             onChange={retSetNewAbnormalByPlaneObj('causeAnalysis.sectionChief', '')}
@@ -1032,13 +1035,12 @@ let Step5 = props => {
                     </Col>
                 </Row>
             </Col>
-            <Col span={9}></Col>
         </Row>
         <Row gutter={[0, 24]} justify="center">
-            <Col span={18}>
+            <Col span={24}>
                 <Row>
                     <Col span={4} style={{ textAlign: 'center' }}>異常知會人</Col>
-                    <Col span={20}>
+                    <Col span={19}>
                         <Select mode="multiple" className={styles.w100} showArrow value={notifier}
                             options={allNotifier.map(v => ({ value: v }))}
                             onChange={retSetNewAbnormalByPlaneObj('causeAnalysis.notifier', '')}
@@ -1073,7 +1075,7 @@ let Step6 = props => {
     let { prevStep, setNewAbnormal, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
     let dispatch = props.dispatch;
     let { problemStatus, remarks, attachments } = props.remarksAndAttachments;
-
+    // console.log(attachments);
     let prop = {
         fileList: attachments.length > 0 ? attachments : null,
         // action: '/api/xxxx',
@@ -1087,22 +1089,35 @@ let Step6 = props => {
             format: percent => `${parseFloat(percent.toFixed(2))}%`,
         },
         onChange: info => {  //status变化时执行 fileList内容不是Blob对象，被代理了
-            // console.log(info);
-            let attachments = info.fileList.map(({ name, uid }) => {
-                return { name, uid }
-            });
-            setNewAbnormal('remarksAndAttachments.attachments', attachments);
+            // console.log(info);  // file: {status}, fileList
+            if (info.file.status == "removed") {  //已删除
+                dispatch({
+                    type: 'AbnormalDecision/setNewAbnormalByFn',
+                    retNewState: state => {
+                        state.remarksAndAttachments.attachments = state.remarksAndAttachments.attachments.filter(_f => _f.uid != info.file.uid);
+                        return state;
+                    }
+                });
+            } else { //新增
+                attachments.filter(_f => _f.name == info.file.name).length == 0 && dispatch({
+                    type: 'AbnormalDecision/setNewAbnormalByFn',
+                    retNewState: state => {
+                        state.remarksAndAttachments.attachments.push(info.file);
+                        return state;
+                    }
+                });
+            }
         },
-        // beforeUpload: (file, fileList) => {  //上传前执行
-        //     return false;  //阻止上传
-        // },
-        customRequest: (e) => {
-            // console.log(e);
-            dispatch({
-                type: 'AbnormalDecision/uploadFile',
-                file: e.file
-            });
-        }  //覆盖默认上传操作
+        beforeUpload: (file, fileList) => {  //上传前执行
+            return false;  //阻止上传
+        },
+        // customRequest: (e) => {
+        //     // console.log(e);
+        //     dispatch({
+        //         type: 'AbnormalDecision/uploadFile',
+        //         file: e.file
+        //     });
+        // }  //覆盖默认上传操作
     }
 
     let submit = useCallback(() => {

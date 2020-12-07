@@ -3,8 +3,8 @@ import React, { memo, createContext, useState, useEffect, useMemo, useCallback, 
 // import { useSelector, useDispatch } from 'react-redux';
 import { useDispatch, useSelector } from 'dva';
 import { connect, FormattedMessage, formatMessage } from 'umi';
-import { Button, Space, Input, Tabs, Steps, message, Popover, Row, Col, Divider, Select, Radio, DatePicker, InputNumber, Tooltip, Upload } from 'antd';
-import { SearchOutlined, PlusOutlined, ProfileOutlined, BarsOutlined, ZoomInOutlined, OrderedListOutlined, UploadOutlined, SaveOutlined, BorderBottomOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { Button, Space, Input, Tabs, Steps, message, Checkbox, Popover, Row, Col, Divider, Select, Radio, DatePicker, InputNumber, Tooltip, Upload } from 'antd';
+import { SearchOutlined, PlusOutlined, ProfileOutlined, BarsOutlined, ZoomInOutlined, OrderedListOutlined, CheckOutlined, UploadOutlined, SaveOutlined, BorderBottomOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { findValueByProp, getBase64 } from '../../../../utils/custom'
 import styles from '../style.less';
@@ -13,15 +13,13 @@ const { TabPane } = Tabs;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
-const { Step } = Steps
+const { Step } = Steps;
 
-let NewAbnormalContext = createContext();
+let EditAbnormalContext = createContext();
 
-let ModalWrap = () => {  // 新增异常
-    console.log('render NewAbnormal');
+let EditAbnormal = () => {  // 修改异常
+    console.log('render EditAbnormal');
     let dispatch = useDispatch();
-    let newAbnormalVisible = useSelector(state => state.AbnormalDecision.anomalousGraph.newAbnormalVisible);
-    let abnormalId = useSelector(state => state.AbnormalDecision.anomalousGraph.newAbnormal.abnormalId);
 
     let [current, setCurrent] = useState(0);
 
@@ -36,46 +34,31 @@ let ModalWrap = () => {  // 新增异常
         setCurrent(current + 1);
     }, [current]);
 
-    let setNewAbnormal = useCallback((prop, value) => {  //設置本模塊數據
+    let setEditAbnormal = useCallback((prop, value) => {  //設置本模塊數據
         dispatch({
-            type: 'AbnormalDecision/setNewAbnormalByProp',
+            type: 'AbnormalDecision/setAbnormalMaintenanceByProp',
             prop, value
         });
     }, []);
 
-    let retSetNewAbnormalByPlaneObj = (stateProp, eProp) => e => {   //平面Obj
-        setNewAbnormal(stateProp, findValueByProp(e, eProp));
+    let retSetEditAbnormalByPlaneObj = (stateProp, eProp) => e => {   //平面Obj
+        setEditAbnormal(stateProp, findValueByProp(e, eProp));
     }
 
-    let retSetNewAbnormalByMoment = prop => moment => {
-        setNewAbnormal(prop, moment.format('YYYY/MM/DD hh:mm'));
+    let retSetEditAbnormalByMoment = prop => moment => {
+        setEditAbnormal(prop, moment.format('YYYY/MM/DD hh:mm'));
     }
-
 
     //获取新增异常需要的附带信息 getNewAbnormalMsg
-    useMemo(() => {
-        dispatch({
-            type: 'AbnormalDecision/getNewAbnormalMsg'
-        });
-    }, []);
-
-    //生成ID
-    useEffect(() => {
-        if (abnormalId == '' && newAbnormalVisible) {
-            let timeStamp = moment().format('YYYYMMDDhhmmssms');
-            console.log(timeStamp);
-            setNewAbnormal('abnormalId', timeStamp);
-        }
-    }, [abnormalId, newAbnormalVisible]);
-
+    // useMemo(() => {
+    //     dispatch({
+    //         type: 'AbnormalDecision/getNewAbnormalMsg'
+    //     });
+    // }, []);
     // 基本信息 上報機制 問題描述 臨時對策 原因分析 備註與附件
 
     return <div className={styles['modal-wrap']}>
-        {/* direction="vertical" */}
         <div className={styles['new-abnormal-steps']}>
-            {/* <div style={{ padding: '0 0 15px 15px' }}>
-                <h4><b><OrderedListOutlined />  新增异常</b> </h4>
-            </div> */}
             <p></p>
             <Steps size='small' current={current} direction="vertical" onChange={setpChange}>
                 <Step title="基本信息"></Step>
@@ -87,14 +70,14 @@ let ModalWrap = () => {  // 新增异常
             </Steps>
         </div>
         <div className={styles['new-abnormal-steps-right']}>
-            <NewAbnormalContext.Provider value={{ current, setCurrent, prevStep, nextStep, setNewAbnormal, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment }}>
+            <EditAbnormalContext.Provider value={{ current, setCurrent, prevStep, nextStep, setEditAbnormal, retSetEditAbnormalByPlaneObj, retSetEditAbnormalByMoment }}>
                 <StepContent current={current} />
-            </NewAbnormalContext.Provider>
+            </EditAbnormalContext.Provider>
         </div>
     </div>
 }
 
-export default ModalWrap;
+export default EditAbnormal;
 
 
 //====================================================================================================================================
@@ -121,7 +104,7 @@ let StepContent = ({ current }) => {
 // ==================================================================================================================================
 
 let Step1 = props => {
-    let { nextStep, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment } = useContext(NewAbnormalContext);
+    let { nextStep, retSetEditAbnormalByPlaneObj, retSetEditAbnormalByMoment } = useContext(EditAbnormalContext);
     let { type, emergencyDegree, baseMsg } = props;
     let {
         allAbnormalClass, allBU, allRegion, allStage,
@@ -134,13 +117,13 @@ let Step1 = props => {
             <h3><b>NSDI 【通知单】</b></h3>
             <Space size="middle">
                 <b>类型：</b>
-                <Radio.Group value={type} onChange={retSetNewAbnormalByPlaneObj('type', 'target.value')}>
+                <Radio.Group value={type} onChange={retSetEditAbnormalByPlaneObj('type', 'target.value')}>
                     <Radio value="异常"> 异常 </Radio>
                     <Radio value="停线"> 停线 </Radio>
                 </Radio.Group>
                 <span>  </span>
                 <b>紧急程度：</b>
-                <Radio.Group value={emergencyDegree} onChange={retSetNewAbnormalByPlaneObj('emergencyDegree', 'target.value')}>
+                <Radio.Group value={emergencyDegree} onChange={retSetEditAbnormalByPlaneObj('emergencyDegree', 'target.value')}>
                     <Radio value="正常"> 正常 </Radio>
                     <Radio value="紧急"> 紧急 </Radio>
                 </Radio.Group>
@@ -173,7 +156,7 @@ let Step1 = props => {
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常時間</Col>
                     <Col span={15}>
-                        <DatePicker className={styles.w100} onChange={retSetNewAbnormalByMoment('baseMsg.abnormalTime')}
+                        <DatePicker className={styles.w100} onChange={retSetEditAbnormalByMoment('baseMsg.abnormalTime')}
                             value={moment(abnormalTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
                         />
                     </Col>
@@ -183,7 +166,7 @@ let Step1 = props => {
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常班別</Col>
                     <Col span={15}>
-                        <Select className={styles.w100} value={abnormalClass} onChange={retSetNewAbnormalByPlaneObj('baseMsg.abnormalClass', '')}>
+                        <Select className={styles.w100} value={abnormalClass} onChange={retSetEditAbnormalByPlaneObj('baseMsg.abnormalClass', '')}>
                             {
                                 allAbnormalClass.map(v => <Option key={v} value={v} >{v}</Option>)
                             }
@@ -195,7 +178,7 @@ let Step1 = props => {
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常BU</Col>
                     <Col span={15}>
-                        <Select className={styles.w100} value={BU} onChange={retSetNewAbnormalByPlaneObj('baseMsg.BU', '')}>
+                        <Select className={styles.w100} value={BU} onChange={retSetEditAbnormalByPlaneObj('baseMsg.BU', '')}>
                             {
                                 allBU.map(v => <Option key={v} value={v} >{v}</Option>)
                             }
@@ -210,7 +193,7 @@ let Step1 = props => {
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常區域</Col>
                     <Col span={15}>
-                        <Select className={styles.w100} value={region} onChange={retSetNewAbnormalByPlaneObj('baseMsg.region', '')}>
+                        <Select className={styles.w100} value={region} onChange={retSetEditAbnormalByPlaneObj('baseMsg.region', '')}>
                             {
                                 allRegion.map(v => <Option key={v} value={v} >{v}</Option>)
                             }
@@ -221,13 +204,13 @@ let Step1 = props => {
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常工站</Col>
-                    <Col span={15}><Input value={station} onChange={retSetNewAbnormalByPlaneObj('baseMsg.station', 'target.value')} /></Col>
+                    <Col span={15}><Input value={station} onChange={retSetEditAbnormalByPlaneObj('baseMsg.station', 'target.value')} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>機種名稱</Col>
-                    <Col span={15}><Input value={skuName} onChange={retSetNewAbnormalByPlaneObj('baseMsg.skuName', 'target.value')} /></Col>
+                    <Col span={15}><Input value={skuName} onChange={retSetEditAbnormalByPlaneObj('baseMsg.skuName', 'target.value')} /></Col>
                 </Row>
             </Col>
         </Row>
@@ -236,20 +219,20 @@ let Step1 = props => {
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>機種料號</Col>
-                    <Col span={15}><Input value={skuno} onChange={retSetNewAbnormalByPlaneObj('baseMsg.skuno', 'target.value')} /></Col>
+                    <Col span={15}><Input value={skuno} onChange={retSetEditAbnormalByPlaneObj('baseMsg.skuno', 'target.value')} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>工單編號</Col>
-                    <Col span={15}><Input value={WO} onChange={retSetNewAbnormalByPlaneObj('baseMsg.WO', 'target.value')} /></Col>
+                    <Col span={15}><Input value={WO} onChange={retSetEditAbnormalByPlaneObj('baseMsg.WO', 'target.value')} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>產品階段</Col>
                     <Col span={15}>
-                        <Select className={styles.w100} value={stage} onChange={retSetNewAbnormalByPlaneObj('baseMsg.stage', '')}>
+                        <Select className={styles.w100} value={stage} onChange={retSetEditAbnormalByPlaneObj('baseMsg.stage', '')}>
                             {
                                 allStage.map(v => <Option key={v} value={v} >{v}</Option>)
                             }
@@ -271,9 +254,9 @@ let Step1 = props => {
 
 Step1 = connect(state => {
     return {
-        type: state.AbnormalDecision.anomalousGraph.newAbnormal.type,
-        emergencyDegree: state.AbnormalDecision.anomalousGraph.newAbnormal.emergencyDegree,
-        baseMsg: state.AbnormalDecision.anomalousGraph.newAbnormal.baseMsg
+        type: state.AbnormalDecision.abnormalMaintenance.type,
+        emergencyDegree: state.AbnormalDecision.abnormalMaintenance.emergencyDegree,
+        baseMsg: state.AbnormalDecision.abnormalMaintenance.baseMsg
     }
 })(Step1)
 
@@ -287,7 +270,7 @@ let Step2 = props => {
     //                 sectionManager: '', //课级
     //                 minister: '', //部级
     //                 sectionChief: '', //处级
-    let { prevStep, nextStep, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { prevStep, nextStep, retSetEditAbnormalByPlaneObj } = useContext(EditAbnormalContext);
 
     let {
         allSectionManager, allMinister, allSectionChief,
@@ -296,11 +279,12 @@ let Step2 = props => {
 
     return <div className={styles['step2']}>
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
-            <Col span={8}>
+            <Col span={24}>
                 <Row>
-                    <Col span={10} style={{ textAlign: 'center' }}>課級（>30m）</Col>
-                    <Col span={14}>
-                        <Select className={styles.w100} value={sectionManager} onChange={retSetNewAbnormalByPlaneObj('report.sectionManager', '')}>
+                    <Col span={4}></Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>課級（>30m）</Col>
+                    <Col span={10}>
+                        <Select className={styles.w100} value={sectionManager} onChange={retSetEditAbnormalByPlaneObj('report.sectionManager', '')}>
                             {
                                 allSectionManager.map(v => <Option key={v} value={v} >{v}</Option>)
                             }
@@ -308,11 +292,12 @@ let Step2 = props => {
                     </Col>
                 </Row>
             </Col>
-            <Col span={8}>
+            <Col span={24}>
                 <Row>
-                    <Col span={10} style={{ textAlign: 'center' }}>部級（0.5~1h）</Col>
-                    <Col span={14}>
-                        <Select className={styles.w100} value={minister} onChange={retSetNewAbnormalByPlaneObj('report.minister', '')}>
+                    <Col span={4}></Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>部級（0.5~1h）</Col>
+                    <Col span={10}>
+                        <Select className={styles.w100} value={minister} onChange={retSetEditAbnormalByPlaneObj('report.minister', '')}>
                             {
                                 allMinister.map(v => <Option key={v} value={v} >{v}</Option>)
                             }
@@ -320,11 +305,12 @@ let Step2 = props => {
                     </Col>
                 </Row>
             </Col>
-            <Col span={8}>
+            <Col span={24}>
                 <Row>
-                    <Col span={10} style={{ textAlign: 'center' }}>處級（>1h）</Col>
-                    <Col span={14}>
-                        <Select className={styles.w100} value={sectionChief} onChange={retSetNewAbnormalByPlaneObj('report.sectionChief', '')}>
+                    <Col span={4}></Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>處級（>1h）</Col>
+                    <Col span={10}>
+                        <Select className={styles.w100} value={sectionChief} onChange={retSetEditAbnormalByPlaneObj('report.sectionChief', '')}>
                             {
                                 allSectionChief.map(v => <Option key={v} value={v} >{v}</Option>)
                             }
@@ -347,25 +333,25 @@ let Step2 = props => {
 
 Step2 = connect(state => {
     return {
-        report: state.AbnormalDecision.anomalousGraph.newAbnormal.report
+        report: state.AbnormalDecision.abnormalMaintenance.report
     }
 })(Step2);
 
 
 
 let Step3 = props => {
-    let { prevStep, nextStep, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment } = useContext(NewAbnormalContext);
+    let { prevStep, nextStep, retSetEditAbnormalByPlaneObj, retSetEditAbnormalByMoment } = useContext(EditAbnormalContext);
     let { currentClassify, allHandler, handler, noticeTime, emailTitle } = props;
 
     return <div className={styles['step3']}>
-        <Row gutter={[0, 16]} justify="center" style={{ marginTop: '20px' }}>
+        <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={16}>
                 <Row>
                     <Col span={6} style={{ textAlign: 'right', paddingRight: '15px' }}>異常處理人</Col>
                     <Col span={18}>
                         {/* 多选 */}
                         <Select mode="multiple" className={styles.w100} showArrow value={handler}
-                            onChange={retSetNewAbnormalByPlaneObj('problem.handler', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('problem.handler', '')}
                             options={allHandler.map(v => ({ value: v }))}
                         />
                     </Col>
@@ -375,24 +361,24 @@ let Step3 = props => {
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>通知時間</Col>
                     <Col span={13}>
-                        <DatePicker className={styles.w100} onChange={retSetNewAbnormalByMoment('problem.noticeTime')}
+                        <DatePicker className={styles.w100} onChange={retSetEditAbnormalByMoment('problem.noticeTime')}
                             value={moment(noticeTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
                         />
                     </Col>
                 </Row>
             </Col>
         </Row>
-        <Row gutter={[0, 16]} justify="center">
+        <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
                     <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>郵件標題</Col>
                     <Col span={19}>
-                        <TextArea value={emailTitle} onChange={retSetNewAbnormalByPlaneObj('problem.emailTitle', 'target.value')} />
+                        <TextArea value={emailTitle} onChange={retSetEditAbnormalByPlaneObj('problem.emailTitle', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
         </Row>
-        <Row gutter={[0, 16]} justify="center">
+        <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
                     <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>問題分類</Col>
@@ -402,7 +388,7 @@ let Step3 = props => {
 
                         {/* 設備異常 物料異常 人員異常 品質異常 治工具異常 系統異常     */}
                         <Tabs size="small" type='card' activeKey={currentClassify}
-                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.currentClassify', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.currentClassify', '')}
                             style={{ width: '100%', border: '1px solid #ddd' }}
                         >
                             <TabPane tab="設備異常" key="equipment">
@@ -445,11 +431,11 @@ let Step3 = props => {
 
 Step3 = connect(state => {
     return {
-        currentClassify: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.abnormalClassify.currentClassify,
-        allHandler: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.allHandler,
-        handler: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.handler,
-        noticeTime: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.noticeTime,
-        emailTitle: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.emailTitle
+        currentClassify: state.AbnormalDecision.abnormalMaintenance.problem.abnormalClassify.currentClassify,
+        allHandler: state.AbnormalDecision.abnormalMaintenance.problem.allHandler,
+        handler: state.AbnormalDecision.abnormalMaintenance.problem.handler,
+        noticeTime: state.AbnormalDecision.abnormalMaintenance.problem.noticeTime,
+        emailTitle: state.AbnormalDecision.abnormalMaintenance.problem.emailTitle
     }
 })(Step3);
 
@@ -465,7 +451,7 @@ let ProblemEquipment = props => {  //設備異常
     //     equipmentNumber: '', // 设备编号
     //     equipmentModel: '' // 設備型號
     // },
-    let { retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { retSetEditAbnormalByPlaneObj } = useContext(EditAbnormalContext);
     let {
         allDesc, allCategory,
         desc, category, name, equipmentNumber, equipmentModel
@@ -478,7 +464,7 @@ let ProblemEquipment = props => {  //設備異常
                     <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={desc}
-                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.desc', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.equipment.desc', '')}
                         >
                             {
                                 allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -492,7 +478,7 @@ let ProblemEquipment = props => {  //設備異常
                     <Col span={8} style={{ textAlign: 'center' }}>機器類別</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={category}
-                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.category', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.equipment.category', '')}
                         >
                             {
                                 allCategory.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -507,7 +493,7 @@ let ProblemEquipment = props => {  //設備異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>設備名稱</Col>
                     <Col span={15}>
-                        <Input size="small" value={name} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.name', 'target.value')} />
+                        <Input size="small" value={name} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.equipment.name', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -515,7 +501,7 @@ let ProblemEquipment = props => {  //設備異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>設備編號</Col>
                     <Col span={15}>
-                        <Input size="small" value={equipmentNumber} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.equipmentNumber', 'target.value')} />
+                        <Input size="small" value={equipmentNumber} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.equipment.equipmentNumber', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -525,7 +511,7 @@ let ProblemEquipment = props => {  //設備異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>設備型號</Col>
                     <Col span={15}>
-                        <Input size="small" value={equipmentModel} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.equipmentModel', 'target.value')} />
+                        <Input size="small" value={equipmentModel} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.equipment.equipmentModel', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -536,15 +522,12 @@ let ProblemEquipment = props => {  //設備異常
 
 ProblemEquipment = connect(state => {
     return {
-        equipment: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.abnormalClassify.equipment
+        equipment: state.AbnormalDecision.abnormalMaintenance.problem.abnormalClassify.equipment
     }
 })(ProblemEquipment);
 
-
-
-
 let ProblemMaterial = props => {  //物料異常
-    let { retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { retSetEditAbnormalByPlaneObj } = useContext(EditAbnormalContext);
     // allDesc: ['來料短缺', '物料Delay', '錯料', '混料', '物料包裝異常', '特采過期', '包裝信息與實物不符', '有帳無務', '其它'],
     // desc: '來料短缺', //异常描述
     // partNo: '', //零件料号
@@ -561,7 +544,7 @@ let ProblemMaterial = props => {  //物料異常
                     <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={desc}
-                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.desc', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.material.desc', '')}
                         >
                             {
                                 allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -574,7 +557,7 @@ let ProblemMaterial = props => {  //物料異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>DC</Col>
                     <Col span={15}>
-                        <Input size="small" value={DC} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.DC', 'target.value')} />
+                        <Input size="small" value={DC} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.material.DC', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -584,7 +567,7 @@ let ProblemMaterial = props => {  //物料異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>LC</Col>
                     <Col span={15}>
-                        <Input size="small" value={LC} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.LC', 'target.value')} />
+                        <Input size="small" value={LC} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.material.LC', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -592,7 +575,7 @@ let ProblemMaterial = props => {  //物料異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>零件料號</Col>
                     <Col span={15}>
-                        <Input size="small" value={partNo} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.partNo', 'target.value')} />
+                        <Input size="small" value={partNo} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.material.partNo', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -602,7 +585,7 @@ let ProblemMaterial = props => {  //物料異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>不良率</Col>
                     <Col span={15}>
-                        <Input size="small" value={rejectRatio} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.rejectRatio', 'target.value')} />
+                        <Input size="small" value={rejectRatio} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.material.rejectRatio', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -610,7 +593,7 @@ let ProblemMaterial = props => {  //物料異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>供應商</Col>
                     <Col span={15}>
-                        <Input size="small" value={supplier} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.supplier', 'target.value')} />
+                        <Input size="small" value={supplier} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.material.supplier', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -620,13 +603,13 @@ let ProblemMaterial = props => {  //物料異常
 
 ProblemMaterial = connect(state => {
     return {
-        material: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.abnormalClassify.material
+        material: state.AbnormalDecision.abnormalMaintenance.problem.abnormalClassify.material
     }
 })(ProblemMaterial);
 
 
 let ProblemPerson = props => {  //人員異常
-    let { retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { retSetEditAbnormalByPlaneObj } = useContext(EditAbnormalContext);
     let { allDesc, desc } = props.person;
     return <div style={{ width: '100%' }}>
         <Row gutter={[0, 12]} justify="center">
@@ -635,7 +618,7 @@ let ProblemPerson = props => {  //人員異常
                     <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={desc}
-                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.person.desc', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.person.desc', '')}
                         >
                             {
                                 allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -651,13 +634,13 @@ let ProblemPerson = props => {  //人員異常
 
 ProblemPerson = connect(state => {
     return {
-        person: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.abnormalClassify.person
+        person: state.AbnormalDecision.abnormalMaintenance.problem.abnormalClassify.person
     }
 })(ProblemPerson);
 
 
 let ProblemQuality = props => {  //品質異常
-    let { retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { retSetEditAbnormalByPlaneObj } = useContext(EditAbnormalContext);
     //                         allProcess: [],
     //                         allBadPhenomenon: [],
     //                         allStation: [],
@@ -677,7 +660,7 @@ let ProblemQuality = props => {  //品質異常
                     <Col span={8} style={{ textAlign: 'center' }}>制程段</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={process}
-                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.process', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.quality.process', '')}
                         >
                             {
                                 allProcess.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -691,7 +674,7 @@ let ProblemQuality = props => {  //品質異常
                     <Col span={8} style={{ textAlign: 'center' }}>不良現象</Col>
                     <Col span={14}>
                         <Select size='small' className={styles.w100} value={badPhenomenon}
-                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.badPhenomenon', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.quality.badPhenomenon', '')}
                         >
                             {
                                 allBadPhenomenon.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -706,7 +689,7 @@ let ProblemQuality = props => {  //品質異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>發生站位</Col>
                     <Col span={15}>
-                        <Input size="small" value={station} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.station', 'target.value')} />
+                        <Input size="small" value={station} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.quality.station', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -715,7 +698,7 @@ let ProblemQuality = props => {  //品質異常
                     <Col span={8} style={{ textAlign: 'center' }}>影響范圍</Col>
                     <Col span={14}>
                         <Select size='small' className={styles.w100} value={scope}
-                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.scope', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.quality.scope', '')}
                         >
                             {
                                 allScope.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -730,7 +713,7 @@ let ProblemQuality = props => {  //品質異常
                 <Row>
                     <Col span={4} style={{ textAlign: 'center' }}>當前措施</Col>
                     <Col span={19}>
-                        <TextArea size="small" value={measures} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.measures', 'target.value')} />
+                        <TextArea size="small" value={measures} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.quality.measures', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -740,7 +723,7 @@ let ProblemQuality = props => {  //品質異常
 
 ProblemQuality = connect(state => {
     return {
-        quality: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.abnormalClassify.quality
+        quality: state.AbnormalDecision.abnormalMaintenance.problem.abnormalClassify.quality
     }
 })(ProblemQuality);
 
@@ -750,7 +733,7 @@ let ProblemTools = props => {  //治工具異常
     // desc: '',   //异常描述
     // skuno: '',  //涉及的产品料号
     // station: '' //使用站位
-    let { retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { retSetEditAbnormalByPlaneObj } = useContext(EditAbnormalContext);
     let { allDesc, desc, skuno, station } = props.tools;
 
     return <div style={{ width: '100%' }}>
@@ -760,7 +743,7 @@ let ProblemTools = props => {  //治工具異常
                     <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={desc}
-                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.tools.desc', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.tools.desc', '')}
                         >
                             {
                                 allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -773,7 +756,7 @@ let ProblemTools = props => {  //治工具異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>涉及的產品料號</Col>
                     <Col span={15}>
-                        <Input size="small" value={skuno} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.tools.skuno', 'target.value')} />
+                        <Input size="small" value={skuno} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.tools.skuno', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -783,7 +766,7 @@ let ProblemTools = props => {  //治工具異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>使用站位</Col>
                     <Col span={15}>
-                        <Input size="small" value={station} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.tools.station', 'target.value')} />
+                        <Input size="small" value={station} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.tools.station', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -794,7 +777,7 @@ let ProblemTools = props => {  //治工具異常
 
 ProblemTools = connect(state => {
     return {
-        tools: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.abnormalClassify.tools
+        tools: state.AbnormalDecision.abnormalMaintenance.problem.abnormalClassify.tools
     }
 })(ProblemTools);
 
@@ -803,7 +786,7 @@ let ProblemSystem = props => {  //系統異常
     // category: '', //异常类别
     // desc: '', //異常描述
     // startTime: '' //異常開始時間
-    let { retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment } = useContext(NewAbnormalContext);
+    let { retSetEditAbnormalByPlaneObj, retSetEditAbnormalByMoment } = useContext(EditAbnormalContext);
     let { allCategory, category, desc, startTime } = props.system;
 
     return <div style={{ width: '100%' }}>
@@ -813,7 +796,7 @@ let ProblemSystem = props => {  //系統異常
                     <Col span={8} style={{ textAlign: 'center' }}>異常類別</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={category}
-                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.system.category', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.system.category', '')}
                         >
                             {
                                 allCategory.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -826,7 +809,7 @@ let ProblemSystem = props => {  //系統異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
                     <Col span={15}>
-                        <Input size="small" value={desc} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.system.desc', 'target.value')} />
+                        <Input size="small" value={desc} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.system.desc', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -836,7 +819,7 @@ let ProblemSystem = props => {  //系統異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常開始時間</Col>
                     <Col span={15}>
-                        <DatePicker className={styles.w100} onChange={retSetNewAbnormalByMoment('problem.abnormalClassify.system.startTime')}
+                        <DatePicker className={styles.w100} onChange={retSetEditAbnormalByMoment('problem.abnormalClassify.system.startTime')}
                             value={moment(startTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
                         />
                     </Col>
@@ -849,7 +832,7 @@ let ProblemSystem = props => {  //系統異常
 
 ProblemSystem = connect(state => {
     return {
-        system: state.AbnormalDecision.anomalousGraph.newAbnormal.problem.abnormalClassify.system
+        system: state.AbnormalDecision.abnormalMaintenance.problem.abnormalClassify.system
     }
 })(ProblemSystem);
 
@@ -867,7 +850,7 @@ let Step4 = props => {
     //     lostYield: '', //良率損失
     //     measures: '' //臨時解決措施
     // },
-    let { prevStep, nextStep, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { prevStep, nextStep, retSetEditAbnormalByPlaneObj } = useContext(EditAbnormalContext);
     let {
         allManpowerArrangement,
         lostWorkTime, idleHuman, manpowerArrangement, lostOutput, lostYield, measures
@@ -886,7 +869,7 @@ let Step4 = props => {
                             parser={value => value.replace('min', '')}
                             // onChange={}
                         /> */}
-                        <Input prefix="" suffix="min" value={lostWorkTime} onChange={retSetNewAbnormalByPlaneObj('countermeasures.lostWorkTime', 'target.value')} />
+                        <Input prefix="" suffix="min" value={lostWorkTime} onChange={retSetEditAbnormalByPlaneObj('countermeasures.lostWorkTime', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -894,7 +877,7 @@ let Step4 = props => {
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>閒置人力</Col>
                     <Col span={16}>
-                        <Input value={idleHuman} onChange={retSetNewAbnormalByPlaneObj('countermeasures.idleHuman', 'target.value')} />
+                        <Input value={idleHuman} onChange={retSetEditAbnormalByPlaneObj('countermeasures.idleHuman', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -906,7 +889,7 @@ let Step4 = props => {
                     <Col span={8} style={{ textAlign: 'center' }}>閒置人力安排</Col>
                     <Col span={16}>
                         <Select className={styles.w100} value={manpowerArrangement}
-                            onChange={retSetNewAbnormalByPlaneObj('countermeasures.manpowerArrangement', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('countermeasures.manpowerArrangement', '')}
                         >
                             {
                                 allManpowerArrangement.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -919,7 +902,7 @@ let Step4 = props => {
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>損失產出</Col>
                     <Col span={16}>
-                        <Input prefix="" suffix="pcs" value={lostOutput} onChange={retSetNewAbnormalByPlaneObj('countermeasures.lostOutput', 'target.value')} />
+                        <Input prefix="" suffix="pcs" value={lostOutput} onChange={retSetEditAbnormalByPlaneObj('countermeasures.lostOutput', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -930,7 +913,7 @@ let Step4 = props => {
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>良率損失</Col>
                     <Col span={16}>
-                        <Input prefix="" suffix="%" value={lostYield} onChange={retSetNewAbnormalByPlaneObj('countermeasures.lostYield', 'target.value')} />
+                        <Input prefix="" suffix="%" value={lostYield} onChange={retSetEditAbnormalByPlaneObj('countermeasures.lostYield', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -941,7 +924,7 @@ let Step4 = props => {
                 <Row>
                     <Col span={4} style={{ textAlign: 'center' }}>臨時解決措施</Col>
                     <Col span={20}>
-                        <TextArea value={measures} onChange={retSetNewAbnormalByPlaneObj('countermeasures.measures', 'target.value')} />
+                        <TextArea value={measures} onChange={retSetEditAbnormalByPlaneObj('countermeasures.measures', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -959,7 +942,7 @@ let Step4 = props => {
 
 Step4 = connect(state => {
     return {
-        countermeasures: state.AbnormalDecision.anomalousGraph.newAbnormal.countermeasures
+        countermeasures: state.AbnormalDecision.abnormalMaintenance.countermeasures
     }
 })(Step4);
 
@@ -975,78 +958,104 @@ let Step5 = props => {
     //                 minister: [], //負責人部级
     //                 sectionChief: [], //負責人处级
     //                 notifier: [] // 異常知會人
-    let { prevStep, nextStep, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { prevStep, nextStep, retSetEditAbnormalByPlaneObj } = useContext(EditAbnormalContext);
     let {
         allChargePerson, allSectionManager, allMinister, allSectionChief, allNotifier,
         chargePerson, sectionManager, minister, sectionChief, notifier
     } = props.causeAnalysis;
     return <div className={styles['step5']}>
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
-            <Col span={18}>
+            <Col span={23}>
                 <Row>
                     <Col span={4} style={{ textAlign: 'center' }}>責任人</Col>
-                    <Col span={20}>
+                    <Col span={12}>
                         <Select mode="multiple" className={styles.w100} showArrow value={chargePerson}
                             options={allChargePerson.map(v => ({ value: v }))}
-                            onChange={retSetNewAbnormalByPlaneObj('causeAnalysis.chargePerson', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.chargePerson', '')}
                         />
                     </Col>
                 </Row>
             </Col>
         </Row>
 
-        <Row gutter={[0, 12]} justify="center">
-            <Col span={9}>
+        <Row gutter={[0, 24]} justify="center">
+            <Col span={23}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>責任人課級(>3d)</Col>
-                    <Col span={16}>
+                    <Col span={4} style={{ textAlign: 'center' }}>責任人課級(>3d)</Col>
+                    <Col span={12}>
                         <Select mode="multiple" className={styles.w100} showArrow value={sectionManager}
                             options={allSectionManager.map(v => ({ value: v }))}
-                            onChange={retSetNewAbnormalByPlaneObj('causeAnalysis.sectionManager', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.sectionManager', '')}
                         />
                     </Col>
                 </Row>
             </Col>
-            <Col span={9}>
+            <Col span={23}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>責任人部級(>5d)</Col>
-                    <Col span={16}>
+                    <Col span={4} style={{ textAlign: 'center' }}>責任人部級(>5d)</Col>
+                    <Col span={12}>
                         <Select mode="multiple" className={styles.w100} showArrow value={minister}
                             options={allMinister.map(v => ({ value: v }))}
-                            onChange={retSetNewAbnormalByPlaneObj('causeAnalysis.minister', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.minister', '')}
+                        />
+                    </Col>
+                </Row>
+            </Col>
+            <Col span={23}>
+                <Row>
+                    <Col span={4} style={{ textAlign: 'center' }}>責任人處級(>10d)</Col>
+                    <Col span={12}>
+                        <Select mode="multiple" className={styles.w100} showArrow value={sectionChief}
+                            options={allSectionChief.map(v => ({ value: v }))}
+                            onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.sectionChief', '')}
                         />
                     </Col>
                 </Row>
             </Col>
         </Row>
 
-        <Row gutter={[0, 12]} justify="center">
+        {/* <Row gutter={[0, 12]} justify="center">
             <Col span={9}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>責任人處級(>10d)</Col>
                     <Col span={16}>
                         <Select mode="multiple" className={styles.w100} showArrow value={sectionChief}
                             options={allSectionChief.map(v => ({ value: v }))}
-                            onChange={retSetNewAbnormalByPlaneObj('causeAnalysis.sectionChief', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.sectionChief', '')}
                         />
                     </Col>
                 </Row>
             </Col>
             <Col span={9}></Col>
-        </Row>
+        </Row> */}
         <Row gutter={[0, 24]} justify="center">
-            <Col span={18}>
+            <Col span={23}>
                 <Row>
                     <Col span={4} style={{ textAlign: 'center' }}>異常知會人</Col>
-                    <Col span={20}>
+                    <Col span={19}>
                         <Select mode="multiple" className={styles.w100} showArrow value={notifier}
                             options={allNotifier.map(v => ({ value: v }))}
-                            onChange={retSetNewAbnormalByPlaneObj('causeAnalysis.notifier', '')}
+                            onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.notifier', '')}
                         />
                     </Col>
                 </Row>
             </Col>
         </Row>
+
+        {/* ************************************************************************************************************************** */}
+
+        <Row gutter={[0, 24]} justify="center">
+            <Col span={23}>
+                <Row>
+                    <Col span={4} style={{ textAlign: 'center' }}>原因</Col>
+                    <Col span={19}>
+                        <Cause />
+                    </Col>
+                </Row>
+            </Col>
+        </Row>
+        {/* ************************************************************************************************************************** */}
+
         <Row gutter={[0, 24]} justify="center">
             <Col span={8} style={{ textAlign: 'center' }}>
                 <Space size="large">
@@ -1060,9 +1069,620 @@ let Step5 = props => {
 
 Step5 = connect(state => {
     return {
-        causeAnalysis: state.AbnormalDecision.anomalousGraph.newAbnormal.causeAnalysis
+        causeAnalysis: state.AbnormalDecision.abnormalMaintenance.causeAnalysis
     }
 })(Step5);
+
+
+
+
+
+let Cause = props => {
+    let { dispatch, currentClassify } = props;
+
+    let tabChange = useCallback((classify) => {
+        dispatch({
+            type: 'AbnormalDecision/setAdvancedSearchOfCauseAnalysis',
+            classify: 'currentClassify',
+            payload: classify
+        });
+    }, []);
+    // return <div>test</div>
+    return <div className={styles['tab-query']}>
+        <Row gutter={[0, 16]} justify="center">
+            <Col span={24}>
+                <Row>
+                    <Col span={24}>
+                        {/* 人 機 料 法 環 量檢測     */}
+                        <Tabs size="small" type='card' activeKey={currentClassify} onChange={tabChange} style={{ width: '100%', border: '1px solid #ddd' }} >
+                            <TabPane tab="人" key="parson">
+                                <CauseAnalysisOfParson />
+                            </TabPane>
+                            <TabPane tab="机" key="equipment">
+                                <CauseAnalysisOfEquipment />
+                            </TabPane>
+                            <TabPane tab="料" key="material">
+                                <CauseAnalysisOfMaterial />
+                            </TabPane>
+                            <TabPane tab="法" key="function">
+                                <CauseAnalysisOfFunction />
+                            </TabPane>
+                            <TabPane tab="环" key="annulus">
+                                <CauseAnalysisOfAnnulus />
+                            </TabPane>
+                            <TabPane tab="量检测" key="detection">
+                                <CauseAnalysisOfDetection />
+                            </TabPane>
+                        </Tabs>
+                    </Col>
+                </Row>
+            </Col>
+        </Row>
+    </div>
+}
+
+Cause = connect(({ AbnormalDecision }) => {
+    return {
+        currentClassify: AbnormalDecision.anomalousGraph.advancedSearch.causeAnalysis.currentClassify
+    }
+})(Cause);
+
+let CauseAnalysisOfParson = props => {
+    let { dispatch, parson } = props;
+    //                     chargePerson: '', //责任人
+    //                     decision: '', //处理决定
+    //                     improve: ''   //改善方向
+    let { chargePerson, decision, improve } = parson;
+    let [nativeState, setNativeState] = useState({ chargePerson, decision, improve });
+
+    let setParson = useCallback((payload) => {
+        dispatch({
+            type: 'AbnormalDecision/setAdvancedSearchOfCauseAnalysis',
+            classify: 'parson',
+            payload: {
+                ...parson,
+                ...payload
+            }
+        })
+    }, [parson]);
+
+    let chargePersonChange = (e) => {
+        setNativeState({ ...nativeState, chargePerson: e.target.value });
+    }
+
+    let decisionChange = (e) => {
+        setNativeState({ ...nativeState, decision: e.target.value });
+    }
+
+    let improveChange = (e) => {
+        setNativeState({ ...nativeState, improve: e.target.value });
+    }
+
+    let confirmHandle = useCallback(() => {
+        setParson(nativeState);
+        message.success('OK');
+    }, [nativeState]);
+
+    return <div style={{ width: '100%' }}>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>責任人</Col>
+                    <Col span={15}><Input size="small" value={nativeState.chargePerson} onChange={chargePersonChange} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>處理決定</Col>
+                    <Col span={15}><Input size="small" value={nativeState.decision} onChange={decisionChange} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>改善方向</Col>
+                    <Col span={15}><Input size="small" value={nativeState.improve} onChange={improveChange} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}></Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12} style={{ textAlign: 'center' }}>
+                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={confirmHandle}>确定</Button>
+            </Col>
+        </Row>
+    </div>
+}
+
+CauseAnalysisOfParson = connect(({ AbnormalDecision }) => {
+    return {
+        parson: AbnormalDecision.anomalousGraph.advancedSearch.causeAnalysis.parson
+    }
+})(CauseAnalysisOfParson);
+
+
+let CauseAnalysisOfEquipment = props => {
+    let { dispatch, equipment } = props;
+    // chargePerson: '', //责任人
+    //                     name: '',  // 机器名称
+    //                     equipmentNumber: '', // 机器编号
+    //                     cause: '', //具体原因
+    //                     improve: '',   //改善方向
+    //                     anImprove: [],  //橫向展開改善  Y | N
+    //                     completionTime: '' //預計完成時間
+    let { chargePerson, name, equipmentNumber, cause, improve, anImprove, completionTime } = equipment;
+    let [nativeState, setNativeState] = useState({ chargePerson, name, equipmentNumber, cause, improve, anImprove, completionTime });
+    let setEquipment = useCallback((payload) => {
+        dispatch({
+            type: 'AbnormalDecision/setAdvancedSearchOfCauseAnalysis',
+            classify: 'equipment',
+            payload: {
+                ...equipment,
+                ...payload
+            }
+        })
+    }, [equipment]);
+
+    let chargePersonChange = (e) => {
+        setNativeState({ ...nativeState, chargePerson: e.target.value })
+    }
+
+    let nameChange = (e) => {
+        setNativeState({ ...nativeState, name: e.target.value })
+    }
+
+    let equipmentNumberChange = (e) => {
+        setNativeState({ ...nativeState, equipmentNumber: e.target.value })
+    }
+
+    let causeChange = (e) => {
+        setNativeState({ ...nativeState, cause: e.target.value })
+    }
+
+    let improveChange = (e) => {
+        setNativeState({ ...nativeState, improve: e.target.value })
+    }
+
+    let anImproveChange = (anImprove) => {
+        setNativeState({ ...nativeState, anImprove })
+    }
+
+    let completionTimeChange = (e) => {
+        setNativeState({ ...nativeState, completionTime: e.target.value })
+    }
+
+    let confirmHandle = useCallback(() => {
+        setEquipment(nativeState);
+        message.success('OK');
+    }, [nativeState]);
+
+    return <div style={{ width: '100%' }}>
+        {/* 負責人 機器名稱 機器編號 具體原因 改善方向 橫向展開改善  預計完成時間 */}
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>負責人</Col>
+                    <Col span={15}><Input size="small" value={nativeState.chargePerson} onChange={chargePersonChange} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>機器名稱</Col>
+                    <Col span={15}><Input size="small" value={nativeState.name} onChange={nameChange} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>機器編號</Col>
+                    <Col span={15}><Input size="small" value={nativeState.equipmentNumber} onChange={equipmentNumberChange} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>具體原因</Col>
+                    <Col span={15}><Input size="small" value={nativeState.cause} onChange={causeChange} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>改善方向</Col>
+                    <Col span={15}><Input size="small" value={nativeState.improve} onChange={improveChange} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>橫向展開改善</Col>
+                    <Col span={15}>
+                        <Checkbox.Group value={nativeState.anImprove} onChange={anImproveChange} >
+                            <Checkbox value="Y">是</Checkbox>
+                            <Checkbox value="N">否</Checkbox>
+                        </Checkbox.Group>
+                    </Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>預計完成時間</Col>
+                    <Col span={15}><Input size="small" value={nativeState.completionTime} onChange={completionTimeChange} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}></Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12} style={{ textAlign: 'center' }}>
+                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={confirmHandle}>确定</Button>
+            </Col>
+        </Row>
+    </div>
+}
+
+CauseAnalysisOfEquipment = connect(({ AbnormalDecision }) => {
+    return {
+        equipment: AbnormalDecision.anomalousGraph.advancedSearch.causeAnalysis.equipment
+    }
+})(CauseAnalysisOfEquipment);
+
+
+let CauseAnalysisOfMaterial = props => {
+    // chargePerson: '', // 負責人
+    // skuno: '', // 料號
+    // DC: '', // DC
+    // LC: '', // LC
+    // vendor: '', // 廠商
+    // result: '', // 處理結果
+    // improve: '', // 改善方向
+    // completionTime: '' // 預計完成時間
+    let { dispatch, material } = props;
+    let { chargePerson, skuno, DC, LC, vendor, result, improve, completionTime } = material;
+    let [nativeState, setNativeState] = useState({ chargePerson, skuno, DC, LC, vendor, result, improve, completionTime });
+
+    let setMaterial = useCallback((payload) => {
+        dispatch({
+            type: 'AbnormalDecision/setAdvancedSearchOfCauseAnalysis',
+            classify: 'material',
+            payload: {
+                ...material,
+                ...payload
+            }
+        })
+    }, [material]);
+
+    let inputValueChange = useCallback((e, key) => {
+        setNativeState({ ...nativeState, [key]: e.target.value });
+    }, [nativeState]);
+
+    let confirmHandle = useCallback(() => {
+        setMaterial(nativeState);
+        message.success('OK');
+    }, [nativeState]);
+
+    return <div style={{ width: '100%' }}>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>負責人</Col>
+                    <Col span={15}><Input size="small" value={nativeState.chargePerson} onChange={e => { inputValueChange(e, 'chargePerson') }} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>料號</Col>
+                    <Col span={15}><Input size="small" value={nativeState.skuno} onChange={e => { inputValueChange(e, 'skuno') }} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>DC</Col>
+                    <Col span={15}><Input size="small" value={nativeState.DC} onChange={e => { inputValueChange(e, 'DC') }} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>LC</Col>
+                    <Col span={15}><Input size="small" value={nativeState.LC} onChange={e => { inputValueChange(e, 'LC') }} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>廠商</Col>
+                    <Col span={15}><Input size="small" value={nativeState.vendor} onChange={e => { inputValueChange(e, 'vendor') }} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>處理結果</Col>
+                    <Col span={15}><Input size="small" value={nativeState.result} onChange={e => { inputValueChange(e, 'result') }} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>改善方向</Col>
+                    <Col span={15}><Input size="small" value={nativeState.improve} onChange={e => { inputValueChange(e, 'improve') }} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>預計完成時間</Col>
+                    <Col span={15}><Input size="small" value={nativeState.completionTime} onChange={e => { inputValueChange(e, 'completionTime') }} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12} style={{ textAlign: 'center' }}>
+                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={confirmHandle}>确定</Button>
+            </Col>
+        </Row>
+    </div>
+}
+
+CauseAnalysisOfMaterial = connect(({ AbnormalDecision }) => {
+    return {
+        material: AbnormalDecision.anomalousGraph.advancedSearch.causeAnalysis.material
+    }
+})(CauseAnalysisOfMaterial);
+
+
+let CauseAnalysisOfFunction = props => {
+    // chargePerson: '', // 負責人
+    //                     result: '', // 改善結果
+    //                     anImprove: [],  // 橫向展開改善 Y | N
+    //                     completionTime: '' // 預計完成時間
+    let { dispatch, func } = props;
+    let { chargePerson, result, anImprove, completionTime } = func;
+
+    let [nativeState, setNativeState] = useState({ chargePerson, result, anImprove, completionTime });
+
+    let setFunction = useCallback((payload) => {
+        dispatch({
+            type: 'AbnormalDecision/setAdvancedSearchOfCauseAnalysis',
+            classify: 'function',
+            payload: {
+                ...func,
+                ...payload
+            }
+        })
+    }, [func]);
+
+    let inputValueChange = useCallback((e, key) => {
+        setNativeState({ ...nativeState, [key]: e.target.value });
+    }, [nativeState]);
+
+    let checkboxValueChange = useCallback((val, key) => {
+        setNativeState({ ...nativeState, [key]: val })
+    }, [nativeState]);
+
+    let confirmHandle = useCallback(() => {
+        setFunction(nativeState);
+        message.success('OK');
+    }, [nativeState]);
+
+
+    return <div style={{ width: '100%' }}>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>負責人</Col>
+                    <Col span={15}><Input size="small" value={nativeState.chargePerson} onChange={e => { inputValueChange(e, 'chargePerson') }} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>改善結果</Col>
+                    <Col span={14}><Input size="small" value={nativeState.result} onChange={e => { inputValueChange(e, 'result') }} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>橫向展開改善</Col>
+                    <Col span={15}>
+                        <Checkbox.Group value={nativeState.anImprove} onChange={v => { checkboxValueChange(v, 'anImprove') }}>
+                            <Checkbox value="Y">是</Checkbox>
+                            <Checkbox value="N">否</Checkbox>
+                        </Checkbox.Group>
+                    </Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>預計完成時間</Col>
+                    <Col span={14}><Input size="small" value={nativeState.completionTime} onChange={e => { inputValueChange(e, 'completionTime') }} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12} style={{ textAlign: 'center' }}>
+                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={confirmHandle}>确定</Button>
+            </Col>
+        </Row>
+    </div>
+}
+
+CauseAnalysisOfFunction = connect(({ AbnormalDecision }) => {
+    return {
+        func: AbnormalDecision.anomalousGraph.advancedSearch.causeAnalysis.function
+    }
+})(CauseAnalysisOfFunction);
+
+
+let CauseAnalysisOfAnnulus = props => {
+    // chargePerson: '', // 負責人
+    //                     cause: '', // 具體原因
+    //                     result: '', // 處理結果
+    //                     improve: '',  // 改善方向
+    //                     completionTime: '' // 預計完成時間
+    let { dispatch, annulus } = props;
+    let { chargePerson, cause, result, improve, completionTime } = annulus;
+
+    let [nativeState, setNativeState] = useState({ chargePerson, cause, result, improve, completionTime });
+
+    let setAnnulus = useCallback((payload) => {
+        dispatch({
+            type: 'AbnormalDecision/setAdvancedSearchOfCauseAnalysis',
+            classify: 'annulus',
+            payload: {
+                ...annulus,
+                ...payload
+            }
+        })
+    }, [annulus]);
+
+    let inputValueChange = useCallback((e, key) => {
+        setNativeState({ ...nativeState, [key]: e.target.value });
+    }, [nativeState]);
+
+    let confirmHandle = useCallback(() => {
+        setAnnulus(nativeState);
+        message.success('OK');
+    }, [nativeState]);
+
+    return <div style={{ width: '100%' }}>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>負責人</Col>
+                    <Col span={15}><Input size="small" value={nativeState.chargePerson} onChange={e => { inputValueChange(e, 'chargePerson') }} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>具體原因</Col>
+                    <Col span={15}><Input size="small" value={nativeState.cause} onChange={e => { inputValueChange(e, 'cause') }} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>處理結果</Col>
+                    <Col span={15}><Input size="small" value={nativeState.result} onChange={e => { inputValueChange(e, 'result') }} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>改善方向</Col>
+                    <Col span={15}><Input size="small" value={nativeState.improve} onChange={e => { inputValueChange(e, 'improve') }} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>預計完成時間</Col>
+                    <Col span={15}><Input size="small" value={nativeState.completionTime} onChange={e => { inputValueChange(e, 'completionTime') }} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}></Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12} style={{ textAlign: 'center' }}>
+                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={confirmHandle}>确定</Button>
+            </Col>
+        </Row>
+    </div>
+}
+
+CauseAnalysisOfAnnulus = connect(({ AbnormalDecision }) => {
+    return {
+        annulus: AbnormalDecision.anomalousGraph.advancedSearch.causeAnalysis.annulus
+    }
+})(CauseAnalysisOfAnnulus);
+
+
+let CauseAnalysisOfDetection = props => {
+    let { dispatch, detection } = props;
+    let { chargePerson, content, result } = detection;
+
+    let [nativeState, setNativeState] = useState({ chargePerson, content, result });
+
+    let setDetection = useCallback((payload) => {
+        dispatch({
+            type: 'AbnormalDecision/setAdvancedSearchOfCauseAnalysis',
+            classify: 'detection',
+            payload: {
+                ...detection,
+                ...payload
+            }
+        })
+    }, [detection]);
+
+    let inputValueChange = useCallback((e, key) => {
+        setNativeState({ ...nativeState, [key]: e.target.value });
+    }, [nativeState]);
+
+    let confirmHandle = useCallback(() => {
+        setDetection(nativeState);
+        message.success('OK');
+    }, [nativeState]);
+
+    return <div style={{ width: '100%' }}>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>負責人</Col>
+                    <Col span={15}><Input size="small" value={nativeState.chargePerson} onChange={e => { inputValueChange(e, 'chargePerson') }} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>測試內容</Col>
+                    <Col span={15}><Input size="small" value={nativeState.content} onChange={e => { inputValueChange(e, 'content') }} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>測試結果</Col>
+                    <Col span={15}><Input size="small" value={nativeState.result} onChange={e => { inputValueChange(e, 'result') }} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}></Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12} style={{ textAlign: 'center' }}>
+                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={confirmHandle}>确定</Button>
+            </Col>
+        </Row>
+    </div>
+}
+
+CauseAnalysisOfDetection = connect(({ AbnormalDecision }) => {
+    return {
+        detection: AbnormalDecision.anomalousGraph.advancedSearch.causeAnalysis.detection
+    }
+})(CauseAnalysisOfDetection);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 let Step6 = props => {
     // remarksAndAttachments: {  // 備註與附件
@@ -1070,10 +1690,10 @@ let Step6 = props => {
     //     remarks: '', // 備註
     //     attachments: [] // 附件
     // }
-    let { prevStep, setNewAbnormal, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { prevStep, retSetEditAbnormalByPlaneObj } = useContext(EditAbnormalContext);
     let dispatch = props.dispatch;
     let { problemStatus, remarks, attachments } = props.remarksAndAttachments;
-
+    // console.log(attachments);
     let prop = {
         fileList: attachments.length > 0 ? attachments : null,
         // action: '/api/xxxx',
@@ -1087,28 +1707,41 @@ let Step6 = props => {
             format: percent => `${parseFloat(percent.toFixed(2))}%`,
         },
         onChange: info => {  //status变化时执行 fileList内容不是Blob对象，被代理了
-            // console.log(info);
-            let attachments = info.fileList.map(({ name, uid }) => {
-                return { name, uid }
-            });
-            setNewAbnormal('remarksAndAttachments.attachments', attachments);
+            // console.log(info);  // file: {status}, fileList
+            if (info.file.status == "removed") {  //已删除
+                dispatch({
+                    type: 'AbnormalDecision/setAbnormalMaintenanceByFn',
+                    retNewState: state => {
+                        state.remarksAndAttachments.attachments = state.remarksAndAttachments.attachments.filter(_f => _f.uid != info.file.uid);
+                        return state;
+                    }
+                });
+            } else { //新增
+                attachments.filter(_f => _f.name == info.file.name).length == 0 && dispatch({
+                    type: 'AbnormalDecision/setAbnormalMaintenanceByFn',
+                    retNewState: state => {
+                        state.remarksAndAttachments.attachments.push(info.file);
+                        return state;
+                    }
+                });
+            }
         },
-        // beforeUpload: (file, fileList) => {  //上传前执行
-        //     return false;  //阻止上传
-        // },
-        customRequest: (e) => {
-            // console.log(e);
-            dispatch({
-                type: 'AbnormalDecision/uploadFile',
-                file: e.file
-            });
-        }  //覆盖默认上传操作
+        beforeUpload: (file, fileList) => {  //上传前执行
+            return false;  //阻止上传
+        },
+        // customRequest: (e) => {
+        //     // console.log(e);
+        //     dispatch({
+        //         type: 'AbnormalDecision/uploadFile',
+        //         file: e.file
+        //     });
+        // }  //覆盖默认上传操作
     }
 
     let submit = useCallback(() => {
-        dispatch({
-            type: 'AbnormalDecision/newAbnormal'
-        });
+        // dispatch({
+        //     type: 'AbnormalDecision/newAbnormal'
+        // });
     }, []);
 
     return <div className={styles['step6']}>
@@ -1118,7 +1751,7 @@ let Step6 = props => {
                     <Col span={4} style={{ textAlign: 'center' }}>問題狀態</Col>
                     <Col span={20}>
                         <Space>
-                            <Radio.Group value={problemStatus} onChange={retSetNewAbnormalByPlaneObj('remarksAndAttachments.problemStatus', 'target.value')}>
+                            <Radio.Group value={problemStatus} onChange={retSetEditAbnormalByPlaneObj('remarksAndAttachments.problemStatus', 'target.value')}>
                                 <Radio value="等待处理">等待处理</Radio>
                                 <Radio value="处理中">处理中</Radio>
                             </Radio.Group>
@@ -1132,7 +1765,7 @@ let Step6 = props => {
                 <Row>
                     <Col span={4} style={{ textAlign: 'center' }}>備註</Col>
                     <Col span={20}>
-                        <TextArea value={remarks} onChange={retSetNewAbnormalByPlaneObj('remarksAndAttachments.remarks', 'target.value')} />
+                        <TextArea value={remarks} onChange={retSetEditAbnormalByPlaneObj('remarksAndAttachments.remarks', 'target.value')} />
                     </Col>
                 </Row>
             </Col>
@@ -1162,7 +1795,7 @@ let Step6 = props => {
 
 Step6 = connect(state => {
     return {
-        remarksAndAttachments: state.AbnormalDecision.anomalousGraph.newAbnormal.remarksAndAttachments
+        remarksAndAttachments: state.AbnormalDecision.abnormalMaintenance.remarksAndAttachments
     }
 })(Step6);
 

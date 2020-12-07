@@ -250,11 +250,6 @@ let ExceptionList = props => {
             type: 'AbnormalDecision/setNewAbnormalVisible',
             newAbnormalVisible: false
         });
-        // dispatch({   //清除ID
-        //     type: 'AbnormalDecision/setNewAbnormalByProp',
-        //     prop: 'abnormalId',
-        //     value: ''
-        // });
         dispatch({   //清除新增异常信息
             type: 'AbnormalDecision/clearNewAbnormalData'
         })

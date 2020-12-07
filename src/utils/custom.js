@@ -26,9 +26,12 @@ let throttle = function (fn, delay) { // 节流 （防止多次点击按钮）
     }
 }
 
-let deepClone = function (obj) { //比较标准的深克隆（基本类型 对象 数组 正则 时间）（用于reducer）
+let deepClone = function (obj) { //比较标准的深克隆（基本类型 对象 数组 正则 时间 文件）（用于reducer）
     if(obj === null) return null;
     if(typeof obj !== 'object') return obj;
+    if(obj instanceof File){   //文件对象
+        return obj;
+    }
     if(obj instanceof RegExp){
         return new RegExp(obj);
     }

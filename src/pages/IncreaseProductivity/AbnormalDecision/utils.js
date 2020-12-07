@@ -133,7 +133,7 @@ let graph5SendData = { // 异常统计图组件
 }
 
 let newAbnormalSendData = {  // 新增异常 状态
-    abnormalId: '',   //异常ID
+    // abnormalId: '',   //异常ID
     type: '', // 通知单类型  异常 | 停线
     emergencyDegree: '一般', // 紧急程度  一般 | 紧急
     baseMsg: { //基本信息
@@ -220,7 +220,7 @@ let newAbnormalSendData = {  // 新增异常 状态
 };
 
 let newAbnormal_empty = {  // 清空后的新增异常的状态
-    abnormalId: '',   //异常ID
+    // abnormalId: '',   //异常ID
     type: '异常', // 通知单类型  异常 | 停线
     emergencyDegree: '一般', // 紧急程度  一般 | 紧急
     baseMsg: { //基本信息
