@@ -82,6 +82,7 @@ let Model = {
                     }
                 },
                 causeAnalysis: {   //按原因分析
+
                     currentClassify: 'parson',  //当前分类
                     // ['parson', 'equipment', 'material', 'function', 'annulus', 'detection']
                     parson: {   //人
@@ -412,27 +413,29 @@ let Model = {
                 sectionChief: [], //負責人处级
                 notifier: [], // 異常知會人
                 
+
                 //异常维护里面特有的***原因分析模块**********************************************************************************************
                 cause: {
                     allCause: ['parson', 'equipment', 'material', 'function', 'annulus', 'detection'],  //涉及的所有原因
+                    currentClassify: 'parson',  //当前分类
                     parson: {   //人
-                        allChargePerson: [], //所有责任人
+                        allChargePerson: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'], //所有责任人
                         chargePerson: [], //责任人
                         decision: '', //处理决定
                         improve: ''   //改善方向
                     },
                     equipment: { //机
-                        allChargePerson: [], //所有负责人
+                        allChargePerson: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'], //所有负责人
                         chargePerson: [], //责任人
                         name: '',  // 机器名称
                         equipmentNumber: '', // 机器编号
                         cause: '', //具体原因
                         improve: '',   //改善方向
                         anImprove: '',  //橫向展開改善  Y | N
-                        completionTime: '' //預計完成時間
+                        completionTime: '2020/12/08 14:16' //預計完成時間
                     },
                     material: {  //料
-                        allChargePerson: [], //所有负责人
+                        allChargePerson: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'], //所有负责人
                         chargePerson: [], // 負責人
                         skuno: '', // 料號
                         DC: '', // DC
@@ -443,14 +446,14 @@ let Model = {
                         completionTime: '' // 預計完成時間
                     },
                     function: {  //法
-                        allChargePerson: [],  //所有负责人
+                        allChargePerson: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],  //所有负责人
                         chargePerson: [], // 負責人
                         result: '', // 改善結果
                         anImprove: '',  // 橫向展開改善 Y | N
                         completionTime: '' // 預計完成時間
                     },
                     annulus: {  //环
-                        allChargePerson: [],  //所有负责人
+                        allChargePerson: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],  //所有负责人
                         chargePerson: [], // 負責人
                         cause: '', // 具體原因
                         result: '', // 處理結果
@@ -458,7 +461,7 @@ let Model = {
                         completionTime: '' // 預計完成時間
                     },
                     detection: {  //量检测
-                        allChargePerson: [],  //所有负责人
+                        allChargePerson: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],  //所有负责人
                         chargePerson: [], // 負責人
                         content: '', // 測試內容
                         result: '' // 測試結果
