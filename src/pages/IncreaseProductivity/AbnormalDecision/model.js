@@ -398,25 +398,25 @@ let Model = {
                 lostYield: '', //良率損失
                 measures: '' //臨時解決措施
             },
-            causeAnalysis: {  // 原因分析(只有填寫原因分析才能申請結案)
-                allChargePerson: ['5DX:李貽剛 (F1304158)', '5DX:羅志濤(F1301571)', '5DX:馮海平(F1219611)', '5DX:區劍(F1331116)', '5DX:陳飛鵬(F1319614)'], // 所有負責人
-                allSectionManager: ['SMT:劉日紅(F1300825)', 'ME:柳界明(F1313143)', 'PE:梁俏麗(F1313632)', 'PD:張強(F1303904)'], //所有負責人课级
-                allMinister: ['ME:熊豐(F1300296)', 'RE:洪永祥(F1300147)', 'ME:段杰君(F1301264)'], //所有負責人部级
-                allSectionChief: ['PIE:劉慶公(100056)'], //所有負責人处级
-                allNotifier: [
-                    '5DX:李貽剛 (esd-5dx-d10@mail.foxconn.com)', '5DX:羅志濤(zhi-tao.luo@mail.foxconn.com)', '5DX:馮海平(hardy.hp.feng@mail.foxconn.com)',
-                    '5DX:區劍(oden.j.ou@mail.foxconn.com)', '5DX:陳飛鵬(nick.fp.chen@mail.foxconn.com)', 'APP:劉照亮(eason.zl.liu@mail.foxconn.com)'
-                ], // 所有異常知會人
-                chargePerson: [], // 負責人
-                sectionManager: [], //負責人课级
-                minister: [], //負責人部级
-                sectionChief: [], //負責人处级
-                notifier: [], // 異常知會人
-                
-
+            causeAnalysis: {  // 原因分析(只有填寫原因分析才能申請結案)                
+                parson: {
+                    allChargePerson: ['5DX:李貽剛 (F1304158)', '5DX:羅志濤(F1301571)', '5DX:馮海平(F1219611)', '5DX:區劍(F1331116)', '5DX:陳飛鵬(F1319614)'], // 所有負責人
+                    allSectionManager: ['SMT:劉日紅(F1300825)', 'ME:柳界明(F1313143)', 'PE:梁俏麗(F1313632)', 'PD:張強(F1303904)'], //所有負責人课级
+                    allMinister: ['ME:熊豐(F1300296)', 'RE:洪永祥(F1300147)', 'ME:段杰君(F1301264)'], //所有負責人部级
+                    allSectionChief: ['PIE:劉慶公(100056)'], //所有負責人处级
+                    allNotifier: [
+                        '5DX:李貽剛 (esd-5dx-d10@mail.foxconn.com)', '5DX:羅志濤(zhi-tao.luo@mail.foxconn.com)', '5DX:馮海平(hardy.hp.feng@mail.foxconn.com)',
+                        '5DX:區劍(oden.j.ou@mail.foxconn.com)', '5DX:陳飛鵬(nick.fp.chen@mail.foxconn.com)', 'APP:劉照亮(eason.zl.liu@mail.foxconn.com)'
+                    ], // 所有異常知會人
+                    chargePerson: [], // 負責人
+                    sectionManager: [], //負責人课级
+                    minister: [], //負責人部级
+                    sectionChief: [], //負責人处级
+                    notifier: [], // 異常知會人
+                },
                 //异常维护里面特有的***原因分析模块**********************************************************************************************
                 cause: {
-                    allCause: ['parson', 'equipment', 'material', 'function', 'annulus', 'detection'],  //涉及的所有原因
+                    allCause: ['parson', 'equipment'], // ['parson', 'equipment', 'material', 'function', 'annulus', 'detection'],  //涉及的所有原因
                     currentClassify: 'parson',  //当前分类
                     parson: {   //人
                         allChargePerson: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'], //所有责任人
@@ -443,14 +443,14 @@ let Model = {
                         vendor: '', // 廠商
                         result: '', // 處理結果
                         improve: '', // 改善方向
-                        completionTime: '' // 預計完成時間
+                        completionTime: '2020/12/08 14:16' // 預計完成時間
                     },
                     function: {  //法
                         allChargePerson: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],  //所有负责人
                         chargePerson: [], // 負責人
                         result: '', // 改善結果
                         anImprove: '',  // 橫向展開改善 Y | N
-                        completionTime: '' // 預計完成時間
+                        completionTime: '2020/12/08 14:16' // 預計完成時間
                     },
                     annulus: {  //环
                         allChargePerson: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],  //所有负责人
@@ -458,7 +458,7 @@ let Model = {
                         cause: '', // 具體原因
                         result: '', // 處理結果
                         improve: '',  // 改善方向
-                        completionTime: '' // 預計完成時間
+                        completionTime: '2020/12/08 14:16' // 預計完成時間
                     },
                     detection: {  //量检测
                         allChargePerson: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],  //所有负责人

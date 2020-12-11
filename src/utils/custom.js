@@ -26,10 +26,11 @@ let throttle = function (fn, delay) { // 节流 （防止多次点击按钮）
     }
 }
 
+
 let deepClone = function (obj) { //比较标准的深克隆（基本类型 对象 数组 正则 时间 文件）（用于reducer）
     if(obj === null) return null;
-    if(typeof obj !== 'object') return obj;
-    if(obj instanceof File){   //文件对象
+    if(typeof obj !== 'object') return obj;  // fn --- null {} []
+    if(obj instanceof File){   //文件对象   
         return obj;
     }
     if(obj instanceof RegExp){
@@ -40,7 +41,7 @@ let deepClone = function (obj) { //比较标准的深克隆（基本类型 对�
     }
     // ...有别的类型再追加
     let newObj = new obj.constructor();
-    for(let key in obj){ // fn obj arr
+    for(let key in obj){ // obj arr
         if(obj.hasOwnProperty(key)){
             newObj[key] = deepClone(obj[key]);
         }
