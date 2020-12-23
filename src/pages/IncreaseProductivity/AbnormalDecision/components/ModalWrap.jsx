@@ -4,10 +4,16 @@ import React, { memo, createContext, useState, useEffect, useMemo, useCallback, 
 import { useDispatch, useSelector } from 'dva';
 import { connect, FormattedMessage, formatMessage } from 'umi';
 import { Button, Space, Input, Tabs, Steps, message, Checkbox, Popover, Row, Col, Divider, Select, Radio, DatePicker, InputNumber, Tooltip, Upload } from 'antd';
-import { SearchOutlined, PlusOutlined, ProfileOutlined, BarsOutlined, ZoomInOutlined, OrderedListOutlined, CheckOutlined, UploadOutlined, SaveOutlined, BorderBottomOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { SearchOutlined, PlusOutlined, ProfileOutlined, BarsOutlined, ZoomInOutlined, OrderedListOutlined, CheckOutlined, CloseOutlined, UploadOutlined, SaveOutlined, BorderBottomOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { findValueByProp, getBase64 } from '../../../../utils/custom'
 import styles from '../style.less';
+
+import png1 from '../../../../file/img/ycjc1.png';
+import png2 from '../../../../file/img/ycjc2.png';
+import png3 from '../../../../file/img/logo1.png';
+import png4 from '../../../../file/img/login1.png';
+import png5 from '../../../../file/img/login2.png';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -67,6 +73,7 @@ let EditAbnormal = () => {  // 修改异常
                 <Step title="臨時對策"></Step>
                 <Step title="原因分析"></Step>
                 <Step title="備註與附件"></Step>
+                <Step title="問題跟蹤"></Step>
             </Steps>
         </div>
         <div className={styles['new-abnormal-steps-right']}>
@@ -96,6 +103,8 @@ let StepContent = ({ current }) => {
             return <Step5 />
         case 5:
             return <Step6 />
+        case 6:
+            return <Step7 />
         default:
             return <Step1 />
     }
@@ -959,7 +968,7 @@ let Step5 = props => {
     //                 sectionChief: [], //負責人处级
     //                 notifier: [] // 異常知會人
     let { prevStep, nextStep, setEditAbnormal, retSetEditAbnormalByPlaneObj } = useContext(EditAbnormalContext);
-    let { parson, allCause, currentClassify} = props;
+    let { parson, allCause, currentClassify } = props;
     let {
         allChargePerson, allSectionManager, allMinister, allSectionChief, allNotifier,
         chargePerson, sectionManager, minister, sectionChief, notifier
@@ -967,7 +976,7 @@ let Step5 = props => {
 
     useEffect(() => {
         // console.log(allCause, currentClassify);
-        if(allCause.length > 0 && !allCause.includes(currentClassify)){
+        if (allCause.length > 0 && !allCause.includes(currentClassify)) {
             setEditAbnormal('causeAnalysis.cause.currentClassify', allCause.slice(-1)[0])
         }
     }, [allCause, currentClassify]);
@@ -1097,7 +1106,7 @@ let Cause = props => {
     let { setEditAbnormal, retSetEditAbnormalByPlaneObj, retSetEditAbnormalByMoment } = useContext(EditAbnormalContext);
 
     let onEdit = (targetKey, action) => {
-        if(action == 'remove'){
+        if (action == 'remove') {
             setEditAbnormal('causeAnalysis.cause.allCause', allCause.filter(cause => cause != targetKey))
         }
     }
@@ -1109,10 +1118,10 @@ let Cause = props => {
         <Row gutter={[0, 16]} justify="center">
             <Col span={24}>
                 {/* 人 機 料 法 環 量檢測     */}
-                <Tabs size="small" type='editable-card' activeKey={currentClassify} 
+                <Tabs size="small" type='editable-card' activeKey={currentClassify}
                     onEdit={onEdit}
-                    onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.currentClassify', '')} 
-                    style={{ width: '100%', border: '1px solid #ddd' }} 
+                    onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.currentClassify', '')}
+                    style={{ width: '100%', border: '1px solid #ddd' }}
                 >
                     {
                         allCause.map(cause => {
@@ -1615,11 +1624,6 @@ let Step6 = props => {
         // }  //覆盖默认上传操作
     }
 
-    let submit = useCallback(() => {
-        // dispatch({
-        //     type: 'AbnormalDecision/newAbnormal'
-        // });
-    }, []);
 
     return <div className={styles['step6']}>
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
@@ -1660,11 +1664,13 @@ let Step6 = props => {
             </Col>
         </Row>
         <Row gutter={[0, 24]} justify="center">
-            <Col span={8} style={{ textAlign: 'center' }}>
-                <Space size="large">
+            <Col span={10} style={{ textAlign: 'center' }}>
+                {/* <Space size="large">
                     <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
+                    <Button type="danger" size="small" icon={<SaveOutlined />} onClick={saveDraft}> 存入草稿 </Button>
                     <Button type="primary" size="small" icon={<SaveOutlined />} onClick={submit}> 提交 </Button>
-                </Space>
+                </Space> */}
+                <Operation />
             </Col>
         </Row>
     </div>
@@ -1675,4 +1681,225 @@ Step6 = connect(state => {
         remarksAndAttachments: state.AbnormalDecision.abnormalMaintenance.remarksAndAttachments
     }
 })(Step6);
+
+
+let Operation = props => {
+    let {dispatch, status, operationPermissions } = props;
+    let { prevStep } = useContext(EditAbnormalContext);
+    //status: 等待處理，處理中，申請結案，已結案
+    let saveDraft = () => {
+        // console.log('存入草稿');  // 不傳附件
+        dispatch({
+            type: 'AbnormalDecision/abnormalMaintenanceSaveDraft'
+        })
+    }
+    let submit = () => {
+        // console.log('提交');  // 全傳
+        dispatch({
+            type: 'AbnormalDecision/abnormalMaintenanceSubmit'
+        })
+    }
+    let resolve = () => {
+        // console.log('通過')
+        dispatch({
+            type: 'AbnormalDecision/abnormalMaintenanceResolve'
+        })
+    }
+    let reject = () => {
+        // console.log('駁回')
+        dispatch({
+            type: 'AbnormalDecision/abnormalMaintenanceReject'
+        })
+    }
+    if (status == '已結案' || operationPermissions == 'N') {   //已結案或無權限操作，不顯示操作按鈕
+        return <Space size="large">
+            <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
+        </Space>
+    } else {
+        switch (status) {
+            case '申請結案':    // 申請結案時顯示通過和駁回按鈕
+                return <Space size="large">
+                    <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
+                    <Button type="primary" size="small" icon={<CheckOutlined />} onClick={resolve}> 通過 </Button>
+                    <Button type="danger" size="small" icon={<CloseOutlined />} onClick={reject}> 駁回 </Button>
+                </Space>
+            case '等待處理':
+            case '處理中':
+                return <Space size="large">
+                    <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
+                    <Button type="danger" size="small" icon={<SaveOutlined />} onClick={saveDraft}> 存入草稿 </Button>
+                    <Button type="primary" size="small" icon={<SaveOutlined />} onClick={submit}> 提交 </Button>
+                </Space>
+            default:
+                return <Space size="large">
+                    <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
+                </Space>
+        }
+    }
+}
+
+Operation = connect(state => {
+    return {
+        status: state.AbnormalDecision.abnormalMaintenance.status,
+        operationPermissions: state.AbnormalDecision.abnormalMaintenance.operationPermissions
+    }
+})(Operation);
+
+
+let Step7 = props => {
+    let issueTracking = props.issueTracking;
+
+    if (issueTracking.length == 0) {
+        return <div className={styles['step7']}>
+            無記錄
+        </div>
+    }
+    return <div className={styles['step7']}>
+        <Steps progressDot current={issueTracking.length - 1} direction="vertical" style={{ marginTop: '20px', marginLeft: '20px' }}>
+            {
+                issueTracking.map(step => <Step key={step.title} title={step.title} description={<Issue content={step.content} />} />)
+            }
+            {/* <Step title="吴勇标发起了问题" description={<Issue1 />} />
+            <Step title="隗勉對問題進行了更新...." description={<Issue2 />} />
+            <Step title="劉慶公對問題進行了更新...." description={<Issue3 />} />
+            <Step title="高超辉對問題進行了更新...." description={<Issue4 />} /> */}
+        </Steps>
+    </div>
+}
+
+Step7 = connect(state => {
+    return {
+        issueTracking: state.AbnormalDecision.abnormalMaintenance.issueTracking
+    }
+})(Step7);
+
+
+let Issue = props => {
+    return <div style={{ paddingTop: '10px', paddingRight: '40px' }}>
+        {
+            props.content.map(row => <Twain key={row.name} {...row} />)
+        }
+    </div>
+}
+
+
+// let Issue1 = props => {
+//     return <div style={{ paddingTop: '10px', paddingRight: '40px' }}>
+//         <b>问题描述:</b>
+//         <div style={{ boxSizing: 'border-box', paddingLeft: '20px' }}>
+//             <b>異常種類-物料异常</b> <br />
+//             <b>DC</b>{' '}<span>无</span> <br />
+//             <b>LC</b>{' '}<span>无</span> <br />
+//             <b>零件料號</b>{' '}<span>无</span> <br />
+//             <b>不良率</b>{' '}<span>无</span> <br />
+//             <b>供應商</b>{' '}<span>无</span>
+//         </div>
+//         <b>通知時間:</b> <span>12/15/2020 7:01:00 AM</span> <br />
+//         <b>處理人員:</b> <span>PD:吳勇標(F4357722)</span> <br />
+//         <b>相關說明:</b>
+//         <p>MCEBU 組裝線在生產Fortitude（800-38531-07）機種時，目檢連續發現4pcs 連接器彈片翹起不良（如下圖），投入185pcs 不良4pcs 不良率2.1%，針對該異常請PQE（隗勉）上班后前來產線分析處理，謝謝！！！（實物在組裝線長電腦桌旁）</p>
+//         <b>相關附件:</b>
+//         <div style={{ width: '100%', display: 'flex', justifyContent: 'space-start', alignItems: 'space-start', padding: '10px', border: '1px solid #ddd', overflow: 'auto' }}>
+//             <div style={{ paddingRight: '15px' }}>
+//                 <a href={png1} target="_blank">
+//                     <div style={{ border: '1px solid #ddd' }}>
+//                         <img width="260" src={png1} alt="" />
+//                     </div>
+//                 </a>
+//             </div>
+//             <div style={{ paddingRight: '15px' }}>
+//                 <a href={png2} target="_blank">
+//                     <div style={{ border: '1px solid #ddd' }}>
+//                         <img width="260" src={png2} alt="" />
+//                     </div>
+//                 </a>
+//             </div>
+//             <div style={{ paddingRight: '15px' }}>
+//                 <a href={png4} target="_blank">
+//                     <div style={{ border: '1px solid #ddd' }}>
+//                         <img width="260" src={png4} alt="" />
+//                     </div>
+//                 </a>
+//             </div>
+//             <div style={{ paddingRight: '15px' }}>
+//                 <a href={png5} target="_blank">
+//                     <div style={{ border: '1px solid #ddd' }}>
+//                         <img width="260" src={png5} alt="" />
+//                     </div>
+//                 </a>
+//             </div>
+//         </div>
+//         <div style={{ marginTop: '8px' }}>
+//             <Space>
+//                 <b>文档链接：</b>
+//                 <a target="_blank" href={png1}>doc1</a> |
+//                 <a target="_blank" href={png2}>doc2</a> |
+//                 <a target="_blank" href={png3}>doc3</a> |
+//                 <a target="_blank" href={png4}>doc4</a> |
+//                 <a target="_blank" href={png5}>doc5</a>
+//             </Space>
+//         </div>
+//     </div>
+// }
+
+let Twain = props => {   // 一对
+    // {name: '', content: ''}  {name: ''}  {name: '', content: [{}, ...]}
+    let { name, content } = props;
+    switch (typeof content) {
+        case 'undefined':
+            return <div> <b>{name}</b> </div>
+        case 'string':
+            if (content.length < 50) {
+                if (content.length == 0) {
+                    return <div> <b>{name}</b> <span>空</span> </div>
+                }
+                return <div> <b>{name}</b> <span>{content}</span> </div>
+            }
+            return <div> <b>{name}</b> <p>{content}</p> </div>
+        case 'object':
+            if (Object.prototype.toString.call(content) == '[object Array]') {  // 子集
+                return <div>
+                    <b>{name}</b>
+                    <div style={{ paddingLeft: '20px' }}>
+                        {
+                            content.map(row => <Twain key={row.name} {...row} />)
+                        }
+                    </div>
+                </div>
+            }
+            if (Object.prototype.toString.call(content) == '[object Object]') {   // 附件
+                return <div>
+                    <b>{name}</b>
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-start', alignItems: 'space-start', padding: '10px', border: '1px solid #ddd', overflow: 'auto' }}>
+                        {
+                            content.img.map(src => (<div key={src} style={{ paddingRight: '15px' }}>
+                                <a href={src} target="_blank">
+                                    <div style={{ border: '1px solid #ddd' }}>
+                                        <img width="260" src={src} alt="" />
+                                    </div>
+                                </a>
+                            </div>))
+                        }
+                    </div>
+                    <div style={{ marginTop: '8px' }}>
+                        <Space>
+                            <b>文档链接：</b>
+                            {
+                                content.doc.map((row, i) => {
+                                    if (i != content.doc.length - 1) {
+                                        return <span key={row.name}><a target="_blank" href={row.src}>{row.name}</a> | </span>
+                                    } else {
+                                        return <a key={row.name} target="_blank" href={row.src}>{row.name}</a>
+                                    }
+                                })
+                            }
+                        </Space>
+                    </div>
+                </div>
+            }
+            return <></>
+        default:
+            return <></>
+    }
+}
 

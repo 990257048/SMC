@@ -118,6 +118,7 @@ const LoginItem = props => {
 };
 
 const LoginItems = {};
+// console.log(ItemMap);
 Object.keys(ItemMap).forEach(key => {
   const item = ItemMap[key];
 

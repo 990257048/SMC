@@ -99,7 +99,15 @@ export async function getNewAbnormalMsg (sendData) {   //获取新增异常需�
     });
 }
 
-export async function uploadFile (sendData) {  //上传文件操作
+export async function getAbnormalMaintenanceMsg (sendData) {  //获取异常维护需要的附带信息
+    console.log(sendData);
+    return requestReal('/api/abnormalDecision/getAbnormalMaintenanceMsg', {
+        method: 'POST',
+        data: sendData
+    });
+}
+
+export async function uploadFile (sendData) {  //上传文件操作(作废)
     return requestReal('/api/abnormalDecision/uploadFile', {
         method: 'POST',
         data: sendData
@@ -109,9 +117,48 @@ export async function uploadFile (sendData) {  //上传文件操作
 export async function newAbnormal (sendData) {   //新增异常操作
     console.log(sendData);
     return requestReal('/api/abnormalDecision/newAbnormal', {
+        method: 'POST',
+        data: sendData
+    });
+}
+
+// abnormalMaintenanceSaveDraft
+
+export async function abnormalMaintenanceSaveDraft (sendData) {   //異常維護： 保存草稿
+    console.log(sendData);
+    return requestReal('/api/abnormalDecision/abnormalMaintenanceSaveDraft', {
+        method: 'POST',
+        data: sendData
+    })
+}
+
+
+export async function abnormalMaintenanceSubmit (sendData) {   //異常維護： 提交
+    console.log(sendData);
+    return requestReal('/api/abnormalDecision/abnormalMaintenanceSubmit', {
+        method: 'POST',
+        data: sendData
+    })
+}
+
+
+export async function abnormalMaintenanceResolve (sendData) {   //異常維護： 結案申請通過
+    console.log(sendData);
+    return requestReal('/api/abnormalDecision/abnormalMaintenanceResolve', {
         method: 'GET',
         params: {
             data: sendData
         }
-    });
+    })
+}
+
+
+export async function abnormalMaintenanceReject (sendData) {   //異常維護： 結案申請拒絕
+    console.log(sendData);
+    return requestReal('/api/abnormalDecision/abnormalMaintenanceReject', {
+        method: 'GET',
+        params: {
+            data: sendData
+        }
+    })
 }

@@ -1,9 +1,25 @@
 
-import { getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5, getTableData, toggerCollect, getNewAbnormalMsg, uploadFile, newAbnormal } from './service'
+import { 
+    getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5, getTableData, 
+    toggerCollect, getNewAbnormalMsg, getAbnormalMaintenanceMsg, uploadFile, newAbnormal,
+    abnormalMaintenanceSaveDraft, abnormalMaintenanceSubmit, abnormalMaintenanceResolve, abnormalMaintenanceReject
+} from './service'
 import { deepClone, retNewStateByProp } from '../../../utils/custom'
-import { graph1SendData, graph23SendData, graph4SendData, graph5SendData, newAbnormalSendData, newAbnormal_empty, filterData, combineData } from './utils'
+import { 
+    graph1SendData, graph23SendData, graph4SendData, graph5SendData, newAbnormalSendData, 
+    abnormalMaintenanceSaveDraftSendData, abnormalMaintenanceSubmitSendData,
+    newAbnormal_empty, AbnormalMaintenance_empty, filterData, combineData 
+} from './utils'
 import { message } from 'antd'
 import moment from 'moment'
+
+import png1 from '../../../file/img/ycjc1.png';
+import png2 from '../../../file/img/ycjc2.png';
+import png3 from '../../../file/img/logo1.png';
+import png4 from '../../../file/img/login1.png';
+import png5 from '../../../file/img/login2.png';
+
+// console.log(png1, png2, png3, png4, png5);
 
 let Model = {
     namespace: 'AbnormalDecision',
@@ -305,8 +321,11 @@ let Model = {
         // ---------------------------------------------------------------------------------------------------------------------------------------------
         
         abnormalMaintenance: {  // 异常维护 状态
+            id: '',   // 異常ID
+            status: '等待处理',  // 当前状态 （待处理，处理中，申请结案，已结案），不同状态操作不一样
+            operationPermissions: 'Y', //用户操作权限 'Y' | 'N'
             type: '异常', // 通知单类型  异常 | 停线
-            emergencyDegree: '一般', // 紧急程度  一般 | 紧急
+            emergencyDegree: '正常', // 紧急程度  正常 | 紧急
             baseMsg: { //基本信息
                 allAbnormalClass: ['白班', '晚班'],
                 allBU: ['SRGBU', 'PCBU'],
@@ -416,7 +435,7 @@ let Model = {
                 },
                 //异常维护里面特有的***原因分析模块**********************************************************************************************
                 cause: {
-                    allCause: ['parson', 'equipment'], // ['parson', 'equipment', 'material', 'function', 'annulus', 'detection'],  //涉及的所有原因
+                    allCause: [], // ['parson', 'equipment', 'material', 'function', 'annulus', 'detection'],  //涉及的所有原因
                     currentClassify: 'parson',  //当前分类
                     parson: {   //人
                         allChargePerson: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'], //所有责任人
@@ -475,9 +494,72 @@ let Model = {
                 remarks: '', // 備註
                 attachments: [] // 附件
             },
-            issueTracking: {   // //问题跟踪
-
-            }
+            issueTracking: [ //问题跟踪
+                {
+                    title: '吴勇标发起了问题...',
+                    content: [
+                        {
+                            name: '问题描述', content: [
+                                { name: '異常種類-物料异常' },
+                                { name: 'DC', content: '' },
+                                { name: 'LC', content: '' },
+                                { name: '零件料號', content: '' },
+                                { name: '不良率', content: '' },
+                                { name: '供應商', content: '' },
+                            ]
+                        },
+                        { name: '通知時間', content: '12/15/2020 7:01:00 AM' },
+                        { name: '處理人員', content: 'PD:吳勇標(F4357722)' },
+                        { name: '相關說明', content: 'MCEBU 組裝線在生產Fortitude（800-38531-07）機種時，目檢連續發現4pcs 連接器彈片翹起不良（如下圖），投入185pcs 不良4pcs 不良率2.1%，針對該異常請PQE（隗勉）上班后前來產線分析處理，謝謝！！！（實物在組裝線長電腦桌旁）' },
+                        {
+                            name: '相關附件', content: {
+                                img: [png1, png2, png4, png5],
+                                doc: [
+                                    { name: 'doc1', src: png1 },
+                                    { name: 'doc2', src: png2 },
+                                    { name: 'doc3', src: png3 },
+                                    { name: 'doc4', src: png4 },
+                                    { name: 'doc5', src: png5 }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    title: '隗勉對問題進行了更新...',
+                    content: [
+                        {
+                            name: '影响因素: 料', content: [
+                                { name: '原因分析-料' },
+                                { name: '負責人', content: 'PQE:黃健(F1334417)' },
+                                { name: '料號', content: 'C335.00021.005C' },
+                                { name: 'DC', content: 'D2002和D2011' },
+                                { name: 'LC', content: 'L01/09/2020 和 L2011' },
+                                { name: '廠商', content: 'Amphenol' },
+                                { name: '處理結果', content: 'QE WILSON聯繫SQE處理中' },
+                                { name: '改善方向', content: '供應商改善' },
+                                { name: '預計完成時間', content: '12/14/2020 10:44:08 AM' }
+                            ]
+                        },
+                        { name: '通知時間', content: '12/15/2020 7:01:00 AM' },
+                        { name: '處理人員', content: 'PD:吳勇標(F4357722)' },
+                
+                        { name: '相關說明', content: '' },
+                        { name: '相關附件', content: '' },
+                        { name: '问题状态', content: '申请结案' }
+                    ]
+                },
+                {
+                    title: '劉慶公對問題進行了更新...',
+                    content: [
+                        { name: '影響因素:', content: '无' },
+                        { name: '相關說明:', content: '无' },
+                        { name: '同意結案:', content: '无' },
+                        { name: '相關附件:', content: '无' },
+                        { name: '問題狀態:', content: '已結案' }
+                    ]
+                }
+            ]
         },
     },
     reducers: {
@@ -797,6 +879,19 @@ let Model = {
             }
         },
 
+        *getAbnormalMaintenanceMsg({ id }, {select, call, put}) {   //获取异常维护的附带信息
+            let {Status, Message, Data} = yield call(getAbnormalMaintenanceMsg, id);
+            console.log({Status, Message, Data});
+            if(Status == 'Pass'){
+                yield put({
+                    type: 'setAbnormalMaintenanceByFn',
+                    retNewState: state => combineData(state, Data)
+                });
+                message.success(Message);
+            }
+        },
+
+
         // *uploadFile({ file }, {select, put, call}) {   // 上传文件操作--不好用
         //     let {abnormalId, remarksAndAttachments: {attachments}} = yield select(state => state.AbnormalDecision.anomalousGraph.newAbnormal);
         //     let formData = new FormData();
@@ -856,6 +951,103 @@ let Model = {
                 type: 'setNewAbnormalByFn',
                 retNewState: state => combineData(state, newAbnormal_empty)
             })
+        },
+
+        //-------------------------------------------------------------------------------------------------------
+        // 存入草稿（異常維護）
+        *abnormalMaintenanceSaveDraft(_, {select, put, call}) { 
+            // abnormalMaintenanceSaveDraftSendData
+            let abnormalMaintenanceState = yield select(state => state.AbnormalDecision.abnormalMaintenance);
+            let sendData = filterData(abnormalMaintenanceState, abnormalMaintenanceSaveDraftSendData);
+            let {Status, Message, Data} = yield call(abnormalMaintenanceSaveDraft, sendData);
+            if(Status == 'Pass'){
+                // 关闭
+                yield put({
+                    type: 'setAnomalousTableData',
+                    payload: {
+                        modalVisible: false
+                    }
+                });
+                // 清空異常維護内容
+                yield put({
+                    type: 'clearAbnormalMaintenanceData'
+                });
+                // 关闭
+                message.success(Message);
+            }
+        },
+        // 提交數據（異常維護）
+        *abnormalMaintenanceSubmit(_, {select, put, call}) {
+            // abnormalMaintenanceSubmitSendData
+            let abnormalMaintenanceState = yield select(state => state.AbnormalDecision.abnormalMaintenance);
+            let data = filterData(abnormalMaintenanceState, abnormalMaintenanceSubmitSendData);
+            let sendData = new FormData();
+            abnormalMaintenanceState.remarksAndAttachments.attachments.forEach(file => {
+                sendData.append(file.name, file);
+            });
+            sendData.append('data', JSON.stringify(data));
+            let {Status, Message, Data} = yield call(abnormalMaintenanceSubmit, sendData);
+            if(Status == 'Pass'){
+                // 关闭
+                yield put({
+                    type: 'setAnomalousTableData',
+                    payload: {
+                        modalVisible: false
+                    }
+                });
+                // 清空
+                yield put({
+                    type: 'clearAbnormalMaintenanceData'
+                });
+                message.success(Message);
+            }
+            
+        },
+        // 結案申請通過（異常維護）
+        *abnormalMaintenanceResolve(_, {select, put, call}) {
+            let id = yield select(state => state.AbnormalDecision.abnormalMaintenance.id);
+            let {Status, Message, Data} = yield call(abnormalMaintenanceResolve, id);
+            if(Status == 'Pass'){
+                // 关闭
+                yield put({
+                    type: 'setAnomalousTableData',
+                    payload: {
+                        modalVisible: false
+                    }
+                });
+                // 清空
+                yield put({
+                    type: 'clearAbnormalMaintenanceData'
+                });
+                message.success(Message);
+            }
+        },
+        // 結案申請拒絕（異常維護）
+        *abnormalMaintenanceReject(_, {select, put, call}) {
+            let id = yield select(state => state.AbnormalDecision.abnormalMaintenance.id);
+            let {Status, Message, Data} = yield call(abnormalMaintenanceReject, id);
+            if(Status == 'Pass'){
+                // 关闭
+                yield put({
+                    type: 'setAnomalousTableData',
+                    payload: {
+                        modalVisible: false
+                    }
+                });
+                // 清空
+                yield put({
+                    type: 'clearAbnormalMaintenanceData'
+                });
+                message.success(Message);
+            }
+        },
+
+        *clearAbnormalMaintenanceData(_, {select, put, call}) {  // 清空異常維護的狀態
+            yield put({
+                type: 'setAbnormalMaintenanceByFn',
+                retNewState: state => combineData(state, AbnormalMaintenance_empty)
+            });
+
         }
     }
 }

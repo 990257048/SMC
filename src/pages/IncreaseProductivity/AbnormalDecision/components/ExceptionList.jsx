@@ -100,7 +100,7 @@ TableToolBar = connect(state => {
 
 let useTableConfig = (initTableData) => {
     let dispatch = useDispatch();
-    let toggerCollect = row => {
+    let toggerCollect = row => {  // 切换收藏操作
         // console.log(row.id);
         dispatch({
             type: 'AbnormalDecision/toggerCollect',
@@ -109,10 +109,23 @@ let useTableConfig = (initTableData) => {
     }
 
     let edit = row => {
+        // console.log(row);
+        // 打开对话框
         dispatch({
             type: 'AbnormalDecision/setAnomalousTableData',
             payload: { modalVisible: true }
-        })
+        });
+        // 獲取附带數據。。。（包含： 基础数据 当前状态 操作权限*****）
+        dispatch({
+            type: 'AbnormalDecision/getAbnormalMaintenanceMsg',
+            id: row.id
+        });
+        // 设置異常ID
+        dispatch({
+            type: 'AbnormalDecision/setAbnormalMaintenanceByProp',
+            prop: 'id', 
+            value: row.id
+        });
     }
 
     let initTableConfig = {
@@ -260,6 +273,10 @@ let ExceptionList = props => {
             type: 'AbnormalDecision/setAnomalousTableData',
             payload: { modalVisible: false }
         })
+        dispatch({
+            type: 'AbnormalDecision/clearAbnormalMaintenanceData'
+        })
+        // 清空數據。。。
     }, []);
 
     return <div className={styles['exception-list']}>

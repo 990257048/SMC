@@ -13,7 +13,7 @@ import RightContent from '@/components/GlobalHeader/RightContent';
 import { getAuthorityFromRouter } from '@/utils/utils';
 import { debounce } from '@/utils/custom';
 import GlobalFooter from '../components/GlobalFooter';
-import logo from '../assets/smc-logo.png';
+import logo from '../assets/login/logo1.png';
 
 const noMatch = (
   <Result

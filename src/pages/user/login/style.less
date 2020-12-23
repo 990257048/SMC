@@ -1,10 +1,145 @@
 @import '~antd/es/style/themes/default.less';
 
 .main {
-  width: 368px;
-  margin: 0 auto;
+  // width: 368px;
+  width: 335px;
+  height: 360px;
+  margin: 2% auto;
+  padding: 10px 45px;
+  // border: 1px solid red;
+  background: url('../../../assets/login/outer-box.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  // display: none;
   @media screen and (max-width: @screen-sm) {
     width: 95%;
+  }
+
+
+  // <div className={styles.logo}></div>
+  // <div className={styles.username}></div>
+  // <div className={styles.password}></div>
+  // <div className={styles.vcode}></div>
+  // <div className={styles.link}></div>
+  // <div className={styles.login}></div>
+
+  .logo{
+    height: 70px;
+    padding: 25px 55px 0px 55px; 
+    // border: 1px solid red;
+  }
+
+  .logo-img{
+    width: 100%;
+    height: 100%;
+    // border: 1px solid #fff;
+    background: url('../../../assets/login/logo.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  .link{
+    height: 30px;
+    line-height: 30px;
+    span{
+      color: #526692;
+    }
+  }
+
+  .username, .password, .vcode{
+    margin-top: 18px;
+    height: 36px;
+    border: 1px solid #1762a0;
+    border-radius: 2px;
+  }
+
+  .username>span, .password>span, .vcode>span{
+    float: left;
+    width: 20px;
+    height: 20px;
+    margin: 7px 0px 7px 7px;
+  }
+
+  .username{
+    span{
+      background: url('../../../assets/login/username.png');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
+    input{
+      width: calc(100% - 27px);
+      height: 34px;
+      border: none;
+      outline: none;
+      background: rgba(0,0,0,0);
+      color: #fff;
+      padding: 0px 7px;
+    }
+  }
+
+  .password{
+    span{
+      background: url('../../../assets/login/password.png');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
+    input{
+      width: calc(100% - 27px);
+      height: 34px;
+      border: none;
+      outline: none;
+      background: rgba(0,0,0,0);
+      color: #fff;
+      padding: 0px 7px;
+    }
+  }
+
+  .vcode{
+    span{
+      background: url('../../../assets/login/vcode.png');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
+    input{
+      width: calc(100% - 120px);
+      height: 34px;
+      float: left;
+      border: none;
+      outline: none;
+      background: rgba(0,0,0,0);
+      color: #fff;
+      padding: 0px 7px;
+    }
+    .vcode-wrap{
+      width: 93px;
+      height: 34px;
+      float: left;
+      padding: 4px;
+      .vcode-img{
+        width: 100%;
+        height: 100%;
+        background: url('../../../assets/vcode/test.png');
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+      }
+    }
+  }
+
+  .login{
+    margin-top: 10px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    color: #002840;
+    font-family: ArialMT,"Microsoft YaHei",Arial,sans-serif,Helvetica,STHeiti;
+    font-size: 15px;
+    font-weight: 600;
+    background: #098eff;
+    border-top-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    &:hover{
+      background: #2095f9;
+    }
   }
 
   .icon {

@@ -11,7 +11,7 @@ const proSettings = {
   menu: {
     locale: true,
   },
-  title: 'Fii Cloud SMC',
+  title: 'Cloud SMC', //'Fii Cloud SMC',
   pwa: false,
   iconfontUrl: '',
 };

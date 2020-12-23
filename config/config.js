@@ -97,7 +97,7 @@ export default defineConfig({
             },
             // -------------------------------------------------------------------------------------------------------------------------------------------------------------
             {
-              path: '/ant-design-components',    // ant-design 组件一般化（快速开发系统）
+              path: '/ant-design-components',    // ant-design 组件（快速开发系统）
               name: 'ant-design-components',
               icon: 'antDesign',
               routes: [

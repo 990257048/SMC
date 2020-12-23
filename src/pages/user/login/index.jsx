@@ -1,9 +1,10 @@
 // import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from '@ant-design/icons';
 import { Space, Alert, Checkbox } from 'antd';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, connect } from 'umi';
 import LoginForm from './components/Login';
 // import smcApp from '../../../assets/smc_qrcode.png';
+
 import styles from './style.less';
 
 const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginForm;
@@ -20,12 +21,22 @@ const LoginMessage = ({ content }) => (
 );
 
 const Login = props => {
-  const { userLogin = {}, submitting } = props;
-  const { status, type: loginType } = userLogin;
-  const [autoLogin, setAutoLogin] = useState(true);
+  // const { userLogin = {}, submitting } = props;
+  // const { status, type: loginType } = userLogin;
+  // const [autoLogin, setAutoLogin] = useState(true);
   const [type, setType] = useState('account');
 
-  const handleSubmit = values => {
+  let username = useRef();
+  let password = useRef();
+  let vcode = useRef();
+
+  const handleSubmit = () => {
+    var values = {
+      userName: username.current.value,
+      password: password.current.value,
+      vcode: vcode.current.value
+    }
+    // console.log(values);
     const { dispatch } = props;
     dispatch({
       type: 'login/login',
@@ -33,14 +44,48 @@ const Login = props => {
     });
   };
 
+  const Keydown = e => {
+    if(e.nativeEvent.keyCode == 13){
+      handleSubmit();
+    }
+  }
+
   return (
     <div className={styles.main}>
-      <LoginForm activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
+
+      <div className={styles.logo}>
+        <div className={styles["logo-img"]}></div>
+      </div>
+      <div className={styles.username}>
+        <span></span>
+        <input type="text" ref={username} placeholder="請輸入工號" />
+      </div>
+      <div className={styles.password}>
+        <span></span>
+        <input type="password" ref={password} placeholder="請輸入密碼" />
+      </div>
+      <div className={styles.vcode}>
+        <span></span>
+        <input type="text" ref={vcode} onKeyDown={Keydown} placeholder="請輸入驗證碼" />
+        <div className={styles["vcode-wrap"]}>
+          <div className={styles["vcode-img"]}></div>
+        </div>
+      </div>
+      <div className={styles.link}>
+        <Space size='large' style={{ float: 'right' }}>
+          <span><a>忘記密碼</a></span>
+          <span><a>註冊</a></span>
+        </Space>
+      </div>
+      <div className={styles.login} onClick={handleSubmit}>
+        登錄
+      </div>
+
+      {/* <LoginForm activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
         <Tab key="account" tab="账户密码登录">
           {status === 'error' && loginType === 'account' && !submitting && (
             <LoginMessage content="账户或密码错误（admin/ant.design）" />
           )}
-
           <UserName
             name="userName"
             placeholder="用户名: admin or user"
@@ -69,25 +114,6 @@ const Login = props => {
           <Submit loading={submitting}>登录</Submit>
         </Tab>
         <Tab key="qr-code" tab="SMC手机登录">  </Tab>
-        {/* <Tab key="download-app" tab="下载手机App">
-          <div >
-            <p>下载手机端SMC</p>
-            <img src={smcApp} alt="smc-app" />
-          </div>
-        </Tab> */}
-
-        
-        {/* <div className={styles.other}>
-          其他登录方式
-          <AlipayCircleOutlined className={styles.icon} />
-          <TaobaoCircleOutlined className={styles.icon} />
-          <WeiboCircleOutlined className={styles.icon} />
-          <Link className={styles.register} to="/user/register">
-            注册账户
-          </Link>
-        </div> */}
-
-
         <div>
           <Space size='middle' className={styles['float-right']}>
             <Link to="/user/down-smc">
@@ -101,10 +127,8 @@ const Login = props => {
             </Link>
           </Space>
         </div>
-
-
-
       </LoginForm>
+     */}
     </div>
   );
 };
