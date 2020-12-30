@@ -18,9 +18,12 @@ export default {
   'menu.increase-productivity.abnormal-decision': '異常決策中心',
   'menu.production-board': '生產性看板',
   'menu.production-board.real-time-production': '實時生產看板',
+  'menu.production-board.line-msg': '線體信息配置',
   //-------------------------------------------------------------
   'menu.ant-design-components': 'AntDesign組件',
   'menu.ant-design-components.antd-button': '按鈕',
+  'menu.practice-page': '練習頁面',
+  'menu.practice-page.test-page1': '測試頁面1',
   //-------------------------------------------------------------
   'menu.dashboard.analysis': '分析頁',
   'menu.dashboard.monitor': '監控頁',

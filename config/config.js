@@ -92,6 +92,11 @@ export default defineConfig({
                   path: '/production-board/real-time-production',   // 实时生产看板
                   name: 'real-time-production',
                   component: './ProductionBoard/RealTimeProduction'
+                },
+                {
+                  path: '/production-board/line-msg',   // 线体信息配置
+                  name: 'line-msg',
+                  component: './ProductionBoard/LineMsg'
                 }
               ]
             },
@@ -105,6 +110,18 @@ export default defineConfig({
                   path: '/ant-design-components/antd-button',   // 按钮
                   name: 'antd-button',
                   component: './AntDesignComponents/AntdButton'
+                }
+              ]
+            },
+            {
+              path: '/practice-page',    //练习页面
+              name: 'practice-page',
+              icon: 'form',
+              routes: [
+                {
+                  path: '/practice-page/test-page1',    // 测试页面1
+                  name: 'test-page1',
+                  component: './PracticePage/TestPage1'
                 }
               ]
             },

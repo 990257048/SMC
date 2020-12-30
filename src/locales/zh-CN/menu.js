@@ -15,9 +15,12 @@ export default {
   'menu.increase-productivity.abnormal-decision': '异常决策中心',
   'menu.production-board': '生产性看板',
   'menu.production-board.real-time-production': '实时生产看板',
+  'menu.production-board.line-msg': '线体信息配置',
   //-------------------------------------------------------------
   'menu.ant-design-components': 'AntDesign组件',
   'menu.ant-design-components.antd-button': '按钮',
+  'menu.practice-page': '练习页面',
+  'menu.practice-page.test-page1': '测试页面1',
   //-------------------------------------------------------------
   'menu.dashboard.analysis': '分析页',
   'menu.dashboard.monitor': '监控页',

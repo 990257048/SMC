@@ -15,9 +15,12 @@ export default {
   'menu.increase-productivity.abnormal-decision': 'Abnormal Decision',
   'menu.production-board': 'Production Board',
   'menu.production-board.real-time-production': 'Realtime Production',
+  'menu.production-board.line-msg': 'Line Message',
   //-------------------------------------------------------------
   'menu.ant-design-components': 'Ant Design Components',
   'menu.ant-design-components.antd-button': 'Button',
+  'menu.practice-page': 'Practice Page',
+  'menu.practice-page.test-page1': 'Test Page1',
   //-------------------------------------------------------------
   'menu.dashboard.analysis': 'Analysis',
   'menu.dashboard.monitor': 'Monitor',
