@@ -10,6 +10,7 @@ let TestPage1 = props => {
         <Spin type="small" />
         <Spin type="default" />
         <Spin type="large" />
+        app
     </div>
 }
 
@@ -27,5 +28,6 @@ export default TestPage1;
 // typescript | less | node | css3 | dart | sql 
 // ReactNative | Flutter | wechart | uni-app
 // express | nest | koa | egg | mongodb
+// git | github | vscode | npm | chrome | chrome-devtools
 
 // 測試頁面1  (20201230 add by gch) 弹性布局 栅格布局 less
