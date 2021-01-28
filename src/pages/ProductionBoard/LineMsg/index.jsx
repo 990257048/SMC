@@ -6,6 +6,9 @@ import { Card, Row, Col, Input, Select, Modal, Button, message, List, DatePicker
 import { SettingOutlined, EditOutlined, DeleteOutlined, SelectOutlined, FormOutlined, PlusOutlined, PlusSquareOutlined, SearchOutlined, EyeOutlined } from '@ant-design/icons';
 import styles from './style.less';
 
+import cookies from 'js-cookie';
+import {getAllMFG, getLineData, getLineAdditionalInformation, getLineBaseMsg, updateLineName, getLineCode} from './service';
+
 let { TextArea } = Input;
 let { Option } = Select;
 let { RangePicker } = DatePicker;
@@ -257,50 +260,97 @@ let createArr = length => {
 
 let Cart1 = (props) => {
     let { dispatch, disabled } = props;
-    // console.log(props);
     let [selectLine, setSelectLine] = useState({
-        MFG: 'MFGI',
-        line: 'LINE2',
-        allMFG: ['MFGI', 'MFGII', 'MFGV'],
-        allLine: ['LINE1', 'LINE2', 'LINE3'],
-        // btnShow: true
+        // MFG: 'MFGI',
+        // line: 'LINE2',
+        // allMFG: ['MFGI', 'MFGII', 'MFGV'],
+        // allLine: ['LINE1', 'LINE2', 'LINE3']
+        MFG: '',
+        line: '',
+        allMFG: [''],
+        allLine: [''],
+        newLine: '',
+        visible: false,
+
     });
-    let [visible, setVisible] = useState(false);
-    let ipt_line = useRef();
-    let { MFG, line, allMFG, allLine } = selectLine;
+    let { MFG, line, allMFG, allLine, newLine, visible } = selectLine;
+    // let [visible, setVisible] = useState(false);
+    // let ipt_line = useRef();
 
-    let MFGChange = (v) => {    // 选择制造处
-        setSelectLine({ ...selectLine, MFG: v });
+    let setLineMsg = (payload) => {
+        dispatch({type: 'LineMsg/setLineMsg', payload})
+    }
+    let setLocalState = (payload) => {
+        setSelectLine({...selectLine, ...payload})
     }
 
-    let lineChange = (v) => {    // 选择线体
-        setSelectLine({ ...selectLine, line: v });
-    }
+    let handleCollectios = useMemo(() => {
+        return {
+            MFGChange(v) {    // 选择制造处
+                setLocalState({ MFG: v });
+            },
+            lineChange(v) {    // 选择线体
+                setLocalState({ line: v });
+            },
+            newLineChange(e) {
+                setLocalState({ newLine: e.target.value });
+            },
+            HandleClick() {     // 点击【修改線體名稱】
+                setLocalState({ newLine: line, visible: true });
+            },
+            handleOk() {        // 对话框 确认
+                updateLineName(MFG, line, newLine).then(e => {
+                    if(e.Status == 'Pass'){
+                        message.success(e.Message);
+                        // 重新获取线体 设置成新线体 后续操作自执行
+                        getLineData(MFG).then(e => {
+                            if(e.Status == 'Pass'){
+                                console.log(e);
+                                e.Data.LineName.includes(newLine) && setLocalState({line: newLine, allLine: e.Data.LineName, visible: false});
+                            }
+                        })
+                    }else{
+                        message.error(e.Message);
+                    }
+                });
+            },
+            handleCancel() {    // 对话框 取消
+                setLocalState({visible: false});
+            }
+        }
+    }, [selectLine]);
 
-    let HandleClick = () => {     // 点击【修改線體名稱】
-        console.log(MFG, line);
-        setVisible(true);
-    }
-
-    let handleOk = () => {        // 对话框 确认
-        console.log(MFG, line, ipt_line.current.state.value);
-        setVisible(false);
-        message.success('已修改线体名称');
-    }
-
-    let handleCancel = () => {    // 对话框 取消
-        setVisible(false);
-    }
+    // 生命周期 事件绑定
+    useMemo(() => {
+        getAllMFG(cookies.get('token')).then(e => {   //加载制造处数据
+            if(e.Status == 'Pass'){
+                e.Data.Mfg.length > 0 && setLocalState({MFG: e.Data.Mfg[0], allMFG: e.Data.Mfg});
+            }
+        });
+        getLineAdditionalInformation().then(e => {    //加载修改线体信息所需附加数据
+            if(e.Status == 'Pass'){
+                setLineMsg(e.Data);
+            }
+        })
+    }, []);
 
     useEffect(() => {
-        if (MFG == 'MFGII' && line == 'LINE2') {
-            // setSelectLine({ ...selectLine, btnShow: true })
-            dispatch({ type: 'LineMsg/setLineMsg', payload: { disabled: false } });
-        } else {
-            // setSelectLine({ ...selectLine, btnShow: false })
-            dispatch({ type: 'LineMsg/setLineMsg', payload: { disabled: true } });
-        }
-    }, [MFG, line])
+        MFG != '' && getLineData(MFG).then(e => {   // 选择制造处后加载线体数据
+            if(e.Status == 'Pass'){
+                e.Data.LineName.length > 0 && setLocalState({line: e.Data.LineName[0], allLine: e.Data.LineName});
+            }
+        })
+    }, [MFG]);
+
+    useEffect(() => {    // 选择线体后加载线体基本信息
+        MFG != '' && line != '' && getLineBaseMsg(MFG, line).then(e => {
+            if(e.Status == 'Pass'){
+                // 设置全局状态
+                setLineMsg({...e.Data, currentMFG: MFG, currentLine: line });
+            }
+        })
+    }, [MFG, line]);
+
     return <Card size='small' title={<Card1Tit />}>
         <div style={{ padding: '15px 25px 0px 25px' }}>
             <Row gutter={[16, 16]} justify='center'>
@@ -308,7 +358,7 @@ let Cart1 = (props) => {
                     <Row gutter={16}>
                         <Col span={8} className={styles['col-label']}>制造处</Col>
                         <Col span={16}>
-                            <Select showSearch value={MFG} onChange={MFGChange} filterOption={filterOption} style={{ width: '100%' }} >
+                            <Select showSearch value={MFG} onChange={handleCollectios.MFGChange} filterOption={filterOption} style={{ width: '100%' }} >
                                 {
                                     allMFG.map(v => <Option key={v} value={v}>{v}</Option>)
                                 }
@@ -322,7 +372,7 @@ let Cart1 = (props) => {
                             SMC線別
                     </Col>
                         <Col span={16}>
-                            <Select showSearch value={line} onChange={lineChange} filterOption={filterOption} style={{ width: '100%' }} >
+                            <Select showSearch value={line} onChange={handleCollectios.lineChange} filterOption={filterOption} style={{ width: '100%' }} >
                                 {
                                     allLine.map(v => <Option key={v} value={v}>{v}</Option>)
                                 }
@@ -333,14 +383,14 @@ let Cart1 = (props) => {
                 <Col span={8}>
                     <Row gutter={16} justify='center'>
                         <Col span={8}>
-                            <Button type="primary" disabled={disabled} icon={<EditOutlined />} onClick={HandleClick}>修改線體名稱</Button>
-                            <Modal title={<div><EditOutlined />修改線體名稱</div>} visible={visible} onOk={handleOk} onCancel={handleCancel}>
+                            <Button type="primary" disabled={disabled} icon={<EditOutlined />} onClick={handleCollectios.HandleClick}>修改線體名稱</Button>
+                            <Modal title={<div><EditOutlined />修改線體名稱</div>} visible={visible} onOk={handleCollectios.handleOk} onCancel={handleCollectios.handleCancel}>
                                 <Row gutter={24}>
                                     <Col span={4} className={styles['col-label']}>
                                         SMC線別
                                     </Col>
                                     <Col span={20}>
-                                        <Input defaultValue={line} ref={ipt_line} />
+                                        <Input value={newLine} onChange={handleCollectios.newLineChange} />
                                     </Col>
                                 </Row>
                             </Modal>
@@ -382,6 +432,7 @@ let Cart2 = props => {
         // lineLeader: 'xxxxxxx',  //线体管理员
         // lastTime: '2021-01-25'  //最后修改时间
         dispatch,
+        currentMFG, currentLine,
         disabled,
         SFC_AP_SYS_name, PCAS_SYS_name, scanPoint,
         IME, allIME, section, allSection, breakPeriodList,
@@ -408,6 +459,11 @@ let Cart2 = props => {
         return {
             searchLICODE() {
                 console.log(PCAS_SYS_name);
+                getLineCode(currentMFG, currentLine, PCAS_SYS_name).then(e => {
+                    if(e.Status == 'Pass'){
+                        
+                    }
+                });
                 setLocalState({
                     visible: true,
                     LICODE: [
@@ -688,7 +744,7 @@ let Cart2 = props => {
                     </Row>
                 </Col>
                 <Col span={24}>
-                    <Row gutter={[16, 24]} justify='center'>
+                    <Row gutter={[16, 16]} justify='center'>
                         <Col span={4}>
                             <Popconfirm
                                 disabled={disabled}

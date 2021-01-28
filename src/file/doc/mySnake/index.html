@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        html,
+        body {
+            background-color: black;
+        }
+
+        #windowsize {
+            height: 300px;
+            width: 300px;
+            background-color: rgba(45, 243, 233, 0.473);
+            border: 10px solid rgb(3, 3, 129);
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -150px;
+            margin-top: -150px;
+        }
+
+        .score{            /* 积分板 */
+            height: 300px;
+            width: 300px;
+            left: 50%;
+            top: 50%;
+            margin-left: 0px;
+            margin-top: -150px;
+            border: 10px solid transparent;
+            position: absolute;
+            font-size: 20px;
+            color: #aaa;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: right;
+        }
+
+        .snake {
+            height: 10px;
+            width: 10px;
+            /* border-radius: 70%; */
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+
+        .head {
+
+            background-color: rgb(188, 255, 4);
+        }
+
+        .body {
+            border-radius: 70%;
+            background-color: chocolate;
+        }
+
+        .showFood {
+            height: 10px;
+            width: 10px;
+            background-color: black;
+            border-radius: 25%;
+            position: absolute;
+        }
+
+         .pause {         /*暂停键消失样式 */
+            display: none;
+        }
+
+        .pauseshow {      /*暂停键样式 */
+            height: 60px;
+            width: 100px;
+            left: 50%;
+            top: 50%;
+            margin-left: -50px;
+            margin-top: -30px;
+            background-color: red;
+            border: 5px solid black;
+            border-radius: 50%;
+            position: absolute;
+            /* z-index: 1; */
+            font-size: 20px; 
+            text-align: center;
+            line-height: 60px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: blanchedalmond;
+        }
+
+        span{
+            height: 20px;
+            width: 300px;
+            margin:  350px 0px 0px -10px;
+            border: 10px solid transparent;
+            position: absolute;
+            font-size: 20px;
+            color: #aaa;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+        }
+    </style>
+    先写结构；
+    <div id="windowsize">
+        <div class="snake head"></div>
+        <div class="snake body"></div>
+        <div class="snake body"></div>
+        <div class="snake showFood"></div>
+        <div class="pause">PAUSE!</div>
+        <span>按空格键暂停</span>
+    </div>
+    <div>
+        
+    </div>
+    <div class="score">
+        <p style="font-weight: 700;">得分</p>
+        <p>0</p>
+    </div>
+</body>
+<script>
+    var direction = 'right';
+    var pausecube = document.querySelector('.pause'); // 选中暂停按键
+    var score = document.getElementsByTagName('p')[1]; // 选中分数标签
+    var div = document.getElementById('windowsize');
+    var bodys = document.getElementsByClassName('body'); // 选中蛇身
+    var head = document.querySelector('.head'); // 选中蛇头
+    var food = document.getElementsByClassName('showFood')[0]; // 选中食物
+    bodys = [].slice.call(bodys);
+    var _newBody; // 新生成的身体
+    // var len = bodys.length;                 // 注！！ 不能在这里设定，len 是定值 2
+    var len;
+    var timer;
+    var scoreNum = 0;    // 吃到食物的数量
+    var pause = false;     // 暂停标志位
+    var x = 0, // 蛇头移动距离
+        y = 0;
+    // 蛇初始位置
+    function init() {
+        head.style.left = 50 + 'px';
+        head.style.top = 0 + 'px';
+        bodys[0].style.left = 40 + 'px';
+        bodys[0].style.top = 0 + 'px';
+        bodys[1].style.left = 30 + 'px';
+        bodys[1].style.top = 0 + 'px';
+        randomFood();
+    }
+    // 蛇身跟随蛇尾
+    function move() {
+        // var len = bodys.length - 1;
+        _newBody = document.createElement('div');
+        _newBody.className = 'snake body';
+        _newBody.style.left = head.style.left; // 只需要动两个节点，把蛇头位置赋给新生成的节点
+        _newBody.style.top = head.style.top;
+        div.appendChild(_newBody);
+        bodys.unshift(_newBody); // 新生成的节点插入到 bodys 数组最前；  
+        head.style.left = parseInt(head.style.left) + x + 'px';
+        head.style.top = parseInt(head.style.top) + y + 'px';
+        if (!(eatFood())) { // 没吃到食物则移除尾巴
+            (bodys.pop()).remove();
+        }
+        // onsole.log('蛇头位置' + 'left' + head.style.left, 'top' + head.style.top);
+    }
+    // 判断是否吃到食物
+    function eatFood() { // 吃到食物
+        if (head.style.left == food.style.left && head.style.top == food.style.top) {
+            console.log('eatFood（）函数执行啦 —— 吃到啦');
+            food.className = ''; // 食物消失
+            scoreNum += 10;  // 吃到加10分
+            console.log('分数' + scoreNum);
+            score.innerHTML = scoreNum;
+            return true;
+        }else{
+            return false;
+        }
+        
+    }
+    // 游戏结束
+    function gameOver() {
+        clearInterval(timer);
+        alert('Game Over!');
+        // init();
+        location.reload();
+    }
+    // 监听键盘方向 暂停功能
+    document.onkeydown = function (e) {
+        var event = e || window.event;
+        var code = e.keyCode || e.which; // 取按键对应的 ascii 码
+        // 根据按键判断方向 37-40 左上右下
+        switch (code) {
+            case 37: // pay attention!!!  not'37'
+                if (direction == 'right') break;
+                direction = 'left';
+                break;
+            case 38:
+                if (direction == 'down') break;
+                direction = 'up';
+                break;
+            case 39:
+                if (direction == 'left') break;
+                direction = 'right';
+                break;
+            case 40:
+                if (direction == 'up') break;
+                direction = 'down';
+                break;
+        }
+        if (code == 32) {
+            if (!pause) { // !pause 代表没有暂停
+                console.log('**************没暂停的时候可以暂停，并且清除定时器');
+                clearInterval(timer);
+                pausecube.className = 'pauseshow';
+                pause = true; // 暂停标志位改成true
+            } else { // 代表暂停时，code == 8的操作
+                console.log('**************暂停之后重新开始');
+                pausecube.className = 'pause';
+                startRun();
+                pause = false;
+            }
+        }
+        console.log('监听按键' + code, '方向' + direction);
+    }
+    // 随机生成食物
+    function randomFood() {
+        var food_x = Math.round(Math.random() * 29) * 10 + 'px'; // 基本均衡获取 0 到 29 的随机整数，其中获取最小值 0 和最大值 30 的几率少一半。 
+        var food_y = Math.round(Math.random() * 29) * 10 + 'px';
+        console.log('食物坐标' + '(' + food_x + ',' + food_y + ')');
+        food.style.top = food_y;
+        food.style.left = food_x;
+        for (var i = 0; i < len; i++) {
+            if (bodys[i].style.left == food.style.left && bodys[i].style.top == food.style.top) {
+                food.className = '';
+                randomFood();
+            } else {
+                food.className = 'showFood';
+            }
+        }
+    }
+    // 判断是否出边界
+    function outArea() {
+        if (parseInt(head.style.left) > 290 || parseInt(head.style.top) > 290 || parseInt(head.style.left) < 0 ||
+            parseInt(head.style.top) < 0) {
+            gameOver();
+        }
+    }
+    // 判断是否吃到寄几
+    function eatMyself() {
+        for (var i = 0; i < len; i++) {
+            if (bodys[i].style.left == head.style.left && bodys[i].style.top == head.style.top) {
+                gameOver();
+            }
+        }
+    }
+
+    init();
+
+    function startRun() {
+        timer = setInterval(function () {
+            len = bodys.length;
+            outArea();
+            eatMyself();
+            // 根据监听的方向，移动蛇头
+            switch (direction) {
+                case 'left':
+                    x -= 10;
+                    break;
+                case 'up':
+                    y -= 10;
+                    break;
+                case 'right':
+                    x += 10;
+                    break;
+                case 'down':
+                    y += 10;
+                    break;
+            }
+            // console.log('x' + x, 'y' + y);
+            move();
+            if (food.className == '') {
+                randomFood();
+            }
+            x = 0; // 将每一帧的动作清0
+            y = 0;
+        }, 200)
+    }
+    startRun();
+</script>
+</body>
+
+</html>

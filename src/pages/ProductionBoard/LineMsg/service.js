@@ -21,7 +21,15 @@ export async function getLineData(Mfg) {
     });
 }
 
-// 3.查询线别基本信息 （包括 操作权限， 所有【產線|ME等相關】【课级】【部级】【处级】【线体管理员】信息）
+// 查询附带信息 （包括 操作权限， 所有【產線|ME等相關】【课级】【部级】【处级】【线体管理员】信息）
+export async function getLineAdditionalInformation() {
+    return requestReal('/api/LineMsg/getLineAdditionalInformation', {
+        method: 'GET',
+        params: {}
+    });
+}
+
+// 3.查询线别基本信息 
 export async function getLineBaseMsg(MFG, line) {
     return requestReal('/api/LineMsg/getLineBaseMsg', {
         method: 'GET',
@@ -31,12 +39,24 @@ export async function getLineBaseMsg(MFG, line) {
     });
 }
 
+
+
 // 4.修改线体名称
 export async function updateLineName(MFG, originLine, currentLine) {
     return requestReal('/api/LineMsg/updateLineName', {
         method: 'GET',
         params: {
             MFG, originLine, currentLine
+        }
+    })
+}
+
+// 8.查询 【PCAS系统名】 对应的LICODE
+export async function getLineCode(MFG, line, PCAS_SYS_name) {
+    return requestReal('/api/LineMsg/getLineCode', {
+        method: 'GET',
+        params: {
+            MFG, line, PCAS_SYS_name
         }
     })
 }
@@ -71,12 +91,4 @@ export async function addLine(MFG, data) {
     })
 }
 
-// 8.查询 【PCAS系统名】 对应的LICODE
-export async function getLineCode(MFG, line, PCAS_SYS_name) {
-    return requestReal('/api/LineMsg/getLineCode', {
-        method: 'GET',
-        params: {
-            MFG, line, PCAS_SYS_name
-        }
-    })
-}
+
