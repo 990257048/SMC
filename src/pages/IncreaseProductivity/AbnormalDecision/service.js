@@ -12,7 +12,6 @@ export async function getAllMfg () {
 }
 
 export async function getBU (MFG) {
-    console.log(MFG);
     return requestReal('/api/getBU', {
         method: 'GET',
         params: {
@@ -22,7 +21,6 @@ export async function getBU (MFG) {
 }
 
 export async function getGraph1 (sendData) {
-    console.log(sendData);
     return requestReal('/api/abnormalDecision/getGraph1', {
         method: 'GET',
         params: {
@@ -32,7 +30,6 @@ export async function getGraph1 (sendData) {
 };
 
 export async function getGraph2 (sendData) {
-    console.log(sendData);
     return requestReal('/api/abnormalDecision/getGraph2', {
         method: 'GET',
         params: {
@@ -42,7 +39,6 @@ export async function getGraph2 (sendData) {
 }
 
 export async function getGraph3 (sendData) {
-    console.log(sendData);
     return requestReal('/api/abnormalDecision/getGraph3', {
         method: 'GET',
         params: {
@@ -52,7 +48,6 @@ export async function getGraph3 (sendData) {
 }
 
 export async function getGraph4 (sendData) {
-    console.log(sendData);
     return requestReal('/api/abnormalDecision/getGraph4', {
         method: 'GET',
         params: {
@@ -62,7 +57,6 @@ export async function getGraph4 (sendData) {
 }
 
 export async function getGraph5 (sendData) {
-    console.log(sendData);
     return requestReal('/api/abnormalDecision/getGraph5', {
         method: 'GET',
         params: {
@@ -72,7 +66,6 @@ export async function getGraph5 (sendData) {
 }
 
 export async function getTableData (sendData) {   //获取异常列表
-    console.log(sendData);
     return requestReal('/api/abnormalDecision/getTable', {
         method: 'GET',
         params: {
@@ -100,7 +93,6 @@ export async function getNewAbnormalMsg (sendData) {   //获取新增异常需�
 }
 
 export async function getAbnormalMaintenanceMsg (sendData) {  //获取异常维护需要的附带信息
-    console.log(sendData);
     return requestReal('/api/abnormalDecision/getAbnormalMaintenanceMsg', {
         method: 'POST',
         data: sendData
@@ -115,7 +107,6 @@ export async function uploadFile (sendData) {  //上传文件操作(作废)
 }
 
 export async function newAbnormal (sendData) {   //新增异常操作
-    console.log(sendData);
     return requestReal('/api/abnormalDecision/newAbnormal', {
         method: 'POST',
         data: sendData
@@ -125,7 +116,6 @@ export async function newAbnormal (sendData) {   //新增异常操作
 // abnormalMaintenanceSaveDraft
 
 export async function abnormalMaintenanceSaveDraft (sendData) {   //異常維護： 保存草稿
-    console.log(sendData);
     return requestReal('/api/abnormalDecision/abnormalMaintenanceSaveDraft', {
         method: 'POST',
         data: sendData
@@ -134,7 +124,6 @@ export async function abnormalMaintenanceSaveDraft (sendData) {   //異常維護
 
 
 export async function abnormalMaintenanceSubmit (sendData) {   //異常維護： 提交
-    console.log(sendData);
     return requestReal('/api/abnormalDecision/abnormalMaintenanceSubmit', {
         method: 'POST',
         data: sendData
@@ -143,7 +132,6 @@ export async function abnormalMaintenanceSubmit (sendData) {   //異常維護：
 
 
 export async function abnormalMaintenanceResolve (sendData) {   //異常維護： 結案申請通過
-    console.log(sendData);
     return requestReal('/api/abnormalDecision/abnormalMaintenanceResolve', {
         method: 'GET',
         params: {
@@ -154,7 +142,6 @@ export async function abnormalMaintenanceResolve (sendData) {   //異常維護�
 
 
 export async function abnormalMaintenanceReject (sendData) {   //異常維護： 結案申請拒絕
-    console.log(sendData);
     return requestReal('/api/abnormalDecision/abnormalMaintenanceReject', {
         method: 'GET',
         params: {
