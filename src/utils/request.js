@@ -71,13 +71,15 @@ const requestMock = extend({    // 请求模拟数据
 
 //==========================================================================
 
-const isMock = true;  // 是否使用模拟数据
+const isMock = false;  // 是否使用模拟数据
+const isDebug = true;   // 是否DEBUG
 
 //==========================================================================
 
 let requestReal;
 if( !isMock ){
   requestReal = (url, ...args) => {   // 请求真实数据
+    isDebug && console.log(args);
     const host = 'http://10.132.37.63:800';  // 'http://10.132.37.63:800'; // 'https://gcrc.efoxconn.com:8023'; http://localhost:3001  // 宿主
     
     // return extend({
@@ -86,7 +88,11 @@ if( !isMock ){
     return umiRequest(host + url, ...args);
   }
 }else{
-  requestReal = requestMock;  //请求模拟数据
+  //requestReal = requestMock;  //请求模拟数据
+  requestReal = (...args) => {
+    isDebug && console.log(args);
+    return requestMock(...args);
+  }
 }
 
 
