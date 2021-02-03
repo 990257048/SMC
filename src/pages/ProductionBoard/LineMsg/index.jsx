@@ -1,13 +1,13 @@
 // 线体信息配置 20201228 add by gch
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { connect } from 'umi';
 import { Card, Row, Col, Input, Select, Modal, Button, message, List, DatePicker, Popconfirm, Space, Typography, Divider } from 'antd';
 import { SettingOutlined, EditOutlined, DeleteOutlined, SelectOutlined, FormOutlined, PlusOutlined, PlusSquareOutlined, SearchOutlined, EyeOutlined } from '@ant-design/icons';
 import styles from './style.less';
 
 import cookies from 'js-cookie';
-import {getAllMFG, getLineData, getLineAdditionalInformation, getLineBaseMsg, updateLineName, getLineCode} from './service';
+import { getAllMFG, getLineData, getLineAdditionalInformation, getLineBaseMsg, updateLineName, getLineCode, updateLineMsg, deleteLine, addLine } from './service';
 
 let { TextArea } = Input;
 let { Option } = Select;
@@ -278,10 +278,10 @@ let Cart1 = (props) => {
     // let ipt_line = useRef();
 
     let setLineMsg = (payload) => {
-        dispatch({type: 'LineMsg/setLineMsg', payload})
+        dispatch({ type: 'LineMsg/setLineMsg', payload })
     }
     let setLocalState = (payload) => {
-        setSelectLine({...selectLine, ...payload})
+        setSelectLine({ ...selectLine, ...payload })
     }
 
     let handleCollectios = useMemo(() => {
@@ -300,22 +300,22 @@ let Cart1 = (props) => {
             },
             handleOk() {        // 对话框 确认
                 updateLineName(MFG, line, newLine).then(e => {
-                    if(e.Status == 'Pass'){
+                    if (e.Status == 'Pass') {
                         message.success(e.Message);
                         // 重新获取线体 设置成新线体 后续操作自执行
                         getLineData(MFG).then(e => {
-                            if(e.Status == 'Pass'){
+                            if (e.Status == 'Pass') {
                                 console.log(e);
-                                e.Data.LineName.includes(newLine) && setLocalState({line: newLine, allLine: e.Data.LineName, visible: false});
+                                e.Data.LineName.includes(newLine) && setLocalState({ line: newLine, allLine: e.Data.LineName, visible: false });
                             }
                         })
-                    }else{
+                    } else {
                         message.error(e.Message);
                     }
                 });
             },
             handleCancel() {    // 对话框 取消
-                setLocalState({visible: false});
+                setLocalState({ visible: false });
             }
         }
     }, [selectLine]);
@@ -323,30 +323,30 @@ let Cart1 = (props) => {
     // 生命周期 事件绑定
     useMemo(() => {
         getAllMFG(cookies.get('token')).then(e => {   //加载制造处数据
-            if(e.Status == 'Pass'){
-                e.Data.Mfg.length > 0 && setLocalState({MFG: e.Data.Mfg[0], allMFG: e.Data.Mfg});
+            if (e.Status == 'Pass') {
+                e.Data.Mfg.length > 0 && setLocalState({ MFG: e.Data.Mfg[0], allMFG: e.Data.Mfg });
             }
         });
-        getLineAdditionalInformation().then(e => {    //加载修改线体信息所需附加数据
-            if(e.Status == 'Pass'){
-                setLineMsg(e.Data);
-            }
-        })
     }, []);
 
     useEffect(() => {
-        MFG != '' && getLineData(MFG).then(e => {   // 选择制造处后加载线体数据
-            if(e.Status == 'Pass'){
-                e.Data.LineName.length > 0 && setLocalState({line: e.Data.LineName[0], allLine: e.Data.LineName});
+        MFG != '' && getLineAdditionalInformation(MFG).then(e => {    //加载修改线体信息所需附加数据
+            if (e.Status == 'Pass') {
+                setLineMsg(e.Data);
             }
-        })
+        });
+        MFG != '' && getLineData(MFG).then(e => {   // 选择制造处后加载线体数据
+            if (e.Status == 'Pass') {
+                e.Data.LineName.length > 0 && setLocalState({ line: e.Data.LineName[0], allLine: e.Data.LineName });
+            }
+        });
     }, [MFG]);
 
     useEffect(() => {    // 选择线体后加载线体基本信息
         MFG != '' && line != '' && getLineBaseMsg(MFG, line).then(e => {
-            if(e.Status == 'Pass'){
+            if (e.Status == 'Pass') {
                 // 设置全局状态
-                setLineMsg({...e.Data, currentMFG: MFG, currentLine: line });
+                setLineMsg({ ...e.Data, currentMFG: MFG, currentLine: line });
             }
         })
     }, [MFG, line]);
@@ -458,22 +458,17 @@ let Cart2 = props => {
         }
         return {
             searchLICODE() {
-                console.log(PCAS_SYS_name);
-                getLineCode(currentMFG, currentLine, PCAS_SYS_name).then(e => {
-                    if(e.Status == 'Pass'){
-                        
+                getLineCode(currentMFG, PCAS_SYS_name).then(e => {  // 获取PCAS_SYS_name对应的LICODE
+                    console.log(e);
+                    if (e.Status == 'Pass') {
+                        setLocalState({
+                            visible: true,
+                            LICODE: e.Data.LICODE
+                        })
+                    } else {
+                        message.error(e.Message);
                     }
                 });
-                setLocalState({
-                    visible: true,
-                    LICODE: [
-                        'Racing car sprays burning fuel into crowd.',
-                        'Japanese princess to wed commoner.',
-                        'Australian walks 100km after outback crash.',
-                        'Man charged over missing wedding girl.',
-                        'Los Angeles battles huge wildfires.'
-                    ]
-                })
             },
             closeModal() {
                 setLocalState({ visible: false })
@@ -494,6 +489,12 @@ let Cart2 = props => {
         }
     }, [modal_PCAS_SYS, PCAS_SYS_name]);
 
+    let deleteBreakPeriodList = useCallback((breakPeriod) => {   //删除指定休息时间 
+        let _breakPeriodList = [...breakPeriodList];
+        _breakPeriodList.splice(breakPeriodList.indexOf(breakPeriod), 1);
+        setLineMsg({ breakPeriodList: _breakPeriodList });
+        message.success('已删除！');
+    }, [breakPeriodList]);
 
     let [addBreakPeriod, setAddBreakPeriod] = useState({ // 新增时间段
         visible: false,
@@ -502,6 +503,7 @@ let Cart2 = props => {
     });
 
     let handleCollectios_addBreakPeriod = useMemo(() => {    // 新增休息时间段的操作集合
+        let { breakPeriod, remark } = addBreakPeriod;
         let setLocalState = (payload) => {
             setAddBreakPeriod({ ...addBreakPeriod, ...payload });
         }
@@ -517,13 +519,47 @@ let Cart2 = props => {
                 setLocalState({ remark: e.target.value });
             },
             handleOk() {   // 对话框点击确定
-                setLocalState({ visible: false });
+                // 改变时间列表（添加一项）
+                let content = breakPeriod[1][0] < breakPeriod[2][0] || (breakPeriod[1][0] == breakPeriod[2][0] && breakPeriod[1][1] <= breakPeriod[2][1]) ?
+                    (breakPeriod[0] + ':' + breakPeriod[1] + ' - ' + breakPeriod[0] + ':' + breakPeriod[2] + ' ' + remark) :
+                    null;
+                content && setLineMsg({ breakPeriodList: [...breakPeriodList, content] });
+                content && setLocalState({ visible: false });
+                !content && message.error('请输入正确的休息时间段！');
             },
             handleCancel() {    // 对话框点击取消
                 setLocalState({ visible: false });
             }
         }
-    }, [addBreakPeriod]);
+    }, [addBreakPeriod, breakPeriodList]);
+
+    let handle_updateLineMsg = () => {   //点击【修改線別信息】【确定】
+        let data = {
+            SFC_AP_SYS_name, PCAS_SYS_name, scanPoint,
+            IME, section, breakPeriodList,
+            sectionManager, minister, sectionChief,
+            lineLeader
+        };
+        updateLineMsg(currentMFG, currentLine, data).then(e => { // 当前制造处 线别 线别信息
+            if (e.Status == 'Pass') {
+                message.success(e.Message);
+            } else {
+                message.error(e.Message);
+            }
+        });
+    }
+
+    let handle_deleteLine = () => {  //点击【删除当前线别】【确定】
+        deleteLine(currentMFG, currentLine).then(e => {
+            if (e.Status == 'Pass') {
+                //提示成功 刷新
+                message.success(e.Message);
+                // location.reload();
+            } else {
+                message.error(e.Message);
+            }
+        });
+    }
 
     return <Card size='small' style={{ marginTop: '15px' }} title={<Card2Tit />} >
         <div style={{ padding: '10px 25px 0px 25px' }}>
@@ -618,10 +654,10 @@ let Cart2 = props => {
                                     <Popconfirm
                                         disabled={disabled}
                                         title="是否删除该时间段？"
-                                        onConfirm={() => { message.success('已删除！') }}
-                                        onCancel={() => { }}
-                                        okText="Yes"
-                                        cancelText="No"
+                                        onConfirm={() => { deleteBreakPeriodList(item) }}
+                                        // onCancel={() => { }}
+                                        okText="是的"
+                                        cancelText="取消"
                                     >
                                         <Button type='primary' size='small' disabled={disabled} danger={true} style={{ float: 'right' }}>删除</Button>
                                     </Popconfirm>
@@ -749,8 +785,8 @@ let Cart2 = props => {
                             <Popconfirm
                                 disabled={disabled}
                                 title="是否修改当前線別信息？"
-                                onConfirm={() => { message.success('已修改！') }}
-                                onCancel={() => { }}
+                                onConfirm={handle_updateLineMsg}
+                                // onCancel={() => { }}
                                 okText="是的"
                                 cancelText="取消"
                             >
@@ -761,8 +797,8 @@ let Cart2 = props => {
                             <Popconfirm
                                 disabled={disabled}
                                 title="是否删除当前線別？"
-                                onConfirm={() => { message.success('已删除！') }}
-                                onCancel={() => { }}
+                                onConfirm={() => { handle_deleteLine() }}
+                                // onCancel={() => { }}
                                 okText="是的"
                                 cancelText="取消"
                             >
@@ -830,11 +866,17 @@ let Cart3 = (props) => {
     let handleCollectios_showLICODE = useMemo(() => {   //查看LICODE对话框的所有操作
         return {
             searchLICODE() {
-                setModalOfShowLICODE({
-                    ...modalOfShowLICODE,
-                    LICODE: ['dsadawfaefewgfwhnfyuwegtf', 'efwejwfuihefuiwehfewfwef', 'fewfewfwejfweuifhweuifh'],
-                    visible: true
-                })
+                getLineCode(currentMFG, lineMsg.PCAS_SYS_name).then(e => {  // 获取PCAS_SYS_name对应的LICODE
+                    if (e.Status == 'Pass') {
+                        setModalOfShowLICODE({
+                            ...modalOfShowLICODE,
+                            LICODE: e.Data.LICODE,
+                            visible: true
+                        })
+                    } else {
+                        message.error(e.Message);
+                    }
+                });
             },
             closeModal() {
                 setModalOfShowLICODE({
@@ -843,8 +885,32 @@ let Cart3 = (props) => {
                 })
             }
         }
-    }, [modalOfShowLICODE, lineMsg.PCAS_SYS_name]);
+    }, [modalOfShowLICODE, lineMsg.PCAS_SYS_name, currentMFG]);
 
+    let handle_addLine = () => {   // 点击【新增线体】
+        let {
+            line, SFC_AP_SYS_name, PCAS_SYS_name, scanPoint, section, dataSource, sectionManager, minister, sectionChief
+        } = lineMsg;
+        let data = {
+            line, SFC_AP_SYS_name, PCAS_SYS_name, scanPoint, section, dataSource, sectionManager, minister, sectionChief
+        }
+        addLine(currentMFG, data).then(e => {
+            if (e.Status == 'Pass') {
+                message.success(e.Message); // 提示成功
+                setLocalState({  // 清空
+                    line: '',
+                    SFC_AP_SYS_name: '',
+                    PCAS_SYS_name: '',
+                    scanPoint: '',
+                    section: 'SMT',
+                    dataSource: 'SFC',
+                    sectionManager: '',
+                    minister: '',
+                    sectionChief: ''
+                });
+            }
+        });
+    }
     return <Card size='small' style={{ marginTop: '15px', display: disabled ? 'none' : 'block' }} title={<Card3Tit />}>
         <div style={{ padding: '15px 25px 0px 25px' }}>
             <Row gutter={[16, 16]} justify='center'>
@@ -944,7 +1010,7 @@ let Cart3 = (props) => {
                 <Col span={24}>
                     <Row gutter={16} justify='center'>
                         <Col span={3}>
-                            <Button type='primary' icon={<PlusOutlined />}>新增線體</Button>
+                            <Button type='primary' onClick={handle_addLine} icon={<PlusOutlined />}>新增線體</Button>
                         </Col>
                     </Row>
                 </Col>

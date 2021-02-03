@@ -27,7 +27,7 @@ export default {
                 IME: ['aaaa', 'bbbb'], // 產線|ME等相關
                 section: 'SMT', // 段別
                 allSection: ['SMT', 'PTH', 'SI', '5DX', 'ICT', 'TEST'], //所有段别
-                breakPeriodList: ['08:00-11:40 工作', '12:00-13:30 休息', '13:30-17:00 工作', '17:00-19:00 加班'],  // 休息时间列表
+                breakPeriodList: ['08:00 - 11:40 工作', '12:00 - 13:30 休息', '13:30 - 17:00 工作', '17:00 - 19:00 加班'],  // 休息时间列表
                 sectionManager: '劉日紅(F1300825)', //课级 
                 minister: '洪永祥(F1300147)', //部级
                 sectionChief: '劉日紅(F1300825)', //处级
@@ -45,5 +45,43 @@ export default {
         });
     },
 
-    'GET /api/LineMsg/getLineCode': () => {}
+    'GET /api/LineMsg/getLineCode': (req, res) => {
+        res.send({
+            Status: 'Pass',
+            Message: 'OK',
+            Data: {
+                LICODE: [
+                    'Racing car sprays burning fuel into crowd.',
+                    'Japanese princess to wed commoner.',
+                    'Australian walks 100km after outback crash.',
+                    'Man charged over missing wedding girl.',
+                    'Los Angeles battles huge wildfires.'
+                ]
+            }
+        })
+    },
+
+    'GET /api/LineMsg/updateLineMsg': (req, res) => {
+        res.send({
+            Status: 'Pass',
+            Message: '已修改线体信息！',
+            Data: {}
+        });
+    },
+
+    'GET /api/LineMsg/deleteLine': (req, res) => {
+        res.send({
+            Status: 'Pass',
+            Message: '已删除该线体！',
+            Data: {}
+        });
+    },
+
+    'GET /api/LineMsg/addLine': (req, res) => {
+        res.send({
+            Status: 'Pass',
+            Message: '已新增该线体！',
+            Data: {}
+        });
+    }
 }

@@ -16,6 +16,7 @@ export default {
   'menu.production-board': '生产性看板',
   'menu.production-board.real-time-production': '实时生产看板',
   'menu.production-board.line-msg': '线体信息配置',
+  'menu.production-board.UPH-SKU-setting': 'UPH和机种信息配置',
   //-------------------------------------------------------------
   'menu.ant-design-components': 'AntDesign组件',
   'menu.ant-design-components.antd-button': '按钮',

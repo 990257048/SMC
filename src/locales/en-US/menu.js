@@ -16,6 +16,7 @@ export default {
   'menu.production-board': 'Production Board',
   'menu.production-board.real-time-production': 'Realtime Production',
   'menu.production-board.line-msg': 'Line Message',
+  'menu.production-board.UPH-SKU-setting': 'UPH&SKU Setting',
   //-------------------------------------------------------------
   'menu.ant-design-components': 'Ant Design Components',
   'menu.ant-design-components.antd-button': 'Button',

@@ -97,6 +97,11 @@ export default defineConfig({
                   path: '/production-board/line-msg',   // 线体信息配置
                   name: 'line-msg',
                   component: './ProductionBoard/LineMsg'
+                },
+                {
+                  path: '/production-board/UPH-SKU-setting',
+                  name: 'UPH-SKU-setting',
+                  component: './ProductionBoard/UPHAndSKUSetting'
                 }
               ]
             },

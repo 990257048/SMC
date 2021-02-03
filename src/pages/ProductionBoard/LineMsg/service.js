@@ -22,10 +22,10 @@ export async function getLineData(Mfg) {
 }
 
 // 查询附带信息 （包括 操作权限， 所有【產線|ME等相關】【课级】【部级】【处级】【线体管理员】信息）
-export async function getLineAdditionalInformation() {
+export async function getLineAdditionalInformation(MFG) {
     return requestReal('/api/LineMsg/getLineAdditionalInformation', {
         method: 'GET',
-        params: {}
+        params: {MFG}
     });
 }
 
@@ -52,11 +52,11 @@ export async function updateLineName(MFG, originLine, currentLine) {
 }
 
 // 8.查询 【PCAS系统名】 对应的LICODE
-export async function getLineCode(MFG, line, PCAS_SYS_name) {
+export async function getLineCode(MFG, PCAS_SYS_name) {
     return requestReal('/api/LineMsg/getLineCode', {
         method: 'GET',
         params: {
-            MFG, line, PCAS_SYS_name
+            MFG, PCAS_SYS_name
         }
     })
 }
@@ -83,7 +83,7 @@ export async function deleteLine(MFG, line) {
 
 // 7.新增线别
 export async function addLine(MFG, data) {
-    return requestReal('/api/LineMsg/deleteLine', {
+    return requestReal('/api/LineMsg/addLine', {
         method: 'GET',
         params: {
             MFG, data
