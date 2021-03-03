@@ -33,7 +33,7 @@ let Card3Tit = () => {
 
 let LineMsg = props => {
     return <div className="line-msg">
-        <h3>
+        <h3> 
             <SettingOutlined />
             <b> 線體信息配置</b>
         </h3>
