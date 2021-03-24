@@ -71,21 +71,27 @@ const requestMock = extend({    // 请求模拟数据
 
 //==========================================================================
 
-const isMock = true;  // 是否使用模拟数据
-const isDebug = true;   // 是否DEBUG
+export const isMock = false;  // 是否使用模拟数据
+export const isDebug = true;   // 是否DEBUG
 
 //==========================================================================
 
 let requestReal;
 if( !isMock ){
-  requestReal = (url, ...args) => {   // 请求真实数据
-    isDebug && console.log(args);
+  requestReal = (url, options, ...args) => {   // 请求真实数据
+    isDebug && console.log(url, options);
     const host = 'http://10.132.37.63:800';  // 'http://10.132.37.63:800'; // 'https://gcrc.efoxconn.com:8023'; http://localhost:3001  // 宿主
     
-    // return extend({
-    //   credentials: 'include'
-    // })(host + url, ...args);
-    return umiRequest(host + url, ...args);
+    return umiRequest(host + url, {
+      ...options,
+      // credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        token: cookies.get('token')
+      },
+    }, ...args);
+    
   }
 }else{
   //requestReal = requestMock;  //请求模拟数据

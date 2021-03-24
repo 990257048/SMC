@@ -291,7 +291,7 @@ let Step2 = props => {
             <Col span={24}>
                 <Row>
                     <Col span={4}></Col>
-                    <Col span={4} style={{ textAlign: 'center' }}>課級（>30m）</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>課級（&gt30m）</Col>
                     <Col span={10}>
                         <Select className={styles.w100} value={sectionManager} onChange={retSetEditAbnormalByPlaneObj('report.sectionManager', '')}>
                             {
@@ -317,7 +317,7 @@ let Step2 = props => {
             <Col span={24}>
                 <Row>
                     <Col span={4}></Col>
-                    <Col span={4} style={{ textAlign: 'center' }}>處級（>1h）</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>處級（&gt1h）</Col>
                     <Col span={10}>
                         <Select className={styles.w100} value={sectionChief} onChange={retSetEditAbnormalByPlaneObj('report.sectionChief', '')}>
                             {
@@ -999,7 +999,7 @@ let Step5 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={23}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人課級(>3d)</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>責任人課級(&gt3d)</Col>
                     <Col span={9}>
                         <Select mode="multiple" className={styles.w100} showArrow value={sectionManager}
                             options={allSectionManager.map(v => ({ value: v }))}
@@ -1010,7 +1010,7 @@ let Step5 = props => {
             </Col>
             <Col span={23}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人部級(>5d)</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>責任人部級(&gt5d)</Col>
                     <Col span={9}>
                         <Select mode="multiple" className={styles.w100} showArrow value={minister}
                             options={allMinister.map(v => ({ value: v }))}
@@ -1021,7 +1021,7 @@ let Step5 = props => {
             </Col>
             <Col span={23}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人處級(>10d)</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>責任人處級(&gt10d)</Col>
                     <Col span={9}>
                         <Select mode="multiple" className={styles.w100} showArrow value={sectionChief}
                             options={allSectionChief.map(v => ({ value: v }))}

@@ -178,7 +178,7 @@ let Tab1 = props => {   // 异常状态
                     chart3: echarts.init(graph3.current)
                 }
                 setMyCharts(charts);     // set 3个echarts实例
-            }, 800);
+            }, 5000);
         }
     }, [activeKey]);   // 只有activeKey变化会引起图表重新创建或销毁
 

@@ -1,59 +1,387 @@
-import React, {useState, useEffect, useMemo, useCallback} from 'react';
-import {connect} from 'react-redux';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { connect } from 'react-redux';
+import { Card, Row, Col, Input, Button, Modal, Space, Select, message } from 'antd';
+import { SettingOutlined, EditOutlined, SearchOutlined, SelectOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { getUPHMsg, updateSMCUPH, addUPHMsg } from './service';
+import styles from './style.less';
+
+let { Option } = Select;
 
 let UPHAndSKUSetting = props => {
-    return <div>xxx</div>
+  return <div>
+    <h3>
+      <SettingOutlined />
+      <b>UPH和机种信息配置</b>
+    </h3>
+    <Card1 />
+    <Card2 />
+  </div>
 }
 
 UPHAndSKUSetting = connect(state => state.UPHAndSKUSetting)(UPHAndSKUSetting);
 
 export default UPHAndSKUSetting;
 
+let CardTitle1 = () => {
+  return <div className={styles['card-tit']}><SelectOutlined /> UPH维护</div>
+}
 
-/**
- * 4rfv7ujm7ujm7ujm665555565tyghnbhgyt6556ythgbn6yhnnnrnrnrnrnrnrnr7ujm7ujm7ujm7ujm4rf
- * uujj8ik,8ik,8ik,8ik,8ik,8ik,8ik,8ik,8ik,3edc3eedc3edc3edc3edc3edc3edc3edc3edc3edc4rfv5tggb666666yhn6yhn 6yhn 6yhn 6yhn 6yhn 6yhhn 6yhn6yhn6yhn6yn6yhn7ujm8ik,8ik,9ol.9ol.9ol.9ol.9ol.9ol.9ol.```                 `       ·   ·   FJFJFFHUYGHUDYGGUIGEPG
- * 高超辉
- * 
- * 
- * 
- * 
- * 
- * 
- * 来源：国家卫健委
- *
- * 
- * 2月2日0—24时，31个省（自治区、直辖市）和新疆生产建设兵团报告新增确诊病例25例，其中境外输入病例10例（上海4例，广东2例，四川2例，江苏1例，陕西1例），本土病例15例（吉林8例，黑龙江6例，河北1例）；无新增死亡病例；新增疑似病例1例，为境外输入病例（在上海）。
+let CardTitle2 = () => {
+  return <div className={styles['card-tit']}><SelectOutlined /> 机种信息维护</div>
+}
 
-   声母 韵母 整体认读音节 常用快捷键 组合键 编程常用键
+let filterOption = (input, option) => option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
+
+let Sel = () => {
+  function onChange(value) {
+    console.log(`selected ${value}`);
+  }
+
+  return <Select showSearch style={{ width: '100%' }} optionFilterProp="children" onChange={onChange} filterOption={filterOption}>
+    <Option value="jack">Jack</Option>
+    <Option value="lucy">Lucy</Option>
+    <Option value="tom">Tom</Option>
+  </Select>
+}
 
 
-当日新增治愈出院病例91例，解除医学观察的密切接触者1675人，重症病例较前一日减少6例。
+let M = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
 
-境外输入现有确诊病例312例（其中重症病例5例），现有疑似病例1例。累计确诊病例4745例，累计治愈出院病例4433例，无死亡病例。
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
 
-截至2月2日24时，据31个省（自治区、直辖市）和新疆生产建设兵团报告，现有确诊病例1516例（其中重症病例66例），累计治愈出院病例83467例，累计死亡病例4636例，累计报告确诊病例89619例，现有疑似病例2例。累计追踪到密切接触者968131人，尚在医学观察的密切接触者36360人。
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
-31个省（自治区、直辖市）和新疆生产建设兵团报告新增无症状感染者12例（境外输入7例）；当日转为确诊病例10例（境外输入2例）；当日解除医学观察45例（境外输入13例）；尚在医学观察无症状感染者829例（境外输入279例）。
+  return (
+    <>
+      <Button type="primary" onClick={showModal}>
+        Open Modal
+        </Button>
+      <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Modal>
+    </>
+  );
+}
 
-累计收到港澳台地区通报确诊病例11473例。其中，香港特别行政区10511例（出院9549例，死亡184例），澳门特别行政区47例（出院46例），台湾地区915例（出院832例，死亡8例）。
- * 
- * 
- * 
- * 
- *  b p m f d t n l g k h j q x zh ch sh r z c s y w  23 
- *  a o e i u v ai ei ui ao ou iu ie ue er an en in un vn ang eng ing ong  24
- *  zhi chi shi ri zi ci si yi wu yu ye yue yuan yin yun ying 16
- * 
- *  ba bo bi bu bai bei bao bie ban ben bin bang beng bing
- *  pa po pi pu pai pei pao pou pie pan pen pin pang peng ping 
- *  ma mo mi mu mai mei mao mou mie man men min mang meng ming 
- *  fa 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- **/
+
+
+// 自定义Hooks
+let useModal = (initModalState) => {
+  let [s, setS] = useState({ ...initModalState, visible: false });
+  let newSetState = payload => {
+    setS({ ...s, ...payload });
+  }
+  let close = () => newSetState({ visible: false });
+  let open = () => newSetState({ visible: true });
+  return [s, newSetState, close, open];
+}
+
+let Card1 = props => {
+  let { dispatch } = props;
+  let { MFG, line, skuno, allMFG, allLine, allSkuno } = props.UPHMsg;
+
+  
+  // UPH信息
+  let [searchResult, setResult] = useState({ isShow: false, isSuccess: false, skuno: '未找到', face: '未找到', pcasUPH: '未找到', editTime: '未找到', smcUPH: '未找到' });
+
+  // 对话框信息
+  let [modalState, setModalState, closeModal, openModal] = useModal({ line, face: '无', allFace: ['无', 'B', 'T', 'S', 'O'], skuno: '', smcUPH: '' });
+
+  let setUPHMsg = (payload) => {
+    dispatch({ type: 'UPHAndSKUSetting/setUPHMsg', payload });
+  }
+
+
+  // 加载制造处
+  useMemo(() => {
+    dispatch({ type: 'UPHAndSKUSetting/getMFG' });
+    setResult({ ...searchResult, isShow: false });
+  }, []);
+
+  useEffect(() => {
+    MFG && dispatch({ type: 'UPHAndSKUSetting/getSMCLine', MFG });
+    setResult({ ...searchResult, isShow: false });
+  }, [MFG]);
+
+  useEffect(() => {
+    MFG && line && dispatch({ type: 'UPHAndSKUSetting/getSkuno', MFG, line });
+    setResult({ ...searchResult, isShow: false });
+    setModalState({line}); 
+  }, [MFG, line]);
+
+  useEffect(() => {
+    MFG && line && skuno && getUPHMsg(MFG, line, skuno).then(({ Status, Message, Data }) => {
+      if (Status == 'Pass') {
+        setResult({ isShow: true, isSuccess: true, ...Data });
+      } else {
+        setResult({ isShow: true, isSuccess: false, skuno: '未找到', face: '未找到', pcasUPH: '未找到', editTime: '未找到', smcUPH: '未找到' });
+        setTimeout(() => {
+          setResult({ ...searchResult, isShow: false });
+        }, 2000);
+      }
+    });
+  }, [MFG, line, skuno]);
+
+  let updataSMC_UPH = useCallback(() => {
+    updateSMCUPH(searchResult.skuno, searchResult.smcUPH).then(({ Status, Message, Data }) => {
+      if (Status == 'Pass') {
+        setResult({ ...searchResult, isShow: false });
+        message.success(Message);
+      } else {
+        message.error(Message);
+      }
+    })
+  }, [searchResult]);
+
+  let new_disabled = useMemo(() => {
+    return line ? false : true; //存在线体时才可以新增操作
+  }, [line]);
+
+
+  let onOk = useCallback(() => {
+    let {line, face, skuno, smcUPH} = modalState;
+    let flag = line && face && skuno && smcUPH;
+    if(!flag){
+      message.error('请补全信息！');
+    }
+    flag && addUPHMsg({MFG, line, face, skuno, smcUPH}).then(({Status, Message}) => {
+      if(Status == 'Pass'){
+        message.success(Message);
+        setModalState({visible: false, face: '无', skuno: '', smcUPH: ''});   // 清空
+      }else{
+        message.error(Message);
+      }
+    });
+  }, [MFG, modalState, closeModal]);
+
+  // console.log(MFG, line, modalState);
+  return <Card size='small' title={<CardTitle1 />}>
+    <div style={{ padding: '15px 25px 0px 25px' }}>
+      <Row gutter={[16, 16]} justify='center'>
+        <Col span={6}>
+          <Row gutter={16}>
+            <Col span={8} className={styles['col-label']}>制造处</Col>
+            <Col span={16}>
+              <Select showSearch optionFilterProp="children" value={MFG} onChange={(v) => { setUPHMsg({ MFG: v, line: '', skuno: '' }) }} filterOption={filterOption} style={{ width: '100%' }}>
+                {
+                  allMFG.map(v => <Option key={v} value={v}>{v}</Option>)
+                }
+              </Select>
+            </Col>
+          </Row>
+        </Col>
+        <Col span={6}>
+          <Row gutter={16}>
+            <Col span={8} className={styles['col-label']}>SMC線別</Col>
+            <Col span={16}>
+              <Select showSearch optionFilterProp="children" value={line} onChange={(v) => { setUPHMsg({ line: v, skuno: '' }) }} filterOption={filterOption} style={{ width: '100%' }}>
+                {
+                  allLine.map(v => <Option key={v} value={v}>{v}</Option>)
+                }
+              </Select>
+            </Col>
+          </Row>
+        </Col>
+        <Col span={6}>
+          <Row gutter={16}>
+            <Col span={8} className={styles['col-label']}>机种料号</Col>
+            <Col span={16}>
+              <Select showSearch optionFilterProp="children" value={skuno} onChange={(v) => { setUPHMsg({ skuno: v }) }} filterOption={filterOption} style={{ width: '100%' }}>
+                {
+                  allSkuno.map(v => <Option key={v} value={v}>{v}</Option>)
+                }
+              </Select>
+            </Col>
+          </Row>
+        </Col>
+        <Col span={6}>
+          <Row gutter={24} justify='center'>
+            <Col span={20}>
+              {/* <Space size='large'>
+                <Button type="primary" disabled={false} icon={<SearchOutlined />} onClick={() => { }}>查询</Button>
+                <Button type="primary" disabled={false} icon={<PlusOutlined />} onClick={() => { }}>新增</Button>
+              </Space> */}
+              <Button type="primary" disabled={new_disabled} icon={<PlusOutlined />} onClick={openModal}>新增</Button>
+              <Modal title="Basic Modal" visible={modalState.visible} onOk={onOk} onCancel={closeModal}>
+                <Row gutter={[16, 16]} justify='center'>
+                  <Col span={4} className={styles['col-label']}>线体名称</Col>
+                  <Col span={16}>
+                    <Input disabled={true} value={modalState.line} onChange={(e) => { setModalState({ line: e.target.value }) }} />
+                  </Col>
+                </Row>
+                <Row gutter={[16, 16]} justify='center'>
+                  <Col span={4} className={styles['col-label']}>面别</Col>
+                  <Col span={16}>
+                    <Select value={modalState.face} style={{ width: '100%' }}>
+                        {
+                          modalState.allFace.map(v => <Option key={v} value={v}>{v}</Option>)
+                        }
+                    </Select>
+                  </Col>
+                </Row>
+                <Row gutter={[16, 16]} justify='center'>
+                  <Col span={4} className={styles['col-label']}>机种料号</Col>
+                  <Col span={16}>
+                    <Input value={modalState.skuno} onChange={(e) => { setModalState({ skuno: e.target.value }) }} />
+                  </Col>
+                </Row>
+                <Row gutter={[16, 16]} justify='center'>
+                  <Col span={4} className={styles['col-label']}>SMC UPH</Col>
+                  <Col span={16}>
+                    <Input value={modalState.smcUPH} onChange={(e) => { Number(e.target.value) >= 0 && setModalState({ smcUPH: e.target.value }) }} />
+                  </Col>
+                </Row>
+              </Modal>
+              {/* <M /> */}
+            </Col>
+          </Row>
+        </Col>
+        <Col span={24}>
+          <div className={styles['search-result']} style={{ display: searchResult.isShow ? 'block' : 'none' }}>
+
+            <Row gutter={[16, 16]} justify='center'>
+              <Col span={6}>
+                <Row gutter={16}>
+                  <Col span={8} className={styles['col-label']}>料号</Col>
+                  <Col span={16} className={styles['col-text']}>
+                    {searchResult.skuno}
+                  </Col>
+                </Row>
+              </Col>
+              <Col span={6}>
+                <Row gutter={16}>
+                  <Col span={8} className={styles['col-label']}>面别</Col>
+                  <Col span={16} className={styles['col-text']}>
+                    {searchResult.face}
+                  </Col>
+                </Row>
+              </Col>
+              <Col span={6}>
+                <Row gutter={16}>
+                  <Col span={8} className={styles['col-label']}>PCAS UPH</Col>
+                  <Col span={16} className={styles['col-text']}>
+                    {searchResult.pcasUPH}
+                  </Col>
+                </Row>
+              </Col>
+              <Col span={6}>
+                <Row gutter={16}>
+                  <Col span={8} className={styles['col-label']}>修改时间</Col>
+                  <Col span={16} className={styles['col-text']}>
+                    {searchResult.editTime}
+                  </Col>
+                </Row>
+              </Col>
+              <Col span={6}>
+                <Row gutter={16}>
+                  <Col span={8} className={styles['col-label']}>SMC UPH</Col>
+                  <Col span={16} className={styles['col-text']}>
+                    <Input value={searchResult.smcUPH} disabled={!searchResult.isSuccess} onChange={e => { Number(e.target.value) >= 0 && setResult({ ...searchResult, smcUPH: e.target.value }) }} />
+                  </Col>
+                </Row>
+              </Col>
+              <Col span={6}>
+                <Row gutter={16} justify='center'>
+                  <Col span={18}>
+                    <Button type="primary" size='middle' shape='circle' danger disabled={!searchResult.isSuccess} icon={<EditOutlined />} onClick={updataSMC_UPH}></Button>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </div>
+        </Col>
+      </Row>
+    </div>
+  </Card>
+}
+
+Card1 = connect(state => {
+  return {
+    UPHMsg: state.UPHAndSKUSetting.UPHMsg
+  }
+})(Card1);
+
+let Card2 = props => {
+
+  let { dispatch } = props;
+  let { skuno, allSkuno, skuName } = props.skuMsg;
+  // function onChange(value) {
+  //   console.log(`selected ${value}`);
+  // }
+  let setSkuMsg = (payload) => {
+    dispatch({ type: 'UPHAndSKUSetting/setSkuMsg', payload })
+  }
+
+  let retChange = key => v => {
+    setSkuMsg({ [key]: v });
+  }
+
+  // skuno: '68-100056-01',
+  //           allSkuno: ['68-100056-01', '68-100056-02', '68-100056-03'],
+  //           skuName: ''
+  
+  useMemo(() => {
+    dispatch({type: 'UPHAndSKUSetting/skuSetting_getSkuno'});
+  }, []);
+
+  useEffect(() => {
+    dispatch({type: 'UPHAndSKUSetting/getSkuName', skuno});
+  }, [skuno]);
+
+  let saveHandle = useCallback(() => {
+    dispatch({type: 'UPHAndSKUSetting/updateSkuName', skuno, skuName});
+  }, [skuno, skuName]);
+
+  return <Card size='small' title={<CardTitle2 />} style={{ marginTop: '25px' }}>
+    <div style={{ padding: '15px 25px 0px 25px' }}>
+      <Row gutter={[16, 16]} justify='left'>
+        <Col span={6}>
+          <Row gutter={16}>
+            <Col span={8} className={styles['col-label']}>料号</Col>
+            <Col span={16}>
+              <Select showSearch optionFilterProp="children" value={skuno} onChange={retChange('skuno')} filterOption={filterOption} style={{ width: '100%' }}>
+                {
+                  allSkuno.map(v => <Option key={v} value={v}>{v}</Option>)
+                }
+              </Select>
+            </Col>
+          </Row>
+        </Col>
+        <Col span={6}>
+          <Row gutter={16}>
+            <Col span={8} className={styles['col-label']}>机种名称</Col>
+            <Col span={16}>
+              <Input value={skuName} onChange={e => {setSkuMsg({skuName: e.target.value})}} style={{ width: '100%' }} />
+            </Col>
+          </Row>
+        </Col>
+        <Col span={6}>
+          <Row gutter={24} justify='center'>
+            <Col span={20}>
+              <Button type="primary" disabled={false} icon={<SaveOutlined />} onClick={saveHandle}>保存</Button>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </div>
+  </Card>
+}
+
+Card2 = connect(state => {
+  return {
+    skuMsg: state.UPHAndSKUSetting.skuMsg
+  }
+})(Card2);
+
+// F1300825
+// Foxconn158!!

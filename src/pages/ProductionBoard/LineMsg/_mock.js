@@ -1,6 +1,22 @@
 
 export default {
 
+    'GET /api/LineMsg/GetLineListByMfg': (req, res) => {
+        let { Mfg } = req.query;
+        let line = [
+            Mfg + ' - LINE1',
+            Mfg + ' - LINE2',
+            Mfg + ' - LINE3',
+            Mfg + ' - LINE4'
+        ]
+        res.send({
+            Status: 'Pass',
+            Message: 'OK',
+            Data: {
+                LineName: line
+            }
+        });
+    },
     'GET /api/LineMsg/getLineAdditionalInformation': (req, res) => { //查询线别附带信息 （包括  所有【產線|ME等相關】【课级】【部级】【处级】【线体管理员】信息）
         res.send({
             Status: 'Pass',

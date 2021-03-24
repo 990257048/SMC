@@ -105,6 +105,20 @@ export default defineConfig({
                 }
               ]
             },
+
+            {
+              path: '/personal-information',   // 个人信息
+              name: 'personal-information',
+              icon: 'user',
+              routes: [
+                {
+                  path: '/personal-information/userRegistrationAndCheck',
+                  name: 'userRegistrationAndCheck',
+                  component: './PersonalInfomation/UserRegistrationAndCheck'
+                }
+              ]
+            },
+
             // -------------------------------------------------------------------------------------------------------------------------------------------------------------
             {
               path: '/ant-design-components',    // ant-design 组件（快速开发系统）

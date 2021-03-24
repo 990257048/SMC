@@ -110,4 +110,31 @@ let getBase64 = (file, name, uid) => {
     });
 }
 
-export {debounce, throttle, deepClone, findValueByProp, retNewStateByProp, getBase64}
+let filterByObj = (obj, fn) => {
+    let ret_o = {};
+    for(var prop in obj){
+        if(obj.hasOwnProperty(prop) && fn(obj[prop], prop)){
+            ret_o[prop] = obj[prop];
+        }
+    }
+    // ret_o.constructor = obj.constructor;
+    ret_o.__proto__ = obj.__proto__;
+    return ret_o;
+}
+
+let mapByObj = (obj, fn) => {
+    let ret_o = {};
+    for(var prop in obj){
+        if(obj.hasOwnProperty(prop)){
+            ret_o[prop] = fn(obj[prop], prop);
+        }
+    }
+    // ret_o.constructor = obj.constructor;
+    ret_o.__proto__ = obj.__proto__;
+    return ret_o;
+}
+
+
+
+
+export {debounce, throttle, deepClone, findValueByProp, retNewStateByProp, getBase64, filterByObj, mapByObj}

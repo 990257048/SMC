@@ -160,7 +160,7 @@ let Tab4 = props => {
             setTimeout(() => {
                 let chart = echarts.init(chartWrap.current);
                 setMyCharts(chart);
-            }, 600);
+            }, 6000);
         }
     }, [activeKey]);
 

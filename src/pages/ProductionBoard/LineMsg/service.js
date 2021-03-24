@@ -13,7 +13,7 @@ export async function getAllMFG(Token) {
 
 // 2.获取线别
 export async function getLineData(Mfg) {
-    return requestReal('/api/SMCKanBan/GetLineByMfg', {
+    return requestReal('/api/LineMsg/GetLineListByMfg', {   ///api/SMCKanBan/GetLineByMfg   /api/LineMsg/GetLineListByMfg
         method: 'GET',
         params: {
             Mfg
