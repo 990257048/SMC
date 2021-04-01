@@ -102,19 +102,24 @@ const Tab = props => {
 
     let resolve = () => {    //通过申请
         let ID = tableState.selectedData.map(row => row.id);
-        userRegistrationSign('resolve', ID).then(e => {
+        userRegistrationSign('pass', ID).then(e => {
             if(e.Status == 'Pass'){
                 message.success(e.Message);
-                // 清空
-                setTableState({selectedRowKeys: [], hasSelected: false, selectedData: []});
-                // getUserRegistrationMsg().then(e => {    // 获取用户注册待签核信息
-                //     if(e.Status == 'Pass'){
-                //         setDataSource(e.Data.map(row => ({...row, key: row.id})));
-                //         message.success(e.Message);
-                //     }else{                                                                                                                            
-                //         message.error(e.Message);
-                //     }
-                // });
+                // 清空(放下面一起)
+                // setTableState({selectedRowKeys: [], hasSelected: false, selectedData: []});
+                getUserRegistrationMsg().then(e => {    // 获取用户注册待签核信息
+                    if(e.Status == 'Pass'){
+                        setTableState({
+                            dataSource: e.Data.map(row => ({...row, key: row.id})),
+                            selectedRowKeys: [], 
+                            hasSelected: false, 
+                            selectedData: []
+                        });  // 更新数据 清空选择
+                        message.success(e.Message);
+                    }else{                                                                                                                            
+                        message.error(e.Message);
+                    }
+                });
             }else{
                 message.error(e.Message);
             }

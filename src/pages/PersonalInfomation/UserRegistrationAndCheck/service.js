@@ -7,11 +7,11 @@ export async function getUserRegistrationMsg (){   //获取用户注册（待签
     });
 }
 
-export async function userRegistrationSign (type, ID){  //签核操作（type: 'resolve' 通过 | 'reject' 驳回）
+export async function userRegistrationSign (status, ID){  //status: 'pass' 通过 | 'reject' 驳回）
     return requestReal('/api/SMCAccount/userRegistrationSign', {     // /api/userRegistrationAndCheck/userRegistrationSign   
         methods: 'GET',
         params: {
-            type,
+            status,
             ID: ID.join(',')
         }
     });

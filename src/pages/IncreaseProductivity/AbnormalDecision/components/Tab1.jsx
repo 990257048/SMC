@@ -147,6 +147,9 @@ let Tab1 = props => {   // 异常状态
 
     let [w, setW] = useState(100);
 
+    // 绘制图表要素： echarts实例 echarts配置数据 loading（是否异步中） isReady（是否准备好） resize(响应)  事件绑定
+
+    
     // ***** 灵活运用 loading(异步) isReady（得到关键数据）20201009 add by gch *****
 
     let isReady = useMemo(() => {  // ***重要*** 未得到初次渲染依赖的数据时被认为没有准备好，不能进行相关的操作（比如组件渲染，生命周期的执行）
@@ -170,17 +173,16 @@ let Tab1 = props => {   // 异常状态
 
     let [myCharts, setMyCharts] = useState(null); //定义图表实例，方便后续操作
     useEffect(() => {
-        if(activeKey == 'tab1'){
-            setTimeout(() => {
-                let charts = {
-                    chart1: echarts.init(graph1.current),
-                    chart2: echarts.init(graph2.current),
-                    chart3: echarts.init(graph3.current)
-                }
-                setMyCharts(charts);     // set 3个echarts实例
-            }, 5000);
+        if(activeKey == 'tab1' && isReady){
+            let charts = {
+                chart1: echarts.init(graph1.current),
+                chart2: echarts.init(graph2.current),
+                chart3: echarts.init(graph3.current)
+            }
+            setMyCharts(charts);     // set 3个echarts实例
         }
-    }, [activeKey]);   // 只有activeKey变化会引起图表重新创建或销毁
+    }, [activeKey, isReady]);   // 只有activeKey变化会引起图表重新创建或销毁
+
 
     // 方法 2， 借助useMemo 也可以引出图表实例，一样的效果
     // let [isMounted, setIsMounted] = useState(false);

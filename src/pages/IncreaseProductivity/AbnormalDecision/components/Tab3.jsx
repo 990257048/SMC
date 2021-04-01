@@ -91,14 +91,14 @@ let ret_option = (xAxisData, seriesData) => {
 }
 
 let Tab3 = props => {
-    let { dispatch, collapsed, width, loading, activeKey, globalSearch, quickSearch, graph3: {xAxisData, seriesData} } = props;
-    
+    let { dispatch, collapsed, width, loading, activeKey, globalSearch, quickSearch, graph3: { xAxisData, seriesData } } = props;
+
     let [myCharts, setMyCharts] = useState(null);
     let [w, setW] = useState(100);
     let chartWrap = useRef();
 
     let isReady = useMemo(() => {
-        if(xAxisData.length > 0 && seriesData.length > 0){
+        if (xAxisData.length > 0 && seriesData.length > 0) {
             return true;
         }
         return false;
@@ -117,40 +117,38 @@ let Tab3 = props => {
     //================================================================================================================
 
     useEffect(() => { //设置实例
-        if(activeKey == 'tab3'){
-            setTimeout(() => {
-                let chart = echarts.init(chartWrap.current);
-                setMyCharts(chart);
-            }, 6000);
+        if (activeKey == 'tab3' && isReady) {
+            let chart = echarts.init(chartWrap.current);
+            setMyCharts(chart);
         }
-    }, [activeKey]);
+    }, [activeKey, isReady]);
 
     useEffect(() => {  //渲染
-        if(myCharts && isReady){
+        if (myCharts && isReady) {
             let option = ret_option(xAxisData, seriesData);
             myCharts.setOption(option);
         }
-    }, [myCharts, isReady , props.graph3]);
+    }, [myCharts, isReady, props.graph3]);
 
     useEffect(() => {  //宽度响应
         myCharts && myCharts.resize({ width: w });
     }, [myCharts, w]);
 
     useEffect(() => {   //绑定事件
-        if(myCharts){
+        if (myCharts) {
             let link = e => {
                 dispatch({
                     type: 'AbnormalDecision/getTableData',
-                    graphLink: { 
-                        seriesName: e.seriesName, 
-                        name: e.name 
+                    graphLink: {
+                        seriesName: e.seriesName,
+                        name: e.name
                     }
                 });
             }
             myCharts.on('click', link);
         }
         return () => {
-            if(myCharts){
+            if (myCharts) {
                 myCharts.off('click');
             }
         }
@@ -158,7 +156,7 @@ let Tab3 = props => {
 
     //================================================================================================================
 
-    if(loading || !isReady){
+    if (loading || !isReady) {
         return <PageLoading size='large' />
     }
 

@@ -122,13 +122,15 @@ let Tab2 = props => {
     }, [isReady, collapsed, width, activeKey]);
 
     useEffect(() => {  //设置实例
-        if (activeKey == 'tab2') {
-            setTimeout(() => {
-                let chart = echarts.init(chartWrap.current);
-                setMyCharts(chart);
-            }, 6000);
+        if (activeKey == 'tab2' && isReady) {
+            // setTimeout(() => {
+            //     let chart = echarts.init(chartWrap.current);
+            //     setMyCharts(chart);
+            // }, 0);
+            let chart = echarts.init(chartWrap.current);
+            setMyCharts(chart);
         }
-    }, [activeKey]);
+    }, [activeKey, isReady]);
 
     useEffect(() => {  //渲染
         if (myCharts && isReady) {
@@ -146,9 +148,9 @@ let Tab2 = props => {
             let link = e => {
                 dispatch({
                     type: 'AbnormalDecision/getTableData',
-                    graphLink: { 
-                        seriesName: e.seriesName, 
-                        name: e.name 
+                    graphLink: {
+                        seriesName: e.seriesName,
+                        name: e.name
                     }
                 });
             }

@@ -299,7 +299,7 @@ export default {
             Message: '获取新增异常需要的附带信息成功！',
             Data: {
                 baseMsg: { //基本信息
-                    allAbnormalClass: ['xxxx', '白班', '晚班'],
+                    allAbnormalClass: ['白班', '晚班'],
                     allBU: ['SRGBU', 'PCBU'],
                     allRegion: ['Kitting', 'SMT', 'ICT', 'Packing', '5DX', '壓合', 'PTH', 'RE', 'MCEBU', '分板', 'BST', '其它'],  //所有异常区域
                     allStage: ['量產', '試產', '外包'],
@@ -315,7 +315,7 @@ export default {
                     allHandler: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],
                     abnormalClassify: {   //按异常分类
                         equipment: { //设备异常
-                            allDesc: ['xxxxx', '設備檔機', '保養超時', '低效生產', '安全隱患', '功能缺失', '帶病運行', '其它'],
+                            allDesc: ['設備檔機', '保養超時', '低效生產', '安全隱患', '功能缺失', '帶病運行', '其它'],
                             allCategory: ['SMT設備', 'PTH設備', '測試設備', '流水線', 'SFC設備', '公務設備', '其它']
                         },
                         material: { //物料异常

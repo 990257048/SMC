@@ -54,6 +54,10 @@ let apis = {
         mock: '/api/abnormalDecision/uploadFile',
         real: '/api/abnormalDecision/uploadFile'
     },
+    newAbnormal: {
+        mock: '/api/abnormalDecision/newAbnormal',
+        real: '/api/abnormalDecision/newAbnormal'
+    },
     abnormalMaintenanceSaveDraft: {
         mock: '/api/abnormalDecision/abnormalMaintenanceSaveDraft',
         real: '/api/abnormalDecision/abnormalMaintenanceSaveDraft'

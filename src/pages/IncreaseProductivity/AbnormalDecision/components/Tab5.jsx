@@ -145,7 +145,7 @@ let ret_option = (xAxisData, seriesData1, seriesData2, seriesData3) => {
 let Tab5 = props => {
 
     let { dispatch, collapsed, width, loading, activeKey, globalSearch, quickSearch, graph5: { xAxisData, seriesData1, seriesData2, seriesData3 } } = props;
-    
+
     let [myCharts, setMyCharts] = useState(null);
     let [w, setW] = useState(100);
     let chartWrap = useRef();
@@ -171,17 +171,15 @@ let Tab5 = props => {
 
     //创建实例
     useEffect(() => {
-        if(activeKey == 'tab5'){
-            setTimeout(() => {
-                let chart = echarts.init(chartWrap.current);
-                setMyCharts(chart);
-            }, 6000);
+        if (activeKey == 'tab5' && isReady) {
+            let chart = echarts.init(chartWrap.current);
+            setMyCharts(chart);
         }
-    }, [activeKey]);
+    }, [activeKey, isReady]);
 
     //渲染
     useEffect(() => {
-        if(isReady && myCharts){
+        if (isReady && myCharts) {
             let option = ret_option(xAxisData, seriesData1, seriesData2, seriesData3);
             myCharts.setOption(option);
         }
@@ -194,20 +192,20 @@ let Tab5 = props => {
 
     //绑定事件
     useEffect(() => {
-        if(myCharts){
+        if (myCharts) {
             let link = e => {
                 dispatch({
                     type: 'AbnormalDecision/getTableData',
-                    graphLink: { 
-                        seriesName: e.seriesName, 
-                        name: e.name 
+                    graphLink: {
+                        seriesName: e.seriesName,
+                        name: e.name
                     }
                 });
             }
             myCharts.on('click', link);
         }
         return () => {
-            if(myCharts){
+            if (myCharts) {
                 myCharts.off('click');
             }
         }

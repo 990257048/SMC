@@ -29,9 +29,9 @@ let Model = {
             activeKey: 'tab1', // 当前活动的tab页： tab1 | tab2 | tab3 | tab4 | tab5
             newAbnormalVisible: false,  // 新增异常对话框是否显示
             globalSearch: {    // 全局条件搜索（当前制造处 分类标准）
-                allMFG: [], // ['ALL', 'MFGI', 'MFGII', 'MFGIII', 'MFGV'], //所有制造处
+                allMFG: ['MFGI', 'MFGII'], // ['ALL', 'MFGI', 'MFGII', 'MFGIII', 'MFGV'], //所有制造处
                 allCategories: ['按發生區域', '按責任單位', '按責任人員', '按問題分類'], //所有查询类别
-                MFG: '', // 'ALL', //当前制造处
+                MFG: 'MFGI', // 'ALL', //当前制造处
                 classify: '按發生區域', //当前查询类别
             },
             quickSearch: {     // 快速搜索（时间条件：年 季 月 周 时间段 -- 当前是否需要该条件， 当前选项卡位置，当前的值是多少）
@@ -145,15 +145,25 @@ let Model = {
                     }
                 }
             },
+
+
+
+            //===============================================================================================================================
+            //===============================================================================================================================
+            //===============================================================================================================================
+
+
             newAbnormal: {  // 新增异常 状态
                 // abnormalId: '',   //异常ID (可以不用了)
                 type: '异常', // 通知单类型  异常 | 停线
                 emergencyDegree: '一般', // 紧急程度  一般 | 紧急
                 baseMsg: { //基本信息
+                    allMFG: ['MFGI', 'MFGII'],    // 新增制造处条件【新】
                     allAbnormalClass: ['白班', '晚班'],
                     allBU: ['SRGBU', 'PCBU'],
                     allRegion: ['Kitting', 'SMT', 'ICT', 'Packing', '5DX', '壓合', 'PTH', 'RE', 'MCEBU', '分板', 'BST', '其它'],  //所有异常区域
                     allStage: ['量產', '試產', '外包'],
+                    MFG: 'MFGI',    // 新增制造处条件【新】
                     issuer: '劉龍飛(F1320854)', // 發文人員
                     units: 'IT', // 發文單位
                     date: '2020/11/11 08:34', // 發文日期
@@ -263,6 +273,15 @@ let Model = {
                     // attachmentsFile: [], //文件内容（File对象）
                 }
             },
+
+
+
+            //===============================================================================================================================
+            //===============================================================================================================================
+            //===============================================================================================================================
+
+
+
             graphData: {
                 graph1: { // 异常状态统计（饼）
                     left: {},
@@ -866,10 +885,11 @@ let Model = {
                 message.error(Mesage)
             }
         },
-        *getNewAbnormalMsg(_, {select, call, put}) {    //获取新增异常需要的附带信息
+        *getNewAbnormalMsg({ MFG }, {select, call, put}) {    //获取新增异常需要的附带信息
             // select...
             // let newAbnormal = yield select(state => state.AbnormalDecision.anomalousGraph.newAbnormal);
-            let {Status, Message, Data} = yield call(getNewAbnormalMsg);   //后台需要的数据未定
+            // let MFG = yield select(state => state.AbnormalDecision.anomalousGraph.globalSearch.MFG);
+            let {Status, Message, Data} = yield call(getNewAbnormalMsg, MFG);   //后台需要的数据未定
             if(Status == 'Pass'){
                 yield put({
                     type: 'setNewAbnormalByFn',
@@ -925,12 +945,13 @@ let Model = {
             //     return formData;
             // });
             let data = filterData(newAbnormalState, newAbnormalSendData);
+            console.log(data);
             let sendData = new FormData();
             newAbnormalState.remarksAndAttachments.attachments.forEach(file => {
                 sendData.append(file.name, file);
             });
             sendData.append('data', JSON.stringify(data));
-
+            console.log(sendData)
             let {Status, Message, Data} = yield call(newAbnormal, sendData);
             if(Status == 'Pass'){
                 yield put({   //关掉对话框

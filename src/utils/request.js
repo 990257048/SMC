@@ -71,7 +71,7 @@ const requestMock = extend({    // 请求模拟数据
 
 //==========================================================================
 
-export const isMock = false;  // 是否使用模拟数据
+export const isMock = true;  // 是否使用模拟数据
 export const isDebug = true;   // 是否DEBUG
 
 //==========================================================================

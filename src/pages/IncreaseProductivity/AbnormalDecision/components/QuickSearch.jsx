@@ -105,7 +105,7 @@ let QuickSearch = props => {  // 快速搜索
                             <div>
                                 <Select value={season} onChange={ changeSeason } className={styles.w100}>
                                     {
-                                        ['第一季度', '第二季度', '第三季度', '第四季度'].map(season => <Option key={season} value={season}>{season}</Option>)
+                                        [['第一季度', 1], ['第二季度', 2], ['第三季度', 3], ['第四季度', 4]].map(season => <Option key={season[1]} value={season[1]}>{season[0]}</Option>)
                                     }
                                 </Select>
                             </div>

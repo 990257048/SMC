@@ -20,9 +20,10 @@ let NewAbnormalContext = createContext();
 let NewAbnormal = () => {  // 新增异常
     console.log('render NewAbnormal');
     let dispatch = useDispatch();
-    let newAbnormalVisible = useSelector(state => state.AbnormalDecision.anomalousGraph.newAbnormalVisible);
-    let abnormalId = useSelector(state => state.AbnormalDecision.anomalousGraph.newAbnormal.abnormalId);
+    // let newAbnormalVisible = useSelector(state => state.AbnormalDecision.anomalousGraph.newAbnormalVisible);
+    // let abnormalId = useSelector(state => state.AbnormalDecision.anomalousGraph.newAbnormal.abnormalId);
 
+    // let MFG = useSelector(state => state.AbnormalDecision.anomalousGraph.globalSearch.MFG);
     let [current, setCurrent] = useState(0);
 
     let setpChange = useCallback((step) => {
@@ -52,12 +53,7 @@ let NewAbnormal = () => {  // 新增异常
     }
 
 
-    //获取新增异常需要的附带信息 getNewAbnormalMsg
-    useMemo(() => {
-        dispatch({
-            type: 'AbnormalDecision/getNewAbnormalMsg'
-        });
-    }, []);
+
 
     //生成ID（可以不用了，批量上传文件问题已经解决！）
     // useEffect(() => {
@@ -78,17 +74,37 @@ let NewAbnormal = () => {  // 新增异常
             </div> */}
             <p></p>
             <Steps size='small' current={current} direction="vertical" onChange={setpChange}>
-                <Step title="基本信息"></Step>
-                <Step title="上報機制"></Step>
-                <Step title="問題描述"></Step>
-                <Step title="臨時對策"></Step>
-                <Step title="原因分析"></Step>
-                <Step title="備註與附件"></Step>
+                <Step title="基本信息">
+                    基本信息
+                </Step>
+                <Step title="上報機制">
+                    上報機制
+                </Step>
+                <Step title="問題描述">
+                    問題描述
+                </Step>
+                <Step title="臨時對策">
+                    臨時對策
+                </Step>
+                <Step title="原因分析">
+                    原因分析
+                </Step>
+                <Step title="備註與附件">
+                    備註與附件
+                </Step>
             </Steps>
         </div>
         <div className={styles['new-abnormal-steps-right']}>
             <NewAbnormalContext.Provider value={{ current, setCurrent, prevStep, nextStep, setNewAbnormal, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment }}>
-                <StepContent current={current} />
+                {/* <StepContent current={current} /> */}
+                <>
+                    <Step1 />
+                    <Step2 />
+                    <Step3 />
+                    <Step4 />
+                    <Step5 />
+                    <Step6 />
+                </>
             </NewAbnormalContext.Provider>
         </div>
     </div>
@@ -121,14 +137,36 @@ let StepContent = ({ current }) => {
 // ==================================================================================================================================
 
 let Step1 = props => {
-    let { nextStep, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment } = useContext(NewAbnormalContext);
-    let { type, emergencyDegree, baseMsg } = props;
+    let { current, nextStep, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment } = useContext(NewAbnormalContext);
+    let { dispatch, type, emergencyDegree, globalSearch, baseMsg } = props;
     let {
-        allAbnormalClass, allBU, allRegion, allStage,
-        issuer, units, date, abnormalTime, abnormalClass, BU, region, station, skuName, skuno, WO, stage
+        allMFG, allAbnormalClass, allBU, allRegion, allStage,
+        MFG, issuer, units, date, abnormalTime, abnormalClass, BU, region, station, skuName, skuno, WO, stage
     } = baseMsg;
 
-    return <div className={styles['step1']}>
+    // 设置当前制造处信息
+    useMemo(() => {
+        dispatch({
+            type: 'AbnormalDecision/setNewAbnormalByFn',
+            retNewState: _ => {
+                _.baseMsg.allMFG = globalSearch.allMFG;
+                _.baseMsg.MFG = globalSearch.MFG;   //制造处以第一次渲染该组件前的全局条件的制造处为标准，后面不受全局条件中的制造处所影响。
+                return _;
+            }
+        });
+    }, []);   //制造处以第一次渲染该组件前的全局条件的制造处为标准，后继不受全局条件中的制造处所影响。
+
+    // 获取新增异常需要的附带信息 getNewAbnormalMsg
+    useMemo(() => {
+        console.log(MFG);
+        dispatch({
+            type: 'AbnormalDecision/getNewAbnormalMsg',
+            MFG
+        });
+    }, [MFG]);
+
+
+    return <div className={styles['step1']} style={{ display: current == 0 ? 'block' : 'none' }}>
         <div style={{ textAlign: 'center' }}>
             <p></p>
             <h3><b>NSDI 【通知单】</b></h3>
@@ -147,7 +185,22 @@ let Step1 = props => {
             </Space>
         </div>
 
-        <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
+        <Row gutter={[0, 24]} justify="left" style={{ marginTop: '20px' }}>
+            <Col span={8}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>制造处</Col>
+                    <Col span={15}>
+                        <Select className={styles.w100} value={MFG} onChange={retSetNewAbnormalByPlaneObj('baseMsg.MFG', '')}>
+                            {
+                                allMFG.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select>
+                    </Col>
+                </Row>
+            </Col>
+        </Row>
+
+        <Row gutter={[0, 24]} justify="center">
             <Col span={8}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>發文人員</Col>
@@ -273,11 +326,10 @@ Step1 = connect(state => {
     return {
         type: state.AbnormalDecision.anomalousGraph.newAbnormal.type,
         emergencyDegree: state.AbnormalDecision.anomalousGraph.newAbnormal.emergencyDegree,
+        globalSearch: state.AbnormalDecision.anomalousGraph.globalSearch,
         baseMsg: state.AbnormalDecision.anomalousGraph.newAbnormal.baseMsg
     }
 })(Step1)
-
-
 
 
 let Step2 = props => {
@@ -287,19 +339,19 @@ let Step2 = props => {
     //                 sectionManager: '', //课级
     //                 minister: '', //部级
     //                 sectionChief: '', //处级
-    let { prevStep, nextStep, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { current, prevStep, nextStep, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
 
     let {
         allSectionManager, allMinister, allSectionChief,
         sectionManager, minister, sectionChief
     } = props.report;
 
-    return <div className={styles['step2']}>
+    return <div className={styles['step2']} style={{ display: current == 1 ? 'block' : 'none' }}>
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={24}>
                 <Row>
                     <Col span={4}></Col>
-                    <Col span={4} style={{ textAlign: 'center' }}>課級（>30m）</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>課級（&gt30m）</Col>
                     <Col span={10}>
                         <Select className={styles.w100} value={sectionManager} onChange={retSetNewAbnormalByPlaneObj('report.sectionManager', '')}>
                             {
@@ -325,7 +377,7 @@ let Step2 = props => {
             <Col span={24}>
                 <Row>
                     <Col span={4}></Col>
-                    <Col span={4} style={{ textAlign: 'center' }}>處級（>1h）</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>處級（&gt1h）</Col>
                     <Col span={10}>
                         <Select className={styles.w100} value={sectionChief} onChange={retSetNewAbnormalByPlaneObj('report.sectionChief', '')}>
                             {
@@ -357,10 +409,10 @@ Step2 = connect(state => {
 
 
 let Step3 = props => {
-    let { prevStep, nextStep, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment } = useContext(NewAbnormalContext);
+    let { current, prevStep, nextStep, retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment } = useContext(NewAbnormalContext);
     let { currentClassify, allHandler, handler, noticeTime, emailTitle } = props;
 
-    return <div className={styles['step3']}>
+    return <div className={styles['step3']} style={{ display: current == 2 ? 'block' : 'none' }}>
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={16}>
                 <Row>
@@ -458,6 +510,8 @@ Step3 = connect(state => {
 
 //--------------------------------------------------------------------------------------------------------------------------------------------
 
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
 let ProblemEquipment = props => {  //設備異常
     // equipment: { //设备异常
     //     allDesc: [],
@@ -474,14 +528,68 @@ let ProblemEquipment = props => {  //設備異常
         desc, category, name, equipmentNumber, equipmentModel
     } = props.equipment;
 
+    let [newDesc, setNewDesc] = useState('');   // 新的异常描述
+    let [newCategory, setNewCategory] = useState(''); // 新的异常类别
+
+    let addDesc = useCallback(() => {
+        props.dispatch({
+            type: 'AbnormalDecision/setNewAbnormalByFn',
+            retNewState: _ => {
+                _.problem.abnormalClassify.equipment.allDesc.push('其它：' + newDesc);
+                _.problem.abnormalClassify.equipment.desc = '其它：' + newDesc;
+                return _;
+            }
+        });
+        setNewDesc('');
+    }, [newDesc]);
+
+    let addCategory = useCallback(() => {
+        props.dispatch({
+            type: 'AbnormalDecision/setNewAbnormalByFn',
+            retNewState: _ => {
+                _.problem.abnormalClassify.equipment.allCategory.push('其它：' + newCategory);
+                _.problem.abnormalClassify.equipment.category = '其它：' + newCategory;
+                return _;
+            }
+        });
+        setNewCategory('');
+    }, [newCategory]);
+
+
     return <div style={{ width: '100%' }}>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
                     <Col span={15}>
-                        <Select size='small' className={styles.w100} value={desc}
+                        {/* <Select size='small' className={styles.w100} value={desc}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.desc', '')}
+                        >
+                            {
+                                allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select> */}
+                        <Select
+                            size='small'
+                            className={styles.w100}
+                            placeholder="可展开添加新的异常描述"
+                            value={desc}
+                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.desc', '')}
+                            dropdownRender={menu => (
+                                <div>
+                                    {menu}
+                                    <Divider style={{ margin: '4px 0' }} />
+                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
+                                        <Input size='small' style={{ flex: 'auto' }} value={newDesc} onChange={e => {setNewDesc(e.target.value)}} />
+                                        <a
+                                            style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
+                                            onClick={addDesc}
+                                        >
+                                            <PlusOutlined /> 新增
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
                         >
                             {
                                 allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -494,8 +602,34 @@ let ProblemEquipment = props => {  //設備異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>機器類別</Col>
                     <Col span={15}>
-                        <Select size='small' className={styles.w100} value={category}
+                        {/* <Select size='small' className={styles.w100} value={category}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.category', '')}
+                        >
+                            {
+                                allCategory.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select> */}
+                        <Select
+                            size='small'
+                            className={styles.w100}
+                            placeholder="可展开添加新的异常类别"
+                            value={category}
+                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.category', '')}
+                            dropdownRender={menu => (
+                                <div>
+                                    {menu}
+                                    <Divider style={{ margin: '4px 0' }} />
+                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
+                                        <Input size='small' style={{ flex: 'auto' }} value={newCategory} onChange={e => {setNewCategory(e.target.value)}} />
+                                        <a
+                                            style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
+                                            onClick={addCategory}
+                                        >
+                                            <PlusOutlined /> 新增
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
                         >
                             {
                                 allCategory.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -557,14 +691,54 @@ let ProblemMaterial = props => {  //物料異常
     // LC: ''
     let { allDesc, desc, DC, LC, partNo, rejectRatio, supplier } = props.material;
 
+    let [newDesc, setNewDesc] = useState('');   // 新的异常描述
+
+    let addDesc = useCallback(() => {
+        props.dispatch({
+            type: 'AbnormalDecision/setNewAbnormalByFn',
+            retNewState: _ => {
+                _.problem.abnormalClassify.material.allDesc.push('其它：' + newDesc);
+                _.problem.abnormalClassify.material.desc = '其它：' + newDesc;
+                return _;
+            }
+        });
+        setNewDesc('');
+    }, [newDesc]);
+
     return <div style={{ width: '100%' }}>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
                     <Col span={15}>
-                        <Select size='small' className={styles.w100} value={desc}
+                        {/* <Select size='small' className={styles.w100} value={desc}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.desc', '')}
+                        >
+                            {
+                                allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select> */}
+                        <Select
+                            size='small'
+                            className={styles.w100}
+                            placeholder="可展开添加新的异常描述"
+                            value={desc}
+                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.desc', '')}
+                            dropdownRender={menu => (
+                                <div>
+                                    {menu}
+                                    <Divider style={{ margin: '4px 0' }} />
+                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
+                                        <Input size='small' style={{ flex: 'auto' }} value={newDesc} onChange={e => {setNewDesc(e.target.value)}} />
+                                        <a
+                                            style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
+                                            onClick={addDesc}
+                                        >
+                                            <PlusOutlined /> 新增
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
                         >
                             {
                                 allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -631,14 +805,55 @@ ProblemMaterial = connect(state => {
 let ProblemPerson = props => {  //人員異常
     let { retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
     let { allDesc, desc } = props.person;
+
+    let [newDesc, setNewDesc] = useState('');   // 新的异常描述
+
+    let addDesc = useCallback(() => {
+        props.dispatch({
+            type: 'AbnormalDecision/setNewAbnormalByFn',
+            retNewState: _ => {
+                _.problem.abnormalClassify.person.allDesc.push('其它：' + newDesc);
+                _.problem.abnormalClassify.person.desc = '其它：' + newDesc;
+                return _;
+            }
+        });
+        setNewDesc('');
+    }, [newDesc]);
+
     return <div style={{ width: '100%' }}>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
                     <Col span={15}>
-                        <Select size='small' className={styles.w100} value={desc}
+                        {/* <Select size='small' className={styles.w100} value={desc}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.person.desc', '')}
+                        >
+                            {
+                                allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select> */}
+                        <Select
+                            size='small'
+                            className={styles.w100}
+                            placeholder="可展开添加新的异常描述"
+                            value={desc}
+                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.person.desc', '')}
+                            dropdownRender={menu => (
+                                <div>
+                                    {menu}
+                                    <Divider style={{ margin: '4px 0' }} />
+                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
+                                        <Input size='small' style={{ flex: 'auto' }} value={newDesc} onChange={e => {setNewDesc(e.target.value)}} />
+                                        <a
+                                            style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
+                                            onClick={addDesc}
+                                        >
+                                            <PlusOutlined /> 新增
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
                         >
                             {
                                 allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -673,14 +888,68 @@ let ProblemQuality = props => {  //品質異常
         allProcess, allBadPhenomenon, allScope,
         process, badPhenomenon, scope, station, measures
     } = props.quality;
+
+    let [newProcess, setNewProcess] = useState('');   // 新的异常描述
+    let [newBadPhenomenon, setNewBadPhenomenon] = useState('');   // 新的异常描述
+
+    let addProcess = useCallback(() => {
+        props.dispatch({
+            type: 'AbnormalDecision/setNewAbnormalByFn',
+            retNewState: _ => {
+                _.problem.abnormalClassify.quality.allProcess.push('其它：' + newProcess);
+                _.problem.abnormalClassify.quality.process = '其它：' + newProcess;
+                return _;
+            }
+        });
+        setNewProcess('');
+    }, [newProcess]);
+
+    let addBadPhenomenon = useCallback(() => {
+        props.dispatch({
+            type: 'AbnormalDecision/setNewAbnormalByFn',
+            retNewState: _ => {
+                _.problem.abnormalClassify.quality.allBadPhenomenon.push('其它：' + newBadPhenomenon);
+                _.problem.abnormalClassify.quality.badPhenomenon = '其它：' + newBadPhenomenon;
+                return _;
+            }
+        });
+        setNewBadPhenomenon('');
+    }, [newBadPhenomenon]);
+
     return <div style={{ width: '100%' }}>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>制程段</Col>
                     <Col span={15}>
-                        <Select size='small' className={styles.w100} value={process}
+                        {/* <Select size='small' className={styles.w100} value={process}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.process', '')}
+                        >
+                            {
+                                allProcess.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select> */}
+                        <Select
+                            size='small'
+                            className={styles.w100}
+                            placeholder="可展开添加新的异常描述"
+                            value={process}
+                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.process', '')}
+                            dropdownRender={menu => (
+                                <div>
+                                    {menu}
+                                    <Divider style={{ margin: '4px 0' }} />
+                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
+                                        <Input size='small' style={{ flex: 'auto' }} value={newProcess} onChange={e => {setNewProcess(e.target.value)}} />
+                                        <a
+                                            style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
+                                            onClick={addProcess}
+                                        >
+                                            <PlusOutlined /> 新增
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
                         >
                             {
                                 allProcess.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -693,8 +962,34 @@ let ProblemQuality = props => {  //品質異常
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>不良現象</Col>
                     <Col span={14}>
-                        <Select size='small' className={styles.w100} value={badPhenomenon}
+                        {/* <Select size='small' className={styles.w100} value={badPhenomenon}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.badPhenomenon', '')}
+                        >
+                            {
+                                allBadPhenomenon.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select> */}
+                        <Select
+                            size='small'
+                            className={styles.w100}
+                            placeholder="可展开添加新的异常描述"
+                            value={badPhenomenon}
+                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.badPhenomenon', '')}
+                            dropdownRender={menu => (
+                                <div>
+                                    {menu}
+                                    <Divider style={{ margin: '4px 0' }} />
+                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
+                                        <Input size='small' style={{ flex: 'auto' }} value={newBadPhenomenon} onChange={e => {setNewBadPhenomenon(e.target.value)}} />
+                                        <a
+                                            style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
+                                            onClick={addBadPhenomenon}
+                                        >
+                                            <PlusOutlined /> 新增
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
                         >
                             {
                                 allBadPhenomenon.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -756,14 +1051,54 @@ let ProblemTools = props => {  //治工具異常
     let { retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
     let { allDesc, desc, skuno, station } = props.tools;
 
+    let [newDesc, setNewDesc] = useState('');   // 新的异常描述
+
+    let addDesc = useCallback(() => {
+        props.dispatch({
+            type: 'AbnormalDecision/setNewAbnormalByFn',
+            retNewState: _ => {
+                _.problem.abnormalClassify.tools.allDesc.push('其它：' + newDesc);
+                _.problem.abnormalClassify.tools.desc = '其它：' + newDesc;
+                return _;
+            }
+        });
+        setNewDesc('');
+    }, [newDesc]);
+
     return <div style={{ width: '100%' }}>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
                     <Col span={15}>
-                        <Select size='small' className={styles.w100} value={desc}
+                        {/* <Select size='small' className={styles.w100} value={desc}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.tools.desc', '')}
+                        >
+                            {
+                                allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select> */}
+                        <Select
+                            size='small'
+                            className={styles.w100}
+                            placeholder="可展开添加新的异常描述"
+                            value={desc}
+                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.tools.desc', '')}
+                            dropdownRender={menu => (
+                                <div>
+                                    {menu}
+                                    <Divider style={{ margin: '4px 0' }} />
+                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
+                                        <Input size='small' style={{ flex: 'auto' }} value={newDesc} onChange={e => {setNewDesc(e.target.value)}} />
+                                        <a
+                                            style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
+                                            onClick={addDesc}
+                                        >
+                                            <PlusOutlined /> 新增
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
                         >
                             {
                                 allDesc.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -809,14 +1144,53 @@ let ProblemSystem = props => {  //系統異常
     let { retSetNewAbnormalByPlaneObj, retSetNewAbnormalByMoment } = useContext(NewAbnormalContext);
     let { allCategory, category, desc, startTime } = props.system;
 
+    let [newCategory, setNewCategory] = useState('');   // 新的异常描述
+    let addCategory = useCallback(() => {
+        props.dispatch({
+            type: 'AbnormalDecision/setNewAbnormalByFn',
+            retNewState: _ => {
+                _.problem.abnormalClassify.system.allCategory.push('其它：' + newCategory);
+                _.problem.abnormalClassify.system.category = '其它：' + newCategory;
+                return _;
+            }
+        });
+        setNewCategory('');
+    }, [newCategory]);
+
     return <div style={{ width: '100%' }}>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
                     <Col span={8} style={{ textAlign: 'center' }}>異常類別</Col>
                     <Col span={15}>
-                        <Select size='small' className={styles.w100} value={category}
+                        {/* <Select size='small' className={styles.w100} value={category}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.system.category', '')}
+                        >
+                            {
+                                allCategory.map(v => <Option key={v} value={v} >{v}</Option>)
+                            }
+                        </Select> */}
+                        <Select
+                            size='small'
+                            className={styles.w100}
+                            placeholder="可展开添加新的异常描述"
+                            value={category}
+                            onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.system.category', '')}
+                            dropdownRender={menu => (
+                                <div>
+                                    {menu}
+                                    <Divider style={{ margin: '4px 0' }} />
+                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
+                                        <Input size='small' style={{ flex: 'auto' }} value={newCategory} onChange={e => {setNewCategory(e.target.value)}} />
+                                        <a
+                                            style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
+                                            onClick={addCategory}
+                                        >
+                                            <PlusOutlined /> 新增
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
                         >
                             {
                                 allCategory.map(v => <Option key={v} value={v} >{v}</Option>)
@@ -870,12 +1244,13 @@ let Step4 = props => {
     //     lostYield: '', //良率損失
     //     measures: '' //臨時解決措施
     // },
-    let { prevStep, nextStep, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { current, prevStep, nextStep, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
     let {
         allManpowerArrangement,
         lostWorkTime, idleHuman, manpowerArrangement, lostOutput, lostYield, measures
     } = props.countermeasures;
-    return <div className={styles['step4']}>
+
+    return <div className={styles['step4']} style={{ display: current == 3 ? 'block' : 'none' }}>
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={9}>
                 <Row>
@@ -978,12 +1353,13 @@ let Step5 = props => {
     //                 minister: [], //負責人部级
     //                 sectionChief: [], //負責人处级
     //                 notifier: [] // 異常知會人
-    let { prevStep, nextStep, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { current, prevStep, nextStep, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
     let {
         allChargePerson, allSectionManager, allMinister, allSectionChief, allNotifier,
         chargePerson, sectionManager, minister, sectionChief, notifier
     } = props.causeAnalysis;
-    return <div className={styles['step5']}>
+
+    return <div className={styles['step5']} style={{ display: current == 4 ? 'block' : 'none' }}>
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={24}>
                 <Row>
@@ -1001,7 +1377,7 @@ let Step5 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人課級(>3d)</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>責任人課級(&gt3d)</Col>
                     <Col span={10}>
                         <Select mode="multiple" className={styles.w100} showArrow value={sectionManager}
                             options={allSectionManager.map(v => ({ value: v }))}
@@ -1012,7 +1388,7 @@ let Step5 = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人部級(>5d)</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>責任人部級(&gt5d)</Col>
                     <Col span={10}>
                         <Select mode="multiple" className={styles.w100} showArrow value={minister}
                             options={allMinister.map(v => ({ value: v }))}
@@ -1026,7 +1402,7 @@ let Step5 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人處級(>10d)</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>責任人處級(&gt10d)</Col>
                     <Col span={10}>
                         <Select mode="multiple" className={styles.w100} showArrow value={sectionChief}
                             options={allSectionChief.map(v => ({ value: v }))}
@@ -1072,7 +1448,7 @@ let Step6 = props => {
     //     remarks: '', // 備註
     //     attachments: [] // 附件
     // }
-    let { prevStep, setNewAbnormal, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
+    let { current, prevStep, setNewAbnormal, retSetNewAbnormalByPlaneObj } = useContext(NewAbnormalContext);
     let dispatch = props.dispatch;
     let { problemStatus, remarks, attachments } = props.remarksAndAttachments;
     // console.log(attachments);
@@ -1126,7 +1502,7 @@ let Step6 = props => {
         });
     }, []);
 
-    return <div className={styles['step6']}>
+    return <div className={styles['step6']} style={{ display: current == 5 ? 'block' : 'none' }}>
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={18}>
                 <Row>
