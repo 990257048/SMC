@@ -1,4 +1,5 @@
-import { queryNotices } from '@/services/user';
+import { getNotices } from '@/services/user';
+import { message } from 'antd';
 
 const GlobalModel = {
   namespace: 'global',
@@ -6,70 +7,21 @@ const GlobalModel = {
     width: null,
     height: null,
     collapsed: false,
-    notices: [],
+    notices: [
+      // {
+      //   msg: '異常決策中心-未結案事項(5個)',
+      //   count: 5,
+      //   url: '/increase-productivity/abnormal-decision?description=open-case'
+      // },
+      // {
+      //   msg: 'SMT超5天未轉板（5個）',
+      //   count: 5,
+      //   url: '/increase-productivity/xxx?xxx=xxx'
+      // }
+    ],
+
   },
-  effects: {
-    *fetchNotices(_, { call, put, select }) {
-      const data = yield call(queryNotices);
-      yield put({
-        type: 'saveNotices',
-        payload: data,
-      });
-      const unreadCount = yield select(
-        state => state.global.notices.filter(item => !item.read).length,
-      );
-      yield put({
-        type: 'user/changeNotifyCount',
-        payload: {
-          totalCount: data.length,
-          unreadCount,
-        },
-      });
-    },
 
-    *clearNotices({ payload }, { put, select }) {
-      yield put({
-        type: 'saveClearedNotices',
-        payload,
-      });
-      const count = yield select(state => state.global.notices.length);
-      const unreadCount = yield select(
-        state => state.global.notices.filter(item => !item.read).length,
-      );
-      yield put({
-        type: 'user/changeNotifyCount',
-        payload: {
-          totalCount: count,
-          unreadCount,
-        },
-      });
-    },
-
-    *changeNoticeReadState({ payload }, { put, select }) {
-      const notices = yield select(state =>
-        state.global.notices.map(item => {
-          const notice = { ...item };
-
-          if (notice.id === payload) {
-            notice.read = true;
-          }
-
-          return notice;
-        }),
-      );
-      yield put({
-        type: 'saveNotices',
-        payload: notices,
-      });
-      yield put({
-        type: 'user/changeNotifyCount',
-        payload: {
-          totalCount: notices.length,
-          unreadCount: notices.filter(item => !item.read).length,
-        },
-      });
-    },
-  },
   reducers: {
     setSize(state, { height, width }) {
       return { ...state, height, width }
@@ -85,34 +37,52 @@ const GlobalModel = {
       return { ...state, collapsed: payload };
     },
 
-    saveNotices(state, { payload }) {
-      return {
-        collapsed: false,
-        ...state,
-        notices: payload,
-      };
-    },
-
-    saveClearedNotices(
-      state = {
-        notices: [],
-        collapsed: true,
-      },
-      { payload },
-    ) {
-      return {
-        ...state,
-        collapsed: false,
-        notices: state.notices.filter(item => item.type !== payload),
-      };
-    },
+    setNotices(state, { notices }) {
+      return { ...state, notices }
+    }
   },
+
+  effects: {
+    *getNotices(_, { call, put, select }) {  // 每次系統路由變化後執行(獲取全局通知)
+      let { Status, Data, Message } = yield call(getNotices);
+      console.log(Data);
+      if (Status == 'Pass') {
+        yield put({
+          type: 'setNotices',
+          notices: Data
+        });
+      } else {
+        message.error(Message);
+      }
+    }
+  },
+
   subscriptions: {
-    setup({ history }) {
+    setup({ history, dispatch }) {  // 打開系統時執行一次
       // Subscribe history(url) change, trigger `load` action if pathname is `/`
-      history.listen(({ pathname, search }) => {
-        if (typeof window.ga !== 'undefined') {
+      history.listen(({ pathname, search, query }) => {   // 系統路由發生變化後執行
+        if (typeof window.ga !== 'undefined') {  // 原本就有的
           window.ga('send', 'pageview', pathname + search);
+        }
+
+        // 路由變化後獲取全局通知
+        dispatch({
+          type: 'getNotices'
+        });
+        switch (pathname) {
+          case '/increase-productivity/abnormal-decision': // 異常決策中心
+            if (query.description && query.description == 'open-case') { // 未結案異常快捷入口
+              // 加載異常表數據
+              setTimeout(() => {
+                dispatch({
+                  type: 'AbnormalDecision/getTableDataByOpenCase'
+                });
+              }, 1000);
+            }
+            break;
+          default:
+            // 不做任何處理
+            break;
         }
       });
     },

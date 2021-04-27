@@ -1,4 +1,4 @@
-import request, {requestReal} from '@/utils/request';
+import request, { requestReal } from '@/utils/request';
 
 export async function query() {
   return request('/api/users');
@@ -9,6 +9,10 @@ export async function queryNotices() {
 }
 
 //----------------------------------------------
+
+export async function getNotices() {
+  return requestReal('/api/getNotices');
+}
 
 export async function queryCurrent(Token) {
   return requestReal('/api/SMCAccount/GetBUPrivillege', {

@@ -6,10 +6,10 @@
 
 // 等待處理 處理中 申請結案 已結案
 
-let png1 = '/static/ycjc1.f43f02bd.png' 
-let png2 = '/static/ycjc2.134feb66.png' 
-let png3 = '/static/logo1.643717f9.png' 
-let png4 = '/static/login1.2f7455d5.png' 
+let png1 = '/static/ycjc1.f43f02bd.png'
+let png2 = '/static/ycjc2.134feb66.png'
+let png3 = '/static/logo1.643717f9.png'
+let png4 = '/static/login1.2f7455d5.png'
 let png5 = '/static/login2.40691084.png'
 
 let tableData = [
@@ -282,6 +282,13 @@ export default {
             Data: tableData
         });
     },
+    '/api/abnormalDecision/getTableDataByOpenCase': (req, res) => {
+        res.send({
+            Status: 'Pass',
+            Message: '获取未結案异常列表成功！',
+            Data: tableData.filter(row => ['00001', '00002', '00003'].includes(row.id))
+        })
+    },
     'GET /api/abnormalDecision/toggerCollect': (req, res) => {
         tableData = tableData.map(row => {
             return row.id == req.query.id ? { ...row, collect: !row.collect } : row;
@@ -300,7 +307,7 @@ export default {
             Data: {
                 baseMsg: { //基本信息
                     allAbnormalClass: ['白班', '晚班'],
-                    allBU: ['SRGBU', 'PCBU'],
+                    allBU: ['SRG', 'PC'],
                     allRegion: ['Kitting', 'SMT', 'ICT', 'Packing', '5DX', '壓合', 'PTH', 'RE', 'MCEBU', '分板', 'BST', '其它'],  //所有异常区域
                     allStage: ['量產', '試產', '外包'],
                     issuer: '劉龍飛(F1320854)', // 發文人員
@@ -357,16 +364,35 @@ export default {
         });
     },
 
-    'POST /api/abnormalDecision/getAbnormalMaintenanceMsg': (req, res) => {
-        console.log(req.body);
+    'GET /api/abnormalDecision/getMasterByBu': (req, res) => {
+        res.send({
+            Status: 'Pass',
+            Message: '获取主管信息成功！',
+            Data: {
+                report: { //上报机制
+                    allSectionManager: ['劉日紅1(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],
+                    allMinister: ['洪永祥1(F1300147)', '段杰君(F1301264)'],
+                    allSectionChief: ['劉慶公1(100056)']
+                },
+                causeAnalysis: {  // 原因分析(只有填寫原因分析才能申請結案)
+                    allChargePerson: ['5DX:李貽剛1 (F1304158)', '5DX:羅志濤(F1301571)', '5DX:馮海平(F1219611)', '5DX:區劍(F1331116)', '5DX:陳飛鵬(F1319614)'], // 所有負責人
+                    allSectionManager: ['SMT:劉日紅1(F1300825)', 'ME:柳界明(F1313143)', 'PE:梁俏麗(F1313632)', 'PD:張強(F1303904)'], //所有負責人课级
+                    allMinister: ['ME:熊豐1(F1300296)', 'RE:洪永祥(F1300147)', 'ME:段杰君(F1301264)'], //所有負責人部级
+                    allSectionChief: ['PIE:劉慶公1(100056)'], //所有負責人处级
+                }
+            }
+        });
+    },
+    'GET /api/abnormalDecision/getAbnormalMaintenanceMsg': (req, res) => {
+        // console.log(req.query);
         res.send({
             Status: 'Pass',
             Message: '获取异常维护的附带信息成功！',
             Data: {  // 异常维护 状态
                 // 等待處理 處理中 申請結案 已結案
-                status: '申請結案',  // 当前状态 （等待處理 處理中 申請結案 已結案），不同状态操作不一样
+                status: '等待處理',  // 当前状态 （ 等待處理 處理中 申請結案 已結案 ），不同状态操作不一样(等待處理 === 處理中)
                 operationPermissions: 'Y', //用户操作权限 'Y' | 'N'
-                type: '异常', // 通知单类型  异常 | 停线
+                type: '異常', // 通知单类型  異常 | 停线
                 emergencyDegree: '正常', // 紧急程度  正常 | 紧急
                 baseMsg: { //基本信息
                     allAbnormalClass: ['白班', '晚班'],
@@ -528,7 +554,7 @@ export default {
                             result: '' // 測試結果
                         }
                     }
-                    
+
                     // ***********************************************************************************************************************
                 },
                 remarksAndAttachments: {  // 備註與附件
@@ -585,7 +611,7 @@ export default {
                             },
                             { name: '通知時間', content: '12/15/2020 7:01:00 AM' },
                             { name: '處理人員', content: 'PD:吳勇標(F4357722)' },
-                    
+
                             { name: '相關說明', content: '' },
                             { name: '相關附件', content: '' },
                             { name: '问题状态', content: '申请结案' }

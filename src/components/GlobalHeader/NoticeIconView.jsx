@@ -6,7 +6,7 @@ import moment from 'moment';
 import NoticeIcon from '../NoticeIcon';
 import styles from './index.less';
 
-class GlobalHeaderRight extends Component {
+class GlobalHeaderRight extends Component {   // 沒用
   componentDidMount() {
     const { dispatch } = this.props;
 

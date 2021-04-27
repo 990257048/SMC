@@ -79,7 +79,7 @@ export function getSkuName(skuno) {
 
 // 修改机种名
 export function updateSkuName(skuno, skuName) {
-    return requestReal('/api/UPHAndSKUDSetting/updateSkuName', {
+    return requestReal('/api/UPHAndSKUSetting/updateSkuName', {
         methods: 'GET',
         params: {
             skuno, skuName

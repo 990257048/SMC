@@ -77,23 +77,23 @@ export const isDebug = true;   // 是否DEBUG
 //==========================================================================
 
 let requestReal;
-if( !isMock ){
+if (!isMock) {
   requestReal = (url, options, ...args) => {   // 请求真实数据
     isDebug && console.log(url, options);
     const host = 'http://10.132.37.63:800';  // 'http://10.132.37.63:800'; // 'https://gcrc.efoxconn.com:8023'; http://localhost:3001  // 宿主
-    
+
     return umiRequest(host + url, {
       ...options,
       // credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/json',
         Accept: 'application/json',
         token: cookies.get('token')
       },
     }, ...args);
-    
+
   }
-}else{
+} else {
   //requestReal = requestMock;  //请求模拟数据
   requestReal = (...args) => {
     isDebug && console.log(args);

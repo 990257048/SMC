@@ -120,6 +120,7 @@ let Step1 = props => {
         issuer, units, date, abnormalTime, abnormalClass, BU, region, station, skuName, skuno, WO, stage
     } = baseMsg;
 
+    // console.log(allBU);
     return <div className={styles['step1']}>
         <div style={{ textAlign: 'center' }}>
             <p></p>
@@ -127,14 +128,14 @@ let Step1 = props => {
             <Space size="middle">
                 <b>类型：</b>
                 <Radio.Group value={type} onChange={retSetEditAbnormalByPlaneObj('type', 'target.value')}>
-                    <Radio value="异常"> 异常 </Radio>
-                    <Radio value="停线"> 停线 </Radio>
+                    <Radio value="異常"> 異常 </Radio>
+                    <Radio value="停線"> 停線 </Radio>
                 </Radio.Group>
                 <span>  </span>
                 <b>紧急程度：</b>
                 <Radio.Group value={emergencyDegree} onChange={retSetEditAbnormalByPlaneObj('emergencyDegree', 'target.value')}>
                     <Radio value="正常"> 正常 </Radio>
-                    <Radio value="紧急"> 紧急 </Radio>
+                    <Radio value="緊急"> 緊急 </Radio>
                 </Radio.Group>
             </Space>
         </div>
@@ -1579,6 +1580,7 @@ let Step6 = props => {
     let { prevStep, retSetEditAbnormalByPlaneObj } = useContext(EditAbnormalContext);
     let dispatch = props.dispatch;
     let { problemStatus, remarks, attachments } = props.remarksAndAttachments;
+    let allCause = props.allCause;
     // console.log(attachments);
     let prop = {
         fileList: attachments.length > 0 ? attachments : null,
@@ -1633,8 +1635,9 @@ let Step6 = props => {
                     <Col span={20}>
                         <Space>
                             <Radio.Group value={problemStatus} onChange={retSetEditAbnormalByPlaneObj('remarksAndAttachments.problemStatus', 'target.value')}>
-                                <Radio value="等待处理">等待处理</Radio>
-                                <Radio value="处理中">处理中</Radio>
+                                <Radio value="等待處理">等待處理</Radio>
+                                <Radio value="處理中">處理中</Radio>
+                                <Radio value="申請結案" disabled={allCause.length > 0 ? false : true}>申請結案</Radio>
                             </Radio.Group>
                         </Space>
                     </Col>
@@ -1660,7 +1663,7 @@ let Step6 = props => {
                             <Button size='small' icon={<UploadOutlined />}>Click to Upload</Button>
                         </Upload>
                     </Col>
-                </Row>
+                </Row> 
             </Col>
         </Row>
         <Row gutter={[0, 24]} justify="center">
@@ -1678,7 +1681,8 @@ let Step6 = props => {
 
 Step6 = connect(state => {
     return {
-        remarksAndAttachments: state.AbnormalDecision.abnormalMaintenance.remarksAndAttachments
+        remarksAndAttachments: state.AbnormalDecision.abnormalMaintenance.remarksAndAttachments,
+        allCause: state.AbnormalDecision.abnormalMaintenance.causeAnalysis.cause.allCause
     }
 })(Step6);
 

@@ -4,6 +4,7 @@ import React from 'react';
 import { history, connect } from 'umi';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
+import tou from '../../assets/tou.png';
 
 class AvatarDropdown extends React.Component {
   onMenuClick = event => {
@@ -32,7 +33,7 @@ class AvatarDropdown extends React.Component {
       },
       menu,
     } = this.props;
-    // console.log(this.props);
+    console.log(this.props);
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
         {menu && (
@@ -58,7 +59,7 @@ class AvatarDropdown extends React.Component {
     return currentUser[0] && currentUser[0].WORKID ? (
       <HeaderDropdown overlay={menuHeaderDropdown}>
         <span className={`${styles.action} ${styles.account}`}>
-          <Avatar size="small" className={styles.avatar} src={'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'} alt="avatar" />
+          <Avatar size="small" className={styles.avatar} src={tou} alt="avatar" />
           <span className={`${styles.name} anticon`}>{currentUser.name}</span>
         </span>
       </HeaderDropdown>

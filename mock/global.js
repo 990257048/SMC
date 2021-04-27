@@ -16,15 +16,15 @@ export default {
     },
 
     'GET /api/SMCAccount/GetBUPrivillege': (req, res) => {
-        let {Token} = req.query;
+        let { Token } = req.query;
         // console.log(Token);
-        if( Token == 'asdfghjkl' ){
+        if (Token == 'asdfghjkl') {
             res.send({
                 Status: 'Pass',
                 Message: '登录验证成功！',
-                Data: [{WORKID: "F1320854"}]
+                Data: [{ WORKID: "F1320854" }]
             });
-        }else{
+        } else {
             res.send({
                 Status: 'Fail',
                 Message: '验证失败！',
@@ -33,4 +33,22 @@ export default {
         }
     },
 
+    'GET /api/getNotices': (req, res) => {
+        res.send({
+            Status: 'Pass',
+            Message: '獲取全局消息成功',
+            Data: [
+                {
+                    msg: '異常決策中心-未結案事項(3個)',
+                    count: 3,
+                    url: '/increase-productivity/abnormal-decision?description=open-case'
+                },
+                {
+                    msg: 'SMT超5天未轉板（3個）',
+                    count: 3,
+                    url: '/increase-productivity/xxx?xxx=xxx'
+                }
+            ]
+        });
+    }
 }

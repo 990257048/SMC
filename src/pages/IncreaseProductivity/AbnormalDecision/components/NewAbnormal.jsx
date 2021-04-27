@@ -44,7 +44,7 @@ let NewAbnormal = () => {  // 新增异常
         });
     }, []);
 
-    let retSetNewAbnormalByPlaneObj = (stateProp, eProp) => e => {   //平面Obj
+    let retSetNewAbnormalByPlaneObj = (stateProp, eProp) => e => {   //純Obj
         setNewAbnormal(stateProp, findValueByProp(e, eProp));
     }
 
@@ -157,14 +157,20 @@ let Step1 = props => {
     }, []);   //制造处以第一次渲染该组件前的全局条件的制造处为标准，后继不受全局条件中的制造处所影响。
 
     // 获取新增异常需要的附带信息 getNewAbnormalMsg
-    useMemo(() => {
-        console.log(MFG);
-        dispatch({
+    useEffect(() => {
+        MFG && dispatch({
             type: 'AbnormalDecision/getNewAbnormalMsg',
             MFG
         });
     }, [MFG]);
 
+    // BU发生变化时获取主管信息
+    useEffect(() => {
+        MFG && BU && dispatch({
+            type: 'AbnormalDecision/getMasterByBu',
+            MFG, BU
+        });
+    }, [MFG, BU]);
 
     return <div className={styles['step1']} style={{ display: current == 0 ? 'block' : 'none' }}>
         <div style={{ textAlign: 'center' }}>
@@ -173,14 +179,14 @@ let Step1 = props => {
             <Space size="middle">
                 <b>类型：</b>
                 <Radio.Group value={type} onChange={retSetNewAbnormalByPlaneObj('type', 'target.value')}>
-                    <Radio value="异常"> 异常 </Radio>
-                    <Radio value="停线"> 停线 </Radio>
+                    <Radio value="異常"> 異常 </Radio>
+                    <Radio value="停線"> 停線 </Radio>
                 </Radio.Group>
                 <span>  </span>
                 <b>紧急程度：</b>
                 <Radio.Group value={emergencyDegree} onChange={retSetNewAbnormalByPlaneObj('emergencyDegree', 'target.value')}>
                     <Radio value="正常"> 正常 </Radio>
-                    <Radio value="紧急"> 紧急 </Radio>
+                    <Radio value="緊急"> 緊急 </Radio>
                 </Radio.Group>
             </Space>
         </div>

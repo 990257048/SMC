@@ -118,7 +118,8 @@ let useTableConfig = (initTableData) => {
         // 獲取附带數據。。。（包含： 基础数据 当前状态 操作权限*****）
         dispatch({
             type: 'AbnormalDecision/getAbnormalMaintenanceMsg',
-            id: row.id
+            id: row.id,
+            status: row.status
         });
         // 设置異常ID
         dispatch({
@@ -252,8 +253,8 @@ let ExceptionList = props => {
 
     let size = useMemo(() => {
         return {
-            w: width - 260,
-            h: height - 220
+            w: width - 100,   // -260
+            h: height - 180   // -220
         }
     }, [width, height]);
 

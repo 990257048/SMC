@@ -58,18 +58,18 @@ export default defineConfig({
 
             // 202008171508 add by gch (smc系统路由) START ================================================================================================================
 
-            {
-              path: '/dashboard',    // 仪表盘
-              name: 'dashboard',
-              icon: 'dashboard',
-              routes: [
-                {
-                  path: '/dashboard/repair-wip',
-                  name: 'repair-wip',
-                  component: './dashboard/RepairWip'
-                }
-              ]
-            },
+            // {
+            //   path: '/dashboard',    // 仪表盘
+            //   name: 'dashboard',
+            //   icon: 'dashboard',
+            //   routes: [
+            //     {
+            //       path: '/dashboard/repair-wip',
+            //       name: 'repair-wip',
+            //       component: './dashboard/RepairWip'
+            //     }
+            //   ]
+            // },
             {
               path: '/increase-productivity',    // 提高生产力
               name: 'increase-productivity',
@@ -120,30 +120,30 @@ export default defineConfig({
             },
 
             // -------------------------------------------------------------------------------------------------------------------------------------------------------------
-            {
-              path: '/ant-design-components',    // ant-design 组件（快速开发系统）
-              name: 'ant-design-components',
-              icon: 'antDesign',
-              routes: [
-                {
-                  path: '/ant-design-components/antd-button',   // 按钮
-                  name: 'antd-button',
-                  component: './AntDesignComponents/AntdButton'
-                }
-              ]
-            },
-            {
-              path: '/practice-page',    //练习页面
-              name: 'practice-page',
-              icon: 'form',
-              routes: [
-                {
-                  path: '/practice-page/test-page1',    // 测试页面1
-                  name: 'test-page1',
-                  component: './PracticePage/TestPage1'
-                }
-              ]
-            },
+            // {
+            //   path: '/ant-design-components',    // ant-design 组件（快速开发系统）
+            //   name: 'ant-design-components',
+            //   icon: 'antDesign',
+            //   routes: [
+            //     {
+            //       path: '/ant-design-components/antd-button',   // 按钮
+            //       name: 'antd-button',
+            //       component: './AntDesignComponents/AntdButton'
+            //     }
+            //   ]
+            // },
+            // {
+            //   path: '/practice-page',    //练习页面
+            //   name: 'practice-page',
+            //   icon: 'form',
+            //   routes: [
+            //     {
+            //       path: '/practice-page/test-page1',    // 测试页面1
+            //       name: 'test-page1',
+            //       component: './PracticePage/TestPage1'
+            //     }
+            //   ]
+            // },
             // 202008171508 add by gch (smc系统路由) END =====================================================================================================================
 
             {
@@ -162,12 +162,12 @@ export default defineConfig({
                 },
               ],
             },
-            {
-              name: 'list.table-list',
-              icon: 'table',
-              path: '/list',
-              component: './ListTableList',
-            },
+            // {
+            //   name: 'list.table-list',
+            //   icon: 'table',
+            //   path: '/list',
+            //   component: './ListTableList',
+            // },
             // {
             //   name: 'test',
             //   icon: 'plus',

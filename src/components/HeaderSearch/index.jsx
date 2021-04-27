@@ -15,6 +15,7 @@ const HeaderSearch = props => {
     defaultOpen,
     ...restProps
   } = props;
+  console.log(props);
   const inputRef = useRef(null);
   const [value, setValue] = useMergeValue(defaultValue, {
     value: props.value,
@@ -79,6 +80,7 @@ const HeaderSearch = props => {
           }}
         />
       </AutoComplete>
+
     </div>
   );
 };

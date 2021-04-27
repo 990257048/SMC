@@ -1,9 +1,11 @@
 import { Tooltip, Tag } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, NotificationOutlined } from '@ant-design/icons';
 import React from 'react';
 import { connect, SelectLang } from 'umi';
 import Avatar from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
+import Notification from './Notification';
+import GlobalHeaderRight1 from './NoticeIconView';
 import styles from './index.less';
 
 const ENVTagColor = {
@@ -44,8 +46,8 @@ const GlobalHeaderRight = props => {
             value: 'Pro Layout',
           },
         ]} // onSearch={value => {
-        //   //console.log('input', value);
-        // }}
+      //   //console.log('input', value);
+      // }}
       />
       {/* <Tooltip title="使用文档">
         <a
@@ -60,6 +62,9 @@ const GlobalHeaderRight = props => {
           <QuestionCircleOutlined />
         </a>
       </Tooltip> */}
+
+      {/* Notification 20210426 add by gch */}
+      <Notification />
       <Avatar menu />
       {REACT_APP_ENV && (
         <span>

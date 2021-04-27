@@ -1,14 +1,14 @@
 
-import { 
-    getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5, getTableData, 
-    toggerCollect, getNewAbnormalMsg, getAbnormalMaintenanceMsg, uploadFile, newAbnormal,
+import {
+    getAllMfg, getBU, getGraph1, getGraph2, getGraph3, getGraph4, getGraph5, getTableData, getTableDataByOpenCase,
+    toggerCollect, getNewAbnormalMsg, getMasterByBu, getAbnormalMaintenanceMsg, uploadFile, newAbnormal,
     abnormalMaintenanceSaveDraft, abnormalMaintenanceSubmit, abnormalMaintenanceResolve, abnormalMaintenanceReject
 } from './service'
 import { deepClone, retNewStateByProp } from '../../../utils/custom'
-import { 
-    graph1SendData, graph23SendData, graph4SendData, graph5SendData, newAbnormalSendData, 
+import {
+    graph1SendData, graph23SendData, graph4SendData, graph5SendData, newAbnormalSendData,
     abnormalMaintenanceSaveDraftSendData, abnormalMaintenanceSubmitSendData,
-    newAbnormal_empty, AbnormalMaintenance_empty, filterData, combineData 
+    newAbnormal_empty, AbnormalMaintenance_empty, filterData, combineData
 } from './utils'
 import { message } from 'antd'
 import moment from 'moment'
@@ -155,21 +155,21 @@ let Model = {
 
             newAbnormal: {  // 新增异常 状态
                 // abnormalId: '',   //异常ID (可以不用了)
-                type: '异常', // 通知单类型  异常 | 停线
-                emergencyDegree: '一般', // 紧急程度  一般 | 紧急
+                type: '異常', // 通知单类型  異常 | 停線
+                emergencyDegree: '正常', // 紧急程度  正常 | 緊急
                 baseMsg: { //基本信息
-                    allMFG: ['MFGI', 'MFGII'],    // 新增制造处条件【新】
+                    allMFG: ['MFGII'],    // 新增制造处条件【新】
                     allAbnormalClass: ['白班', '晚班'],
                     allBU: ['SRGBU', 'PCBU'],
                     allRegion: ['Kitting', 'SMT', 'ICT', 'Packing', '5DX', '壓合', 'PTH', 'RE', 'MCEBU', '分板', 'BST', '其它'],  //所有异常区域
                     allStage: ['量產', '試產', '外包'],
-                    MFG: 'MFGI',    // 新增制造处条件【新】
+                    MFG: '',    // 新增制造处条件【新】
                     issuer: '劉龍飛(F1320854)', // 發文人員
                     units: 'IT', // 發文單位
                     date: '2020/11/11 08:34', // 發文日期
                     abnormalTime: '2020/11/11 08:34', // 异常时间
                     abnormalClass: '白班', // 异常班别
-                    BU: 'SRGBU', // 异常BU
+                    BU: '', // 异常BU
                     region: 'SMT', //异常区域
                     station: '', //异常工站
                     skuName: '', //机种名称
@@ -181,9 +181,9 @@ let Model = {
                     allSectionManager: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],
                     allMinister: ['洪永祥(F1300147)', '段杰君(F1301264)'],
                     allSectionChief: ['劉慶公(100056)'],
-                    sectionManager: '劉日紅(F1300825)', //课级
-                    minister: '洪永祥(F1300147)', //部级
-                    sectionChief: '劉日紅(F1300825)' //处级
+                    sectionManager: '', //课级
+                    minister: '', //部级
+                    sectionChief: '' //处级
                 },
                 problem: { //問題描述
                     allHandler: ['劉日紅(F1300825)', '張任(F1304859)', '張強(F1303904)', '任杏(F1306746)', '梁俏麗(F1313632)', '李濤(F1302833)'],
@@ -338,7 +338,7 @@ let Model = {
             modalVisible: false
         },
         // ---------------------------------------------------------------------------------------------------------------------------------------------
-        
+
         abnormalMaintenance: {  // 异常维护 状态
             id: '',   // 異常ID
             status: '等待处理',  // 当前状态 （待处理，处理中，申请结案，已结案），不同状态操作不一样
@@ -454,6 +454,7 @@ let Model = {
                 },
                 //异常维护里面特有的***原因分析模块**********************************************************************************************
                 cause: {
+
                     allCause: [], // ['parson', 'equipment', 'material', 'function', 'annulus', 'detection'],  //涉及的所有原因
                     currentClassify: 'parson',  //当前分类
                     parson: {   //人
@@ -505,7 +506,7 @@ let Model = {
                         result: '' // 測試結果
                     }
                 }
-                
+
                 // ***********************************************************************************************************************
             },
             remarksAndAttachments: {  // 備註與附件
@@ -562,7 +563,7 @@ let Model = {
                         },
                         { name: '通知時間', content: '12/15/2020 7:01:00 AM' },
                         { name: '處理人員', content: 'PD:吳勇標(F4357722)' },
-                
+
                         { name: '相關說明', content: '' },
                         { name: '相關附件', content: '' },
                         { name: '问题状态', content: '申请结案' }
@@ -634,26 +635,26 @@ let Model = {
             let newAbnormal = deepClone(state.anomalousGraph.newAbnormal);
             newAbnormal = retNewState(newAbnormal);
             return {
-                ...state, anomalousGraph: {...state.anomalousGraph, newAbnormal}
+                ...state, anomalousGraph: { ...state.anomalousGraph, newAbnormal }
             };
         },
         setNewAbnormalByProp: (state, { prop, value }) => {  //设置新增异常的状态, 更簡單好用（適合修改超級複雜（多層級）的狀態）
             let newAbnormal = deepClone(state.anomalousGraph.newAbnormal);
-            newAbnormal = retNewStateByProp(newAbnormal, prop, value); 
+            newAbnormal = retNewStateByProp(newAbnormal, prop, value);
             return {
-                ...state, anomalousGraph: {...state.anomalousGraph, newAbnormal}
+                ...state, anomalousGraph: { ...state.anomalousGraph, newAbnormal }
             };
         },
         // 异常维护（修改）
-        setAbnormalMaintenanceByFn: (state, {retNewState}) => {  //设置异常维护的状态, 用回调函数改变状态
+        setAbnormalMaintenanceByFn: (state, { retNewState }) => {  //设置异常维护的状态, 用回调函数改变状态
             let abnormalMaintenance = deepClone(state.abnormalMaintenance);
             abnormalMaintenance = retNewState(abnormalMaintenance);
             return { ...state, abnormalMaintenance }
         },
-        setAbnormalMaintenanceByProp: (state, {prop, value}) => {  //设置异常维护的状态，用prop字符串
+        setAbnormalMaintenanceByProp: (state, { prop, value }) => {  //设置异常维护的状态，用prop字符串
             let abnormalMaintenance = deepClone(state.abnormalMaintenance);
             abnormalMaintenance = retNewStateByProp(abnormalMaintenance, prop, value);
-            return { ...state, abnormalMaintenance}
+            return { ...state, abnormalMaintenance }
         }
     },
     effects: {
@@ -847,6 +848,23 @@ let Model = {
             }
         },
 
+        *getTableDataByOpenCase(_, { call, put, select }) {   // 獲取未結案的異常
+            let { Status, Message, Data } = yield call(getTableDataByOpenCase);
+            if (Status == 'Pass') {
+                let d = Data.map((row) => ({ ...row, key: row.id }));     // 加上key
+                yield put({    // 設置 all
+                    type: 'setAnomalousTableData',
+                    payload: { all: d } // { all: d, current: d}
+                });
+                yield put({    // 设置筛选后的 current
+                    type: 'filterTable'
+                })
+                message.success('getTableData' + Message);
+            } else {
+                message.error(Message);
+            }
+        },
+
         filterTable: [
             function* (_, { select, put }) {
                 let { all, like, collectFlag } = yield select(state => state.AbnormalDecision.anomalousTable);
@@ -885,29 +903,62 @@ let Model = {
                 message.error(Mesage)
             }
         },
-        *getNewAbnormalMsg({ MFG }, {select, call, put}) {    //获取新增异常需要的附带信息
+
+        *getNewAbnormalMsg({ MFG }, { select, call, put }) {    //获取新增异常需要的附带信息
             // select...
             // let newAbnormal = yield select(state => state.AbnormalDecision.anomalousGraph.newAbnormal);
             // let MFG = yield select(state => state.AbnormalDecision.anomalousGraph.globalSearch.MFG);
-            let {Status, Message, Data} = yield call(getNewAbnormalMsg, MFG);   //后台需要的数据未定
-            if(Status == 'Pass'){
-                yield put({
-                    type: 'setNewAbnormalByFn',
-                    retNewState: state => combineData(state, Data)
-                });
-                message.success(Message);
+            try {
+                let { Status, Message, Data } = yield call(getNewAbnormalMsg, MFG);   //后台需要的数据未定
+                console.log(Data);
+                if (Status == 'Pass') {
+                    yield put({
+                        type: 'setNewAbnormalByFn',
+                        retNewState: state => combineData(state, Data)
+                    });
+                    message.success(Message);
+                }
+            } catch (e) {
+                message.error(e);
             }
         },
 
-        *getAbnormalMaintenanceMsg({ id }, {select, call, put}) {   //获取异常维护的附带信息
-            let {Status, Message, Data} = yield call(getAbnormalMaintenanceMsg, id);
-            console.log({Status, Message, Data});
-            if(Status == 'Pass'){
-                yield put({
-                    type: 'setAbnormalMaintenanceByFn',
-                    retNewState: state => combineData(state, Data)
-                });
-                message.success(Message);
+        *getMasterByBu({ MFG, BU }, { select, put, call }) {     //新增异常BU变化时获取主管信息
+            try {
+                let { Status, Message, Data } = yield call(getMasterByBu, MFG, BU);
+                // console.log(Data);
+                if (Status == 'Pass') {
+                    yield put({
+                        type: 'setNewAbnormalByFn',
+                        retNewState: state => combineData(state, Data)
+                    });
+                    message.success(Message);
+                }
+            } catch (e) {
+                message.error(e);
+            }
+        },
+
+        *getAbnormalMaintenanceMsg({ id, status }, { select, call, put }) {   //获取异常维护的附带信息
+            try {
+                let { Status, Message, Data } = yield call(getAbnormalMaintenanceMsg, id);
+                console.log({ Status, Message, Data });
+                // 格式兼容：
+                Data = Data.baseMsg.abnormalInformation ? { ...Data, status, baseMsg: { ...Data.baseMsg, ...Data.baseMsg.abnormalInformation } } : { ...Data, status }; // 前者真實數據 後者模擬數據
+
+                if (Status == 'Pass') {
+                    yield put({
+                        type: 'setAbnormalMaintenanceByFn',
+                        retNewState: state => {
+                            let r = combineData(state, Data);
+                            console.log(r);
+                            return r;
+                        }
+                    });
+                    message.success(Message);
+                }
+            } catch (e) {
+                message.error(e)
             }
         },
 
@@ -934,7 +985,7 @@ let Model = {
         //         message.success(Message);
         //     }
         // },
-        *newAbnormal(_, {select, put, call}) {    //新增异常操作
+        *newAbnormal(_, { select, put, call }) {    //新增异常操作
             // select ....
             let newAbnormalState = yield select(state => state.AbnormalDecision.anomalousGraph.newAbnormal);
             // let sendData = filterData(newAbnormalState, newAbnormalSendData);
@@ -944,30 +995,37 @@ let Model = {
             //     formData.append('file', file);
             //     return formData;
             // });
+            console.log(newAbnormalState);
             let data = filterData(newAbnormalState, newAbnormalSendData);
             console.log(data);
+
             let sendData = new FormData();
             newAbnormalState.remarksAndAttachments.attachments.forEach(file => {
                 sendData.append(file.name, file);
             });
             sendData.append('data', JSON.stringify(data));
-            console.log(sendData)
-            let {Status, Message, Data} = yield call(newAbnormal, sendData);
-            if(Status == 'Pass'){
-                yield put({   //关掉对话框
-                    type: 'setNewAbnormalVisible',
-                    newAbnormalVisible: false
-                });
-                yield put({   //清除新增异常信息
-                    type: 'clearNewAbnormalData'
-                })
-                yield put({   //重新获取异常列表
-                    type: 'getTableData'
-                });
-                message.success(Message);
+            console.log(sendData);
+            try {
+                let { Status, Message, Data } = yield call(newAbnormal, sendData);
+                if (Status == 'Pass') {
+                    yield put({   //关掉对话框
+                        type: 'setNewAbnormalVisible',
+                        newAbnormalVisible: false
+                    });
+                    yield put({   //清除新增异常信息
+                        type: 'clearNewAbnormalData'
+                    })
+                    yield put({   //重新获取异常列表
+                        type: 'getTableData'
+                    });
+                    message.success(Message);
+                }
+            } catch (e) {
+                message.error(e);
             }
+
         },
-        *clearNewAbnormalData(_, {select, put, call}) {   //清空新增异常的状态(关闭弹出框时; 提交数据后;)
+        *clearNewAbnormalData(_, { select, put, call }) {   //清空新增异常的状态(关闭弹出框时; 提交数据后;)
             yield put({
                 type: 'setNewAbnormalByFn',
                 retNewState: state => combineData(state, newAbnormal_empty)
@@ -976,100 +1034,150 @@ let Model = {
 
         //-------------------------------------------------------------------------------------------------------
         // 存入草稿（異常維護）
-        *abnormalMaintenanceSaveDraft(_, {select, put, call}) { 
+        *abnormalMaintenanceSaveDraft(_, { select, put, call }) {
             // abnormalMaintenanceSaveDraftSendData
             let abnormalMaintenanceState = yield select(state => state.AbnormalDecision.abnormalMaintenance);
             let sendData = filterData(abnormalMaintenanceState, abnormalMaintenanceSaveDraftSendData);
-            let {Status, Message, Data} = yield call(abnormalMaintenanceSaveDraft, sendData);
-            if(Status == 'Pass'){
-                // 关闭
-                yield put({
-                    type: 'setAnomalousTableData',
-                    payload: {
-                        modalVisible: false
-                    }
-                });
-                // 清空異常維護内容
-                yield put({
-                    type: 'clearAbnormalMaintenanceData'
-                });
-                // 关闭
-                message.success(Message);
+            try {
+                let { Status, Message, Data } = yield call(abnormalMaintenanceSaveDraft, sendData);
+                if (Status == 'Pass') {
+                    // 关闭
+                    yield put({
+                        type: 'setAnomalousTableData',
+                        payload: {
+                            modalVisible: false
+                        }
+                    });
+                    // 清空異常維護内容
+                    yield put({
+                        type: 'clearAbnormalMaintenanceData'
+                    });
+                    // 关闭
+                    message.success(Message);
+                }
+            } catch (e) {
+                message.error(e)
             }
         },
         // 提交數據（異常維護）
-        *abnormalMaintenanceSubmit(_, {select, put, call}) {
+        *abnormalMaintenanceSubmit(_, { select, put, call }) {
             // abnormalMaintenanceSubmitSendData
             let abnormalMaintenanceState = yield select(state => state.AbnormalDecision.abnormalMaintenance);
+
+            // let data = filterData(abnormalMaintenanceState, abnormalMaintenanceSubmitSendData);  //原来的 不符合后台接收的格式（要稍微修改一下）
+
+            // 修正后 start---------
+            abnormalMaintenanceState = deepClone(abnormalMaintenanceState);
             let data = filterData(abnormalMaintenanceState, abnormalMaintenanceSubmitSendData);
+            data.ID = data.id;  // 新增需要的
+            data.cause = data.causeAnalysis.cause;
+            data.cause.currentClassify = data.cause.allCause;
+            delete data.id;  // 删除没用的
+            delete data.causeAnalysis.cause;
+            delete data.cause.allCause;
+            // 修正后 end-----------
+
+            console.log(data);
             let sendData = new FormData();
             abnormalMaintenanceState.remarksAndAttachments.attachments.forEach(file => {
                 sendData.append(file.name, file);
             });
             sendData.append('data', JSON.stringify(data));
-            let {Status, Message, Data} = yield call(abnormalMaintenanceSubmit, sendData);
-            if(Status == 'Pass'){
-                // 关闭
-                yield put({
-                    type: 'setAnomalousTableData',
-                    payload: {
-                        modalVisible: false
-                    }
-                });
-                // 清空
-                yield put({
-                    type: 'clearAbnormalMaintenanceData'
-                });
-                message.success(Message);
+            try {
+                let { Status, Message, Data } = yield call(abnormalMaintenanceSubmit, sendData);
+                if (Status == 'Pass') {
+                    // 关闭
+                    yield put({
+                        type: 'setAnomalousTableData',
+                        payload: {
+                            modalVisible: false
+                        }
+                    });
+                    // 清空
+                    yield put({
+                        type: 'clearAbnormalMaintenanceData'
+                    });
+                    message.success(Message);
+                }
+            } catch (e) {
+                message.error(e)
             }
-            
         },
         // 結案申請通過（異常維護）
-        *abnormalMaintenanceResolve(_, {select, put, call}) {
+        *abnormalMaintenanceResolve(_, { select, put, call }) {
             let id = yield select(state => state.AbnormalDecision.abnormalMaintenance.id);
-            let {Status, Message, Data} = yield call(abnormalMaintenanceResolve, id);
-            if(Status == 'Pass'){
-                // 关闭
-                yield put({
-                    type: 'setAnomalousTableData',
-                    payload: {
-                        modalVisible: false
-                    }
-                });
-                // 清空
-                yield put({
-                    type: 'clearAbnormalMaintenanceData'
-                });
-                message.success(Message);
+
+            try {
+                let { Status, Message, Data } = yield call(abnormalMaintenanceResolve, id);
+                if (Status == 'Pass') {
+                    // 关闭
+                    yield put({
+                        type: 'setAnomalousTableData',
+                        payload: {
+                            modalVisible: false
+                        }
+                    });
+                    // 清空
+                    yield put({
+                        type: 'clearAbnormalMaintenanceData'
+                    });
+                    message.success(Message);
+                }
+            } catch (e) {
+                message.error(e)
             }
         },
         // 結案申請拒絕（異常維護）
-        *abnormalMaintenanceReject(_, {select, put, call}) {
+        *abnormalMaintenanceReject(_, { select, put, call }) {
             let id = yield select(state => state.AbnormalDecision.abnormalMaintenance.id);
-            let {Status, Message, Data} = yield call(abnormalMaintenanceReject, id);
-            if(Status == 'Pass'){
-                // 关闭
-                yield put({
-                    type: 'setAnomalousTableData',
-                    payload: {
-                        modalVisible: false
-                    }
-                });
-                // 清空
-                yield put({
-                    type: 'clearAbnormalMaintenanceData'
-                });
-                message.success(Message);
+            try {
+                let { Status, Message, Data } = yield call(abnormalMaintenanceReject, id);
+                if (Status == 'Pass') {
+                    // 关闭
+                    yield put({
+                        type: 'setAnomalousTableData',
+                        payload: {
+                            modalVisible: false
+                        }
+                    });
+                    // 清空
+                    yield put({
+                        type: 'clearAbnormalMaintenanceData'
+                    });
+                    message.success(Message);
+                }
+            } catch (e) {
+                message.error(e)
             }
         },
 
-        *clearAbnormalMaintenanceData(_, {select, put, call}) {  // 清空異常維護的狀態
+        *clearAbnormalMaintenanceData(_, { select, put, call }) {  // 清空異常維護的狀態
             yield put({
                 type: 'setAbnormalMaintenanceByFn',
                 retNewState: state => combineData(state, AbnormalMaintenance_empty)
             });
 
         }
+    },
+    subscriptions: {
+        // 不好用，已經放在global中
+        // setUp({ dispatch, history }) {  // 只會打開系統時執行一次！
+        //     //console.log(history);
+        //     history.listen(location => {   // 監聽路由的變化（每次路由發生變化時執行）
+        //         if (location.pathname == '/increase-productivity/abnormal-decision') {  // 每次 進入異常決策中心
+        //             // 更新未結案異常數量
+        //             // 。。。還沒寫
+        //             if (location.query.description && location.query.description == 'open-case') { // 未結案異常快捷入口
+        //                 // 加載異常表數據
+        //                 setTimeout(() => {
+        //                     dispatch({
+        //                         type: 'getTableDataByOpenCase'
+        //                     });
+        //                 }, 0);
+        //             }
+        //         }
+        //     })
+        // }
     }
 }
 
