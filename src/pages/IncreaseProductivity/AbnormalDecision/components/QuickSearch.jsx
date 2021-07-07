@@ -12,13 +12,13 @@ const { RangePicker } = DatePicker;
 
 let QuickSearch = props => {  // 快速搜索
     // console.log('QuickSearch render');
-    let { 
-        dispatch, 
-        quickSearch: { 
-            allYear, allCategories, classify, year, season, month, week, time 
-        } 
+    let {
+        dispatch,
+        quickSearch: {
+            allYear, allCategories, classify, year, season, month, week, time
+        }
     } = props;
-    
+
 
     let changeClassify = useCallback((classify) => {
         // console.log(v);
@@ -26,7 +26,7 @@ let QuickSearch = props => {  // 快速搜索
             type: 'AbnormalDecision/setQuickSearch',
             payload: { classify }
         });
-    });
+    }, []);
 
     let yearChange = useCallback((year) => {
         dispatch({
@@ -36,6 +36,7 @@ let QuickSearch = props => {  // 快速搜索
     }, []);
 
     let changeSeason = useCallback((season) => {
+        console.log(season)
         dispatch({
             type: 'AbnormalDecision/setQuickSearch',
             payload: { season }
@@ -64,16 +65,20 @@ let QuickSearch = props => {  // 快速搜索
     }, []);
 
     return <div className={styles['control-content']}>
-        <Tabs size="small" type='line' activeKey={classify} onChange={ changeClassify } className={styles['tabs-query']} >
-            <TabPane tab="按年份" key="year" disabled={ !allCategories.includes('year') }>
+        <Tabs size="small" type='line' activeKey={classify} onChange={changeClassify} className={styles['tabs-query']} >
+            <TabPane tab={
+                formatMessage({ id: 'abnormal-decision-center.quick-search.tab.year' })
+            } key="year" disabled={!allCategories.includes('year')}>
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
-                            <div className={styles['col-con']}>年份</div>
+                            <div className={styles['col-con']}>{
+                                formatMessage({ id: 'abnormal-decision-center.quick-search.lable.year' })
+                            }</div>
                         </Col>
                         <Col span={18}>
                             <div>
-                                <Select value={year} onChange={ yearChange } className={styles.w100}>
+                                <Select value={year} onChange={yearChange} className={styles.w100}>
                                     {
                                         allYear.map(year => <Option key={year} value={year}>{year + '年'}</Option>)
                                     }
@@ -83,15 +88,19 @@ let QuickSearch = props => {  // 快速搜索
                     </Row>
                 </div>
             </TabPane>
-            <TabPane tab="按季度" key="season" disabled={ !allCategories.includes('season') }>
+            <TabPane tab={
+                formatMessage({ id: 'abnormal-decision-center.quick-search.tab.season' })
+            } key="season" disabled={!allCategories.includes('season')}>
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
-                            <div className={styles['col-con']}>年份</div>
+                            <div className={styles['col-con']}>{
+                                formatMessage({ id: 'abnormal-decision-center.quick-search.lable.year' })
+                            }</div>
                         </Col>
                         <Col span={18}>
                             <div>
-                                <Select value={year} onChange={ yearChange } className={styles.w100}>
+                                <Select value={year} onChange={yearChange} className={styles.w100}>
                                     {
                                         allYear.map(year => <Option key={year} value={year}>{year + '年'}</Option>)
                                     }
@@ -99,11 +108,13 @@ let QuickSearch = props => {  // 快速搜索
                             </div>
                         </Col>
                         <Col span={6}>
-                            <div className={styles['col-con']}>季度</div>
+                            <div className={styles['col-con']}>{
+                                formatMessage({ id: 'abnormal-decision-center.quick-search.lable.season' })
+                            }</div>
                         </Col>
                         <Col span={18}>
                             <div>
-                                <Select value={season} onChange={ changeSeason } className={styles.w100}>
+                                <Select value={season} onChange={changeSeason} className={styles.w100}>
                                     {
                                         [['第一季度', 1], ['第二季度', 2], ['第三季度', 3], ['第四季度', 4]].map(season => <Option key={season[1]} value={season[1]}>{season[0]}</Option>)
                                     }
@@ -113,15 +124,19 @@ let QuickSearch = props => {  // 快速搜索
                     </Row>
                 </div>
             </TabPane>
-            <TabPane tab="按月份" key="month" disabled={ !allCategories.includes('month') }>
+            <TabPane tab={
+                formatMessage({ id: 'abnormal-decision-center.quick-search.tab.month' })
+            } key="month" disabled={!allCategories.includes('month')}>
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
-                            <div className={styles['col-con']}>年份</div>
+                            <div className={styles['col-con']}>{
+                                formatMessage({ id: 'abnormal-decision-center.quick-search.lable.year' })
+                            }</div>
                         </Col>
                         <Col span={18}>
                             <div>
-                                <Select value={year} onChange={ yearChange } className={styles.w100}>
+                                <Select value={year} onChange={yearChange} className={styles.w100}>
                                     {
                                         allYear.map(year => <Option key={year} value={year}>{year + '年'}</Option>)
                                     }
@@ -129,11 +144,13 @@ let QuickSearch = props => {  // 快速搜索
                             </div>
                         </Col>
                         <Col span={6}>
-                            <div className={styles['col-con']}>月份</div>
+                            <div className={styles['col-con']}>{
+                                formatMessage({ id: 'abnormal-decision-center.quick-search.lable.month' })
+                            }</div>
                         </Col>
                         <Col span={18}>
                             <div>
-                                <Select value={month} onChange={ changeMonth } className={styles.w100}>
+                                <Select value={month} onChange={changeMonth} className={styles.w100}>
 
                                     <Option value={1}>一月份</Option>
                                     <Option value={2}>二月份</Option>
@@ -153,15 +170,19 @@ let QuickSearch = props => {  // 快速搜索
                     </Row>
                 </div>
             </TabPane>
-            <TabPane tab="按周别" key="week" disabled={ !allCategories.includes('week') } >
+            <TabPane tab={
+                formatMessage({ id: 'abnormal-decision-center.quick-search.tab.week' })
+            } key="week" disabled={!allCategories.includes('week')} >
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
-                            <div className={styles['col-con']}>年份</div>
+                            <div className={styles['col-con']}>{
+                                formatMessage({ id: 'abnormal-decision-center.quick-search.lable.year' })
+                            }</div>
                         </Col>
                         <Col span={18}>
                             <div>
-                                <Select value={year} onChange={ yearChange } className={styles.w100}>
+                                <Select value={year} onChange={yearChange} className={styles.w100}>
                                     {
                                         allYear.map(year => <Option key={year} value={year}>{year + '年'}</Option>)
                                     }
@@ -169,16 +190,18 @@ let QuickSearch = props => {  // 快速搜索
                             </div>
                         </Col>
                         <Col span={6}>
-                            <div className={styles['col-con']}>周别</div>
+                            <div className={styles['col-con']}>{
+                                formatMessage({ id: 'abnormal-decision-center.quick-search.lable.week' })
+                            }</div>
                         </Col>
                         <Col span={18}>
                             <div>
-                                <Select value={week} onChange={ changeWeek } className={styles.w100}>
+                                <Select value={week} onChange={changeWeek} className={styles.w100}>
                                     {
                                         [
                                             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
                                             28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53
-                                        ].map(n => <Option key={'week' + n} value={ n }>{'第' + n + '周'}</Option>)
+                                        ].map(n => <Option key={'week' + n} value={n}>{'第' + n + '周'}</Option>)
                                     }
                                 </Select>
                             </div>
@@ -186,15 +209,19 @@ let QuickSearch = props => {  // 快速搜索
                     </Row>
                 </div>
             </TabPane>
-            <TabPane tab="按时间段" key="time" disabled={ !allCategories.includes('time') }>
+            <TabPane tab={
+                formatMessage({ id: 'abnormal-decision-center.quick-search.tab.time' })
+            } key="time" disabled={!allCategories.includes('time')}>
                 <div className={styles['tab-query']}>
                     <Row gutter={[16, 12]} style={{ marginTop: '10px' }}>
                         <Col span={6}>
-                            <div className={styles['col-con']}>时间段</div>
+                            <div className={styles['col-con']}>{
+                                formatMessage({ id: 'abnormal-decision-center.quick-search.lable.time' })
+                            }</div>
                         </Col>
                         <Col span={18}>
                             <div>
-                                <RangePicker onChange={ changeTime } className={styles.w100}
+                                <RangePicker onChange={changeTime} className={styles.w100}
                                     value={[moment(time[0], 'YYYY-MM-DD'), moment(time[1], 'YYYY-MM-DD')]} format='YYYY-MM-DD'
                                 />
                             </div>

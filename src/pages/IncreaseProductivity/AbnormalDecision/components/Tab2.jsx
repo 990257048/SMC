@@ -11,7 +11,7 @@ import styles from '../style.less';
 let option = {
     color: ['#3398DB'],
     title: {
-        text: '異常類別統計（单位:個）',
+        text: formatMessage({ id: 'abnormal-decision-center.tab2.title' }),
         left: 'center',
         top: '3%',
         textStyle: {

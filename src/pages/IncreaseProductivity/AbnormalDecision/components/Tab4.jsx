@@ -13,7 +13,7 @@ let ret_option = (xAxisData, seriesData1, seriesData2) => {
     let option = {
         color: ['#67e0e3', '#722ed1', '#fa8c16', '#ffec3d'],
         title: {
-            text: '异常工时统计',
+            text: formatMessage({ id: 'abnormal-decision-center.tab4.title' }),
             left: 'center',
             top: '3%',
             textStyle: {
@@ -64,7 +64,7 @@ let ret_option = (xAxisData, seriesData1, seriesData2) => {
                 type: 'value',
                 // name: '次数',
                 min: 0,
-                max: 250,
+                max: 'dataMax',
                 interval: 50,
                 axisLabel: {
                     formatter: '{value} 次'
@@ -74,7 +74,7 @@ let ret_option = (xAxisData, seriesData1, seriesData2) => {
                 type: 'value',
                 // name: '工时数',
                 min: 0,
-                max: 25,
+                max: 'dataMax',
                 interval: 5,
                 axisLabel: {
                     formatter: '{value} min'
@@ -106,7 +106,7 @@ let ret_option = (xAxisData, seriesData1, seriesData2) => {
             }
         ]
     };
-    
+
     return {
         ...option,
         xAxis: [

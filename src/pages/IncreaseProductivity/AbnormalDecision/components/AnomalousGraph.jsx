@@ -29,7 +29,7 @@ let TabControls = props => {   // 标签页控件
     let {
         MFGChange, classifyChange,
         getAllMfg, getBU,
-        initQuickSearch, 
+        initQuickSearch,
         setNewAbnormal,
         activeKey, globalSearch: { allMFG, allCategories, MFG, classify }
     } = props;
@@ -53,13 +53,13 @@ let TabControls = props => {   // 标签页控件
     let showNewAbnormal = useCallback(() => {
         setNewAbnormal(true)
     }, []);
-    
+
     return <div className={styles['tab-controls']}>
         <Space size="middle" align="baseline">
             {/* <b>当前：MFGII · 按区域统计 · 2020年 · 异常</b> */}
 
             <Tooltip title="制造处">
-                <Select loading={ !isReady } value={MFG} onChange={MFGChange} style={{ width: '100px' }}>
+                <Select loading={!isReady} value={MFG} onChange={MFGChange} style={{ width: '100px' }}>
                     {
                         isReady ? allMFG.map(MFG => <Option key={MFG} value={MFG}>{MFG}</Option>) : null
                     }
@@ -96,7 +96,7 @@ let TabControls = props => {   // 标签页控件
                 {/* <Popover placement="bottomRight" content={<NewAbnormal />} trigger="click">
                     <Button type="primary" shape='circle' icon={<PlusOutlined />}></Button>
                 </Popover> */}
-                <Button type="primary" shape='circle' onClick={ showNewAbnormal } icon={<PlusOutlined />}></Button>
+                <Button type="primary" shape='circle' onClick={showNewAbnormal} icon={<PlusOutlined />}></Button>
             </Tooltip>
 
 
@@ -143,7 +143,7 @@ let AnomalousGraph = props => {  // 异常统计图
         });
         let allCategories, newClassify;
         //不同的选项卡对应不同的快速搜索的条件，选项卡切换时可能需要改变当前的条件
-        switch(activeKey){
+        switch (activeKey) {
             case 'tab4':
                 allCategories = ['year'];
                 newClassify = allCategories.includes(classify) ? classify : 'year';
@@ -164,14 +164,14 @@ let AnomalousGraph = props => {  // 异常统计图
     }, [classify]);
 
     let desc = useMemo(() => {   // 拼接条件（实时）
-        let {MFG} = globalSearch;
-        let {classify, year, season, month, week, time} = quickSearch;
+        let { MFG } = globalSearch;
+        let { classify, year, season, month, week, time } = quickSearch;
 
         let desc = [MFG];   // 制造处 
-        if( activeKey == 'tab1' ){
+        if (activeKey == 'tab1') {
             desc.push(globalSearch.classify + '分类'); // 当前查询类别
         }
-        switch(classify){
+        switch (classify) {
             case 'year':
                 desc.push(year + '年');
                 break;
@@ -193,29 +193,39 @@ let AnomalousGraph = props => {  // 异常统计图
     }, [activeKey, globalSearch, quickSearch]);
 
     return <div className={styles['anomalous-graph']}>
-        <Tabs size="middle" type='line' activeKey={activeKey} onChange={ tabChange } className={styles.tabs} >
+        <Tabs size="middle" type='line' activeKey={activeKey} onChange={tabChange} className={styles.tabs} >
             <TabControls />
-            <TabPane tab={<b>异常状态统计</b>} key="tab1">
+            <TabPane tab={<b>{
+                formatMessage({ id: 'abnormal-decision-center.anomalousGraph.tab1' })
+            }</b>} key="tab1">
                 <div className={styles.tab}>
                     <Tab1 />
                 </div>
             </TabPane>
-            <TabPane tab={<b>异常类别统计</b>} key="tab2">
+            <TabPane tab={<b>{
+                formatMessage({ id: 'abnormal-decision-center.anomalousGraph.tab2' })
+            }</b>} key="tab2">
                 <div className={styles.tab}>
                     <Tab2 />
                 </div>
             </TabPane>
-            <TabPane tab={<b>原因类别统计</b>} key="tab3">
+            <TabPane tab={<b>{
+                formatMessage({ id: 'abnormal-decision-center.anomalousGraph.tab3' })
+            }</b>} key="tab3">
                 <div className={styles.tab}>
                     <Tab3 />
                 </div>
             </TabPane>
-            <TabPane tab={<b>异常工时統計</b>} key="tab4">
+            <TabPane tab={<b>{
+                formatMessage({ id: 'abnormal-decision-center.anomalousGraph.tab4' })
+            }</b>} key="tab4">
                 <div className={styles.tab}>
                     <Tab4 />
                 </div>
             </TabPane>
-            <TabPane tab={<b>結案狀態統計</b>} key="tab5">
+            <TabPane tab={<b>{
+                formatMessage({ id: 'abnormal-decision-center.anomalousGraph.tab5' })
+            }</b>} key="tab5">
                 <div className={styles.tab}>
                     <Tab5 />
                 </div>

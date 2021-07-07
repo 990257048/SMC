@@ -348,7 +348,7 @@ let abnormalMaintenanceSaveDraftSendData = {  // 异常维护 请求保存草稿
                 result: '' // 測試結果
             }
         }
-        
+
         // ***********************************************************************************************************************
     },
     remarksAndAttachments: {  // 備註與附件 （不需要发送附件）
@@ -486,7 +486,7 @@ let abnormalMaintenanceSubmitSendData = {  // 异常维护 状态
                 result: '' // 測試結果
             }
         }
-        
+
         // ***********************************************************************************************************************
     },
     remarksAndAttachments: {  // 備註與附件
@@ -502,13 +502,13 @@ let abnormalMaintenanceSubmitSendData = {  // 异常维护 状态
 
 let newAbnormal_empty = {  // 清空后的新增异常的状态
     // abnormalId: '',   //异常ID
-    type: '异常', // 通知单类型  异常 | 停线
-    emergencyDegree: '一般', // 紧急程度  一般 | 紧急
+    // type: '异常', // 通知单类型  异常 | 停线
+    // emergencyDegree: '一般', // 紧急程度  一般 | 紧急
     baseMsg: { //基本信息
         // issuer: '', // 發文人員
         // units: '', // 發文單位
         // date: '2020/11/11 08:34', // 發文日期
-        abnormalTime: '2020/11/11 08:34', // 异常时间
+        // abnormalTime: '2020/11/11 08:34', // 异常时间
         abnormalClass: '', // 异常班别
         BU: '', // 异常BU
         region: '', //异常区域
@@ -720,7 +720,7 @@ let AbnormalMaintenance_empty = {  // 异常维护 状态
                 result: '' // 測試結果
             }
         }
-        
+
         // ***********************************************************************************************************************
     },
     remarksAndAttachments: {  // 備註與附件
@@ -736,6 +736,7 @@ let filterData = (origin, target) => {   // target代表一种数据模型， �
     if (Object.prototype.toString.call(target) != '[object Object]') return origin; // 不是字面量对象时，直接赋值过去即可，不影响Model,因为后续不会对数据操作
     for (let key in target) {
         if (target.hasOwnProperty(key)) {
+            // console.log(key, origin, target);
             target[key] = filterData(origin[key], target[key]);
         }
     }
@@ -752,8 +753,8 @@ let combineData = (origin, data) => {    // 合并数据，把data合并到origi
     return origin;
 }
 
-export { 
-    graph1SendData, graph23SendData, graph4SendData, graph5SendData, newAbnormalSendData, 
+export {
+    graph1SendData, graph23SendData, graph4SendData, graph5SendData, newAbnormalSendData,
     abnormalMaintenanceSaveDraftSendData, abnormalMaintenanceSubmitSendData,
     newAbnormal_empty, AbnormalMaintenance_empty, filterData, combineData
 };

@@ -1,0 +1,72 @@
+html | html5 
+css | css3 | less | sass | postcss 
+javascript | es5 | es5严格模式 | es6 | es6+ | typescript | jsx | 大胡须
+vue | vuex | vue-router | vuetify | iview | element | nuxt
+react | redux | redux-saga/thunk/promise... | react-router | immutable | antd | material-ui | next | dva | umi
+angular
+jquery | bootstrap | axios | fetch | dayjs(moment)
+echarts | 阿里系可视化 | three | d3
+nodejs | express | koa | nest | egg
+mongodb | oracle | mysql | redis
+webpack git github svn chrome-devtools
+
+redux工作流程及其原理 | MVVM工作流程及其原理
+react優化策略(Hooks, HOC Immutable)
+ant-design組件庫使用
+網頁佈局技巧，IE兼容處理，移動端適配方案
+umi框架使用 | webpack配置技巧
+javascript | css/css3/less 基礎，使用技巧 
+React HOOKS底層機制，redux | redux-saga底層機制
+可視化方案（統計圖表 echarts antv，3d可視化 three，動畫 D3）
+
+typescript | less | node | css3 | dart | sql 
+ReactNative | Flutter | wechart | uni-app
+express | nest | koa | egg | mongodb
+git | github | vscode | npm | chrome | chrome-devtools
+
+----------------------------------------------------------------------------------------------------------
+
+create-react-app:
+安装脚手架  yarn global add create-react-app 
+创建项目    yarn create react-app my-app
+
+@vue/cli:
+安装脚手架  yarn global add @vue/cli
+创建项目    vue create my-project
+
+yarn安装路径 yarn global dir 
+
+dva-cli:
+安装脚手架  yarn global add dva-cli
+创建项目    dva new dva-quickstart
+
+umi
+yarn global add umi
+yarn create umi umi-project
+
+----------------------------------------------------------------------------------------------------------
+git配置：
+
+git操作：
+
+从github：
+查找项目指令 
+创建仓库 
+创建项目 
+
+从本地：
+创建本地仓库
+定义项目上传位置
+上传操作 
+查看本地版本与最新版本 
+本地代码内容与最新代码内容Diff
+删除文件
+下载|更新（部分）操作
+
+
+git clone https:/path/to/repository.git
+
+git init
+git status
+
+

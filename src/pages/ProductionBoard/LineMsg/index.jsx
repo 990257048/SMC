@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { connect } from 'umi';
 import { Card, Row, Col, Input, Select, Modal, Button, message, List, DatePicker, Popconfirm, Space, Typography, Divider } from 'antd';
 import { SettingOutlined, EditOutlined, DeleteOutlined, SelectOutlined, FormOutlined, PlusOutlined, PlusSquareOutlined, SearchOutlined, EyeOutlined } from '@ant-design/icons';
+import { formatMessage } from 'umi';
 import styles from './style.less';
 
 import cookies from 'js-cookie';
@@ -14,28 +15,30 @@ let { Option } = Select;
 let { RangePicker } = DatePicker;
 
 let Card1Tit = () => {
-    return <div className={styles['card-tit']}><SelectOutlined /> 選擇線體</div>
+    return <div className={styles['card-tit']}><SelectOutlined /> {formatMessage({ id: '实时生产看板.选择线体' })}</div>
 }
 
 let Card2Tit = () => {
     return <div className={styles['card-tit']}>
-        <FormOutlined /> 配置(
+        <FormOutlined /> {formatMessage({ id: '实时生产看板.配置' })}(
         <span style={{ color: 'red' }}>
-            如要更改線體產線&ME等相關人員和線體管理員請向現有線體管理員或課部處級主管提出更改
+            {formatMessage({ id: '实时生产看板.红字描述' })}
         </span>
         )
     </div>
 }
 
 let Card3Tit = () => {
-    return <div className={styles['card-tit']}><PlusSquareOutlined /> 新增線體</div>
+    return <div className={styles['card-tit']}><PlusSquareOutlined /> {
+        formatMessage({ id: '实时生产看板.新增线体' })
+    }</div>
 }
 
 let LineMsg = props => {
     return <div className="line-msg">
-        <h3> 
+        <h3>
             <SettingOutlined />
-            <b> 線體信息配置</b>
+            <b> {formatMessage({ id: '实时生产看板.标题' })}</b>
         </h3>
         <Cart1 />
         <Cart2 />
@@ -356,7 +359,7 @@ let Cart1 = (props) => {
             <Row gutter={[16, 16]} justify='center'>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>制造处</Col>
+                        <Col span={8} className={styles['col-label']}>{formatMessage({ id: '实时生产看板.选择线体.制造处' })}</Col>
                         <Col span={16}>
                             <Select showSearch value={MFG} onChange={handleCollectios.MFGChange} filterOption={filterOption} style={{ width: '100%' }} >
                                 {
@@ -369,8 +372,8 @@ let Cart1 = (props) => {
                 <Col span={8}>
                     <Row gutter={16}>
                         <Col span={8} className={styles['col-label']}>
-                            SMC線別
-                    </Col>
+                            {formatMessage({ id: '实时生产看板.选择线体.SMC线别' })}
+                        </Col>
                         <Col span={16}>
                             <Select showSearch value={line} onChange={handleCollectios.lineChange} filterOption={filterOption} style={{ width: '100%' }} >
                                 {
@@ -383,11 +386,11 @@ let Cart1 = (props) => {
                 <Col span={8}>
                     <Row gutter={16} justify='center'>
                         <Col span={8}>
-                            <Button type="primary" disabled={disabled} icon={<EditOutlined />} onClick={handleCollectios.HandleClick}>修改線體名稱</Button>
-                            <Modal title={<div><EditOutlined />修改線體名稱</div>} visible={visible} onOk={handleCollectios.handleOk} onCancel={handleCollectios.handleCancel}>
+                            <Button type="primary" disabled={disabled} icon={<EditOutlined />} onClick={handleCollectios.HandleClick}>{formatMessage({ id: '实时生产看板.选择线体.修改线体名称' })}</Button>
+                            <Modal title={<div><EditOutlined />{formatMessage({ id: '实时生产看板.选择线体.修改线体名称' })}</div>} visible={visible} onOk={handleCollectios.handleOk} onCancel={handleCollectios.handleCancel}>
                                 <Row gutter={24}>
                                     <Col span={4} className={styles['col-label']}>
-                                        SMC線別
+                                        {formatMessage({ id: '实时生产看板.选择线体.SMC线别' })}
                                     </Col>
                                     <Col span={20}>
                                         <Input value={newLine} onChange={handleCollectios.newLineChange} />
@@ -566,7 +569,9 @@ let Cart2 = props => {
             <Row gutter={[16, 16]} justify='center'>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>SFC/AP系统名</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.配置.SFC/AP系统名' })
+                        }</Col>
                         <Col span={16}>
                             <Input disabled={disabled} value={SFC_AP_SYS_name} onChange={e => { setLineMsg({ SFC_AP_SYS_name: e.target.value }) }} />
                         </Col>
@@ -574,7 +579,9 @@ let Cart2 = props => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>PCAS系统名</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.配置.PCAS系统名' })
+                        }</Col>
                         <Col span={12}>
                             <Input disabled={disabled} value={PCAS_SYS_name} onChange={e => { setLineMsg({ PCAS_SYS_name: e.target.value }) }} />
                             {/* <Modal title={<div><EditOutlined />修改PCAS系统对应線體名稱</div>} visible={modal_PCAS_SYS.visible} onOk={handleCollectios_PCAS_SYS.handleOk} onCancel={handleCollectios_PCAS_SYS.handleCancel}>
@@ -599,7 +606,9 @@ let Cart2 = props => {
                         </Col>
                         <Col span={4}>
                             <Button type='primary' shape='circle' disabled={disabled} onClick={handleCollectios_PCAS_SYS.searchLICODE} icon={<SearchOutlined />} ></Button>
-                            <Modal title={<div><EyeOutlined />查看LICODE</div>} visible={modal_PCAS_SYS.visible} onOk={handleCollectios_PCAS_SYS.closeModal} onCancel={handleCollectios_PCAS_SYS.closeModal}>
+                            <Modal title={<div><EyeOutlined />{
+                                formatMessage({ id: '实时生产看板.配置.查看LICODE' })
+                            }</div>} visible={modal_PCAS_SYS.visible} onOk={handleCollectios_PCAS_SYS.closeModal} onCancel={handleCollectios_PCAS_SYS.closeModal}>
                                 <Row gutter={[24, 16]}>
                                     <Col span={24}>
                                         <List
@@ -614,7 +623,9 @@ let Cart2 = props => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>掃描點</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.配置.扫描点' })
+                        }</Col>
                         <Col span={16}>
                             <Input disabled={disabled} value={scanPoint} onChange={e => { setLineMsg({ scanPoint: e.target.value }) }} />
                         </Col>
@@ -622,7 +633,9 @@ let Cart2 = props => {
                 </Col>
                 <Col span={16}>
                     <Row gutter={16}>
-                        <Col span={4} className={styles['col-label']}>產線|ME等相關</Col>
+                        <Col span={4} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.配置.产线|ME等相关' })
+                        }</Col>
                         <Col span={20}>
                             <Select mode="multiple" allowClear disabled={disabled} value={IME} onChange={IME => { setLineMsg({ IME }) }} style={{ width: '100%' }} >
                                 {
@@ -634,7 +647,9 @@ let Cart2 = props => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>段別</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.配置.段別' })
+                        }</Col>
                         <Col span={16}>
                             <Select disabled={disabled} value={section} onChange={section => { setLineMsg({ section }) }} style={{ width: '100%' }}>
                                 {
@@ -646,7 +661,9 @@ let Cart2 = props => {
                 </Col>
                 <Col span={16}>
                     <Row gutter={16}>
-                        <Col span={4} className={styles['col-label']}>休息時間</Col>
+                        <Col span={4} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.配置.休息时间' })
+                        }</Col>
                         <Col span={20}>
                             <List size="small" disabled={disabled} bordered={true} dataSource={breakPeriodList} renderItem={item => {
                                 return <List.Item>
@@ -669,10 +686,16 @@ let Cart2 = props => {
                 <Col span={8}>
                     <Row gutter={16} justify='center'>
                         <Col span={8}>
-                            <Button type="primary" disabled={disabled} onClick={handleCollectios_addBreakPeriod.handleClick}><PlusOutlined />添加休息時間</Button>
-                            <Modal title={<div><PlusOutlined />添加休息时间</div>} visible={addBreakPeriod.visible} onOk={handleCollectios_addBreakPeriod.handleOk} onCancel={handleCollectios_addBreakPeriod.handleCancel}>
+                            <Button type="primary" disabled={disabled} onClick={handleCollectios_addBreakPeriod.handleClick}><PlusOutlined />{
+                                formatMessage({ id: '实时生产看板.配置.添加休息时间' })
+                            }</Button>
+                            <Modal title={<div><PlusOutlined />{
+                                formatMessage({ id: '实时生产看板.配置.添加休息时间' })
+                            }</div>} visible={addBreakPeriod.visible} onOk={handleCollectios_addBreakPeriod.handleOk} onCancel={handleCollectios_addBreakPeriod.handleCancel}>
                                 <Row gutter={[24, 16]}>
-                                    <Col span={6} className={styles['col-label']}>小時段(时)</Col>
+                                    <Col span={6} className={styles['col-label']}>{
+                                        formatMessage({ id: '实时生产看板.配置.添加休息时间.小时段（时）' })
+                                    }</Col>
                                     <Col span={17}>
                                         <Select value={addBreakPeriod.breakPeriod[0]} onChange={v => {
                                             handleCollectios_addBreakPeriod.setLocalState({ breakPeriod: [v, addBreakPeriod.breakPeriod[1], addBreakPeriod.breakPeriod[2]] })
@@ -682,7 +705,9 @@ let Cart2 = props => {
                                             }
                                         </Select>
                                     </Col>
-                                    <Col span={6} className={styles['col-label']}>起始时间(分)</Col>
+                                    <Col span={6} className={styles['col-label']}>{
+                                        formatMessage({ id: '实时生产看板.配置.添加休息时间.起始时间（分）' })
+                                    }</Col>
                                     <Col span={6}>
                                         <Select value={addBreakPeriod.breakPeriod[1]} onChange={v => {
                                             handleCollectios_addBreakPeriod.setLocalState({ breakPeriod: [addBreakPeriod.breakPeriod[0], v, addBreakPeriod.breakPeriod[2]] })
@@ -692,7 +717,9 @@ let Cart2 = props => {
                                             }
                                         </Select>
                                     </Col>
-                                    <Col span={5} className={styles['col-label']}>结束时间(分)</Col>
+                                    <Col span={5} className={styles['col-label']}>{
+                                        formatMessage({ id: '实时生产看板.配置.添加休息时间.结束时间（分）' })
+                                    }</Col>
                                     <Col span={6}>
                                         <Select value={addBreakPeriod.breakPeriod[2]} onChange={v => {
                                             handleCollectios_addBreakPeriod.setLocalState({ breakPeriod: [addBreakPeriod.breakPeriod[0], addBreakPeriod.breakPeriod[1], v] })
@@ -702,11 +729,15 @@ let Cart2 = props => {
                                             }
                                         </Select>
                                     </Col>
-                                    <Col span={6} className={styles['col-label']}>备注</Col>
+                                    <Col span={6} className={styles['col-label']}>{
+                                        formatMessage({ id: '实时生产看板.配置.添加休息时间.备注' })
+                                    }</Col>
                                     <Col span={17}>
                                         <Input value={addBreakPeriod.remark} onChange={handleCollectios_addBreakPeriod.remarkChange} />
                                     </Col>
-                                    <Col span={6} className={styles['col-label']}>预览</Col>
+                                    <Col span={6} className={styles['col-label']}>{
+                                        formatMessage({ id: '实时生产看板.配置.添加休息时间.预览' })
+                                    }</Col>
                                     <Col span={17}>
                                         <span style={{ lineHeight: '32px' }}>
                                             {
@@ -725,7 +756,9 @@ let Cart2 = props => {
 
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>課級</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.配置.课级' })
+                        }</Col>
                         <Col span={16}>
                             <Select disabled={disabled} showSearch value={sectionManager} onChange={v => { setLineMsg({ sectionManager: v }) }} filterOption={filterOption} style={{ width: '100%' }} >
                                 {
@@ -737,7 +770,9 @@ let Cart2 = props => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>部級</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.配置.部级' })
+                        }</Col>
                         <Col span={16}>
                             <Select disabled={disabled} showSearch value={minister} onChange={v => { setLineMsg({ minister: v }) }} filterOption={filterOption} style={{ width: '100%' }} >
                                 {
@@ -749,7 +784,9 @@ let Cart2 = props => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>處級</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.配置.处级' })
+                        }</Col>
                         <Col span={16}>
                             <Select disabled={disabled} showSearch value={sectionChief} onChange={v => { setLineMsg({ sectionChief: v }) }} filterOption={filterOption} style={{ width: '100%' }} >
                                 {
@@ -761,7 +798,9 @@ let Cart2 = props => {
                 </Col>
                 <Col span={16}>
                     <Row gutter={16}>
-                        <Col span={4} className={styles['col-label']}>線體管理員</Col>
+                        <Col span={4} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.配置.线体管理员' })
+                        }</Col>
                         <Col span={20}>
                             <Select mode="multiple" allowClear disabled={disabled} value={lineLeader} onChange={lineLeader => { setLineMsg({ lineLeader }) }} style={{ width: '100%' }} >
                                 {
@@ -773,7 +812,9 @@ let Cart2 = props => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>最後修改時間</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.配置.最后修改时间' })
+                        }</Col>
                         <Col span={16}>
                             <Input disabled={true} value={lastTime} />
                         </Col>
@@ -790,7 +831,9 @@ let Cart2 = props => {
                                 okText="是的"
                                 cancelText="取消"
                             >
-                                <Button type='primary' disabled={disabled} icon={<EditOutlined />}>修改線別信息</Button>
+                                <Button type='primary' disabled={disabled} icon={<EditOutlined />}>{
+                                    formatMessage({ id: '实时生产看板.配置.修改线体信息' })
+                                }</Button>
                             </Popconfirm>
                         </Col>
                         <Col span={4}>
@@ -802,7 +845,9 @@ let Cart2 = props => {
                                 okText="是的"
                                 cancelText="取消"
                             >
-                                <Button type='danger' disabled={disabled} icon={<DeleteOutlined />}>删除当前線別</Button>
+                                <Button type='danger' disabled={disabled} icon={<DeleteOutlined />}>{
+                                    formatMessage({ id: '实时生产看板.配置.删除当前线别' })
+                                }</Button>
                             </Popconfirm>
                         </Col>
                     </Row>
@@ -916,7 +961,9 @@ let Cart3 = (props) => {
             <Row gutter={[16, 16]} justify='center'>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>線體名稱</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.新增线体.线体名称' })
+                        }</Col>
                         <Col span={16}>
                             <Input value={lineMsg.line} onChange={e => { setLocalState({ line: e.target.value }) }} />
                         </Col>
@@ -924,7 +971,9 @@ let Cart3 = (props) => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>SFC/AP系统名</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.新增线体.SFC/AP系统名' })
+                        }</Col>
                         <Col span={16}>
                             <Input value={lineMsg.SFC_AP_SYS_name} onChange={e => { setLocalState({ SFC_AP_SYS_name: e.target.value }) }} />
                         </Col>
@@ -932,13 +981,17 @@ let Cart3 = (props) => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>PCAS系统名</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.新增线体.PCAS系统名' })
+                        }</Col>
                         <Col span={12}>
                             <Input value={lineMsg.PCAS_SYS_name} onChange={e => { setLocalState({ PCAS_SYS_name: e.target.value }) }} />
                         </Col>
                         <Col span={4}>
                             <Button type='primary' shape='circle' onClick={handleCollectios_showLICODE.searchLICODE} icon={<SearchOutlined />} ></Button>
-                            <Modal title={<div><EyeOutlined />查看LICODE</div>} visible={modalOfShowLICODE.visible} onOk={handleCollectios_showLICODE.closeModal} onCancel={handleCollectios_showLICODE.closeModal}>
+                            <Modal title={<div><EyeOutlined />{
+                                formatMessage({ id: '实时生产看板.配置.查看LICODE' })
+                            }</div>} visible={modalOfShowLICODE.visible} onOk={handleCollectios_showLICODE.closeModal} onCancel={handleCollectios_showLICODE.closeModal}>
                                 <Row gutter={[24, 16]}>
                                     <Col span={24}>
                                         <List
@@ -953,7 +1006,9 @@ let Cart3 = (props) => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>掃描點</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.新增线体.扫描点' })
+                        }</Col>
                         <Col span={16}>
                             <Input value={lineMsg.scanPoint} onChange={e => { setLocalState({ scanPoint: e.target.value }) }} />
                         </Col>
@@ -961,7 +1016,9 @@ let Cart3 = (props) => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>段別</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.新增线体.段别' })
+                        }</Col>
                         <Col span={16}>
                             <Select value={lineMsg.section} onChange={section => { setLocalState({ section }) }} style={{ width: '100%' }}>
                                 {
@@ -973,7 +1030,9 @@ let Cart3 = (props) => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>數據源</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.新增线体.数据源' })
+                        }</Col>
                         <Col span={16}>
                             <Select value={lineMsg.dataSource} onChange={dataSource => { setLocalState({ dataSource }) }} style={{ width: '100%' }}>
                                 {
@@ -985,7 +1044,9 @@ let Cart3 = (props) => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>課級主管</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.新增线体.课级主管' })
+                        }</Col>
                         <Col span={16}>
                             <Input value={lineMsg.sectionManager} onChange={e => { setLocalState({ sectionManager: e.target.value }) }} />
                         </Col>
@@ -993,7 +1054,9 @@ let Cart3 = (props) => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>部級主管</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.新增线体.部级主管' })
+                        }</Col>
                         <Col span={16}>
                             <Input value={lineMsg.minister} onChange={e => { setLocalState({ minister: e.target.value }) }} />
                         </Col>
@@ -1001,7 +1064,9 @@ let Cart3 = (props) => {
                 </Col>
                 <Col span={8}>
                     <Row gutter={16}>
-                        <Col span={8} className={styles['col-label']}>處級主管</Col>
+                        <Col span={8} className={styles['col-label']}>{
+                            formatMessage({ id: '实时生产看板.新增线体.处级主管' })
+                        }</Col>
                         <Col span={16}>
                             <Input value={lineMsg.sectionChief} onChange={e => { setLocalState({ sectionChief: e.target.value }) }} />
                         </Col>
@@ -1010,7 +1075,9 @@ let Cart3 = (props) => {
                 <Col span={24}>
                     <Row gutter={16} justify='center'>
                         <Col span={3}>
-                            <Button type='primary' onClick={handle_addLine} icon={<PlusOutlined />}>新增線體</Button>
+                            <Button type='primary' onClick={handle_addLine} icon={<PlusOutlined />}>{
+                                formatMessage({ id: '实时生产看板.新增线体' })
+                            }</Button>
                         </Col>
                     </Row>
                 </Col>

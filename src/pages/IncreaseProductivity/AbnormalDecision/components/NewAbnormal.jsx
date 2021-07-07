@@ -49,7 +49,7 @@ let NewAbnormal = () => {  // 新增异常
     }
 
     let retSetNewAbnormalByMoment = prop => moment => {
-        setNewAbnormal(prop, moment.format('YYYY/MM/DD hh:mm'));
+        setNewAbnormal(prop, moment.format('YYYY/MM/DD HH:mm'));
     }
 
 
@@ -73,24 +73,44 @@ let NewAbnormal = () => {  // 新增异常
                 <h4><b><OrderedListOutlined />  新增异常</b> </h4>
             </div> */}
             <p></p>
-            <Steps size='small' current={current} direction="vertical" onChange={setpChange}>
+            {/* <Steps size='small' current={current} direction="vertical" onChange={setpChange}>
                 <Step title="基本信息">
-                    基本信息
+                    {formatMessage({ id: 'abnormal-decision-center.add-case.base-msg' })}
                 </Step>
                 <Step title="上報機制">
-                    上報機制
+                    {formatMessage({ id: 'abnormal-decision-center.add-case.report' })}
                 </Step>
                 <Step title="問題描述">
-                    問題描述
+                    {formatMessage({ id: 'abnormal-decision-center.add-case.problem' })}
                 </Step>
                 <Step title="臨時對策">
-                    臨時對策
+                    {formatMessage({ id: 'abnormal-decision-center.add-case.countermeasures' })}
                 </Step>
                 <Step title="原因分析">
-                    原因分析
+                    {formatMessage({ id: 'abnormal-decision-center.add-case.cause-analysis' })}
                 </Step>
                 <Step title="備註與附件">
-                    備註與附件
+                    {formatMessage({ id: 'abnormal-decision-center.add-case.remarks-and-attachments' })}
+                </Step>
+            </Steps> */}
+            <Steps size='small' current={current} direction="vertical" onChange={setpChange}>
+                <Step title={formatMessage({ id: 'abnormal-decision-center.add-case.base-msg' })}>
+                    {formatMessage({ id: 'abnormal-decision-center.add-case.base-msg' })}
+                </Step>
+                <Step title={formatMessage({ id: 'abnormal-decision-center.add-case.report' })}>
+                    {formatMessage({ id: 'abnormal-decision-center.add-case.report' })}
+                </Step>
+                <Step title={formatMessage({ id: 'abnormal-decision-center.add-case.problem' })}>
+                    {formatMessage({ id: 'abnormal-decision-center.add-case.problem' })}
+                </Step>
+                <Step title={formatMessage({ id: 'abnormal-decision-center.add-case.countermeasures' })}>
+                    {formatMessage({ id: 'abnormal-decision-center.add-case.countermeasures' })}
+                </Step>
+                <Step title={formatMessage({ id: 'abnormal-decision-center.add-case.cause-analysis' })}>
+                    {formatMessage({ id: 'abnormal-decision-center.add-case.cause-analysis' })}
+                </Step>
+                <Step title={formatMessage({ id: 'abnormal-decision-center.add-case.remarks-and-attachments' })}>
+                    {formatMessage({ id: 'abnormal-decision-center.add-case.remarks-and-attachments' })}
                 </Step>
             </Steps>
         </div>
@@ -145,12 +165,17 @@ let Step1 = props => {
     } = baseMsg;
 
     // 设置当前制造处信息
-    useMemo(() => {
+    useMemo(() => {  // 初始化操作
+        // 设置当前制造处信息 發文日期 異常時間（設置為當前時間）以及问题描述-通知时间
+        let currentDate = moment().format('YYYY/MM/DD HH:mm');
         dispatch({
             type: 'AbnormalDecision/setNewAbnormalByFn',
             retNewState: _ => {
                 _.baseMsg.allMFG = globalSearch.allMFG;
-                _.baseMsg.MFG = globalSearch.MFG;   //制造处以第一次渲染该组件前的全局条件的制造处为标准，后面不受全局条件中的制造处所影响。
+                _.baseMsg.MFG = globalSearch.MFG;  //制造处以第一次渲染该组件前的全局条件的制造处为标准，后面不受全局条件中的制造处所影响。
+                _.baseMsg.date = currentDate;
+                _.baseMsg.abnormalTime = currentDate;
+                _.problem.noticeTime = currentDate;  // 问题描述-通知时间 20210512 add
                 return _;
             }
         });
@@ -175,18 +200,32 @@ let Step1 = props => {
     return <div className={styles['step1']} style={{ display: current == 0 ? 'block' : 'none' }}>
         <div style={{ textAlign: 'center' }}>
             <p></p>
-            <h3><b>NSDI 【通知单】</b></h3>
+            <h3><b>{
+                formatMessage({ id: 'abnormal-decision-center.add-case.title' })
+            }</b></h3>
             <Space size="middle">
-                <b>类型：</b>
+                <b>{
+                    formatMessage({ id: 'abnormal-decision-center.add-case.type' })
+                }</b>
                 <Radio.Group value={type} onChange={retSetNewAbnormalByPlaneObj('type', 'target.value')}>
-                    <Radio value="異常"> 異常 </Radio>
-                    <Radio value="停線"> 停線 </Radio>
+                    <Radio value="異常">{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.type.abnormal' })
+                    }</Radio>
+                    <Radio value="停線"> {
+                        formatMessage({ id: 'abnormal-decision-center.add-case.type.stop-line' })
+                    } </Radio>
                 </Radio.Group>
                 <span>  </span>
-                <b>紧急程度：</b>
+                <b>{
+                    formatMessage({ id: 'abnormal-decision-center.add-case.emergencyDegree' })
+                }</b>
                 <Radio.Group value={emergencyDegree} onChange={retSetNewAbnormalByPlaneObj('emergencyDegree', 'target.value')}>
-                    <Radio value="正常"> 正常 </Radio>
-                    <Radio value="緊急"> 緊急 </Radio>
+                    <Radio value="正常"> {
+                        formatMessage({ id: 'abnormal-decision-center.add-case.emergencyDegree.normal' })
+                    } </Radio>
+                    <Radio value="緊急"> {
+                        formatMessage({ id: 'abnormal-decision-center.add-case.emergencyDegree.urgent' })
+                    } </Radio>
                 </Radio.Group>
             </Space>
         </div>
@@ -194,7 +233,9 @@ let Step1 = props => {
         <Row gutter={[0, 24]} justify="left" style={{ marginTop: '20px' }}>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>制造处</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.MFG' })
+                    }</Col>
                     <Col span={15}>
                         <Select className={styles.w100} value={MFG} onChange={retSetNewAbnormalByPlaneObj('baseMsg.MFG', '')}>
                             {
@@ -209,19 +250,25 @@ let Step1 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>發文人員</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.issuer' })
+                    }</Col>
                     <Col span={15}><Input disabled={true} value={issuer} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>發文單位</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.units' })
+                    }</Col>
                     <Col span={15}><Input disabled={true} value={units} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>發文日期</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.date' })
+                    }</Col>
                     <Col span={15}><Input disabled={true} value={date} /></Col>
                 </Row>
             </Col>
@@ -230,17 +277,21 @@ let Step1 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常時間</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.abnormalTime' })
+                    }</Col>
                     <Col span={15}>
                         <DatePicker className={styles.w100} onChange={retSetNewAbnormalByMoment('baseMsg.abnormalTime')}
-                            value={moment(abnormalTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
+                            value={moment(abnormalTime, 'YYYY/MM/DD HH:mm')} format='YYYY/MM/DD HH:mm' showTime
                         />
                     </Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常班別</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.abnormalClass' })
+                    }</Col>
                     <Col span={15}>
                         <Select className={styles.w100} value={abnormalClass} onChange={retSetNewAbnormalByPlaneObj('baseMsg.abnormalClass', '')}>
                             {
@@ -252,7 +303,9 @@ let Step1 = props => {
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常BU</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.BU' })
+                    }</Col>
                     <Col span={15}>
                         <Select className={styles.w100} value={BU} onChange={retSetNewAbnormalByPlaneObj('baseMsg.BU', '')}>
                             {
@@ -267,7 +320,9 @@ let Step1 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常區域</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.region' })
+                    }</Col>
                     <Col span={15}>
                         <Select className={styles.w100} value={region} onChange={retSetNewAbnormalByPlaneObj('baseMsg.region', '')}>
                             {
@@ -279,13 +334,17 @@ let Step1 = props => {
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常工站</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.station' })
+                    }</Col>
                     <Col span={15}><Input value={station} onChange={retSetNewAbnormalByPlaneObj('baseMsg.station', 'target.value')} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>機種名稱</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.skuName' })
+                    }</Col>
                     <Col span={15}><Input value={skuName} onChange={retSetNewAbnormalByPlaneObj('baseMsg.skuName', 'target.value')} /></Col>
                 </Row>
             </Col>
@@ -294,19 +353,25 @@ let Step1 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>機種料號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.skuno' })
+                    }</Col>
                     <Col span={15}><Input value={skuno} onChange={retSetNewAbnormalByPlaneObj('baseMsg.skuno', 'target.value')} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>工單編號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.WO' })
+                    }</Col>
                     <Col span={15}><Input value={WO} onChange={retSetNewAbnormalByPlaneObj('baseMsg.WO', 'target.value')} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>產品階段</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.base-msg.stage' })
+                    }</Col>
                     <Col span={15}>
                         <Select className={styles.w100} value={stage} onChange={retSetNewAbnormalByPlaneObj('baseMsg.stage', '')}>
                             {
@@ -321,7 +386,9 @@ let Step1 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={8} style={{ textAlign: 'center' }}>
                 <Space size="large">
-                    <Button type="primary" size="small" icon={<ArrowDownOutlined />} onClick={nextStep}> 下一步 </Button>
+                    <Button type="primary" size="small" icon={<ArrowDownOutlined />} onClick={nextStep}> {
+                        formatMessage({ id: 'abnormal-decision-center.add-case.handle.next-step' })
+                    } </Button>
                 </Space>
             </Col>
         </Row>
@@ -357,7 +424,9 @@ let Step2 = props => {
             <Col span={24}>
                 <Row>
                     <Col span={4}></Col>
-                    <Col span={4} style={{ textAlign: 'center' }}>課級（&gt30m）</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.report.sectionManager' })
+                    }</Col>
                     <Col span={10}>
                         <Select className={styles.w100} value={sectionManager} onChange={retSetNewAbnormalByPlaneObj('report.sectionManager', '')}>
                             {
@@ -370,7 +439,9 @@ let Step2 = props => {
             <Col span={24}>
                 <Row>
                     <Col span={4}></Col>
-                    <Col span={4} style={{ textAlign: 'center' }}>部級（0.5~1h）</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.report.minister' })
+                    }</Col>
                     <Col span={10}>
                         <Select className={styles.w100} value={minister} onChange={retSetNewAbnormalByPlaneObj('report.minister', '')}>
                             {
@@ -383,7 +454,9 @@ let Step2 = props => {
             <Col span={24}>
                 <Row>
                     <Col span={4}></Col>
-                    <Col span={4} style={{ textAlign: 'center' }}>處級（&gt1h）</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.report.sectionChief' })
+                    }</Col>
                     <Col span={10}>
                         <Select className={styles.w100} value={sectionChief} onChange={retSetNewAbnormalByPlaneObj('report.sectionChief', '')}>
                             {
@@ -422,7 +495,9 @@ let Step3 = props => {
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={16}>
                 <Row>
-                    <Col span={6} style={{ textAlign: 'right', paddingRight: '15px' }}>異常處理人</Col>
+                    <Col span={6} style={{ textAlign: 'right', paddingRight: '15px' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.handler' })
+                    }</Col>
                     <Col span={18}>
                         {/* 多选 */}
                         <Select mode="multiple" className={styles.w100} showArrow value={handler}
@@ -434,10 +509,12 @@ let Step3 = props => {
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>通知時間</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.noticeTime' })
+                    }</Col>
                     <Col span={13}>
                         <DatePicker className={styles.w100} onChange={retSetNewAbnormalByMoment('problem.noticeTime')}
-                            value={moment(noticeTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
+                            value={moment(noticeTime, 'YYYY/MM/DD HH:mm')} format='YYYY/MM/DD HH:mm' showTime
                         />
                     </Col>
                 </Row>
@@ -446,7 +523,9 @@ let Step3 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>郵件標題</Col>
+                    <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.emailTitle' })
+                    }</Col>
                     <Col span={19}>
                         <TextArea value={emailTitle} onChange={retSetNewAbnormalByPlaneObj('problem.emailTitle', 'target.value')} />
                     </Col>
@@ -456,7 +535,9 @@ let Step3 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>問題分類</Col>
+                    <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification' })
+                    }</Col>
                     <Col span={19}>
 
                         {/* ====================================================================================================================================== */}
@@ -466,22 +547,34 @@ let Step3 = props => {
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.currentClassify', '')}
                             style={{ width: '100%', border: '1px solid #ddd' }}
                         >
-                            <TabPane tab="設備異常" key="equipment">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.tab.equipment' })
+                            } key="equipment">
                                 <ProblemEquipment />
                             </TabPane>
-                            <TabPane tab="物料異常" key="material">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.tab.material' })
+                            } key="material">
                                 <ProblemMaterial />
                             </TabPane>
-                            <TabPane tab="人員異常" key="person">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.tab.person' })
+                            } key="person">
                                 <ProblemPerson />
                             </TabPane>
-                            <TabPane tab="品質異常" key="quality">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.tab.quality' })
+                            } key="quality">
                                 <ProblemQuality />
                             </TabPane>
-                            <TabPane tab="治工具異常" key="tools">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.tab.tools' })
+                            } key="tools">
                                 <ProblemTools />
                             </TabPane>
-                            <TabPane tab="系統異常" key="system">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.tab.system' })
+                            } key="system">
                                 <ProblemSystem />
                             </TabPane>
                         </Tabs>
@@ -496,8 +589,12 @@ let Step3 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={8} style={{ textAlign: 'center' }}>
                 <Space size="large">
-                    <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
-                    <Button type="primary" size="small" icon={<ArrowDownOutlined />} onClick={nextStep}> 下一步 </Button>
+                    <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> {
+                        formatMessage({ id: 'abnormal-decision-center.add-case.handle.previous-step' })
+                    } </Button>
+                    <Button type="primary" size="small" icon={<ArrowDownOutlined />} onClick={nextStep}> {
+                        formatMessage({ id: 'abnormal-decision-center.add-case.handle.next-step' })
+                    } </Button>
                 </Space>
             </Col>
         </Row>
@@ -566,7 +663,9 @@ let ProblemEquipment = props => {  //設備異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.desc' })
+                    }</Col>
                     <Col span={15}>
                         {/* <Select size='small' className={styles.w100} value={desc}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.desc', '')}
@@ -586,7 +685,7 @@ let ProblemEquipment = props => {  //設備異常
                                     {menu}
                                     <Divider style={{ margin: '4px 0' }} />
                                     <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
-                                        <Input size='small' style={{ flex: 'auto' }} value={newDesc} onChange={e => {setNewDesc(e.target.value)}} />
+                                        <Input size='small' style={{ flex: 'auto' }} value={newDesc} onChange={e => { setNewDesc(e.target.value) }} />
                                         <a
                                             style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
                                             onClick={addDesc}
@@ -606,7 +705,9 @@ let ProblemEquipment = props => {  //設備異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>機器類別</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.category' })
+                    }</Col>
                     <Col span={15}>
                         {/* <Select size='small' className={styles.w100} value={category}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.category', '')}
@@ -626,7 +727,7 @@ let ProblemEquipment = props => {  //設備異常
                                     {menu}
                                     <Divider style={{ margin: '4px 0' }} />
                                     <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
-                                        <Input size='small' style={{ flex: 'auto' }} value={newCategory} onChange={e => {setNewCategory(e.target.value)}} />
+                                        <Input size='small' style={{ flex: 'auto' }} value={newCategory} onChange={e => { setNewCategory(e.target.value) }} />
                                         <a
                                             style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
                                             onClick={addCategory}
@@ -648,7 +749,9 @@ let ProblemEquipment = props => {  //設備異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>設備名稱</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.name' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={name} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.name', 'target.value')} />
                     </Col>
@@ -656,7 +759,9 @@ let ProblemEquipment = props => {  //設備異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>設備編號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.equipmentNumber' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={equipmentNumber} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.equipmentNumber', 'target.value')} />
                     </Col>
@@ -666,7 +771,9 @@ let ProblemEquipment = props => {  //設備異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>設備型號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.equipmentModel' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={equipmentModel} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.equipment.equipmentModel', 'target.value')} />
                     </Col>
@@ -715,7 +822,9 @@ let ProblemMaterial = props => {  //物料異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.desc' })
+                    }</Col>
                     <Col span={15}>
                         {/* <Select size='small' className={styles.w100} value={desc}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.desc', '')}
@@ -735,7 +844,7 @@ let ProblemMaterial = props => {  //物料異常
                                     {menu}
                                     <Divider style={{ margin: '4px 0' }} />
                                     <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
-                                        <Input size='small' style={{ flex: 'auto' }} value={newDesc} onChange={e => {setNewDesc(e.target.value)}} />
+                                        <Input size='small' style={{ flex: 'auto' }} value={newDesc} onChange={e => { setNewDesc(e.target.value) }} />
                                         <a
                                             style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
                                             onClick={addDesc}
@@ -755,7 +864,9 @@ let ProblemMaterial = props => {  //物料異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>DC</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.DC' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={DC} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.DC', 'target.value')} />
                     </Col>
@@ -765,7 +876,9 @@ let ProblemMaterial = props => {  //物料異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>LC</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.LC' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={LC} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.LC', 'target.value')} />
                     </Col>
@@ -773,7 +886,9 @@ let ProblemMaterial = props => {  //物料異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>零件料號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.partNo' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={partNo} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.partNo', 'target.value')} />
                     </Col>
@@ -783,7 +898,9 @@ let ProblemMaterial = props => {  //物料異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>不良率</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.rejectRatio' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={rejectRatio} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.rejectRatio', 'target.value')} />
                     </Col>
@@ -791,7 +908,9 @@ let ProblemMaterial = props => {  //物料異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>供應商</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.supplier' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={supplier} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.material.supplier', 'target.value')} />
                     </Col>
@@ -830,7 +949,9 @@ let ProblemPerson = props => {  //人員異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.desc' })
+                    }</Col>
                     <Col span={15}>
                         {/* <Select size='small' className={styles.w100} value={desc}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.person.desc', '')}
@@ -850,7 +971,7 @@ let ProblemPerson = props => {  //人員異常
                                     {menu}
                                     <Divider style={{ margin: '4px 0' }} />
                                     <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
-                                        <Input size='small' style={{ flex: 'auto' }} value={newDesc} onChange={e => {setNewDesc(e.target.value)}} />
+                                        <Input size='small' style={{ flex: 'auto' }} value={newDesc} onChange={e => { setNewDesc(e.target.value) }} />
                                         <a
                                             style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
                                             onClick={addDesc}
@@ -926,7 +1047,9 @@ let ProblemQuality = props => {  //品質異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>制程段</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.process' })
+                    }</Col>
                     <Col span={15}>
                         {/* <Select size='small' className={styles.w100} value={process}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.process', '')}
@@ -946,7 +1069,7 @@ let ProblemQuality = props => {  //品質異常
                                     {menu}
                                     <Divider style={{ margin: '4px 0' }} />
                                     <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
-                                        <Input size='small' style={{ flex: 'auto' }} value={newProcess} onChange={e => {setNewProcess(e.target.value)}} />
+                                        <Input size='small' style={{ flex: 'auto' }} value={newProcess} onChange={e => { setNewProcess(e.target.value) }} />
                                         <a
                                             style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
                                             onClick={addProcess}
@@ -966,7 +1089,9 @@ let ProblemQuality = props => {  //品質異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>不良現象</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.badPhenomenon' })
+                    }</Col>
                     <Col span={14}>
                         {/* <Select size='small' className={styles.w100} value={badPhenomenon}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.badPhenomenon', '')}
@@ -986,7 +1111,7 @@ let ProblemQuality = props => {  //品質異常
                                     {menu}
                                     <Divider style={{ margin: '4px 0' }} />
                                     <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
-                                        <Input size='small' style={{ flex: 'auto' }} value={newBadPhenomenon} onChange={e => {setNewBadPhenomenon(e.target.value)}} />
+                                        <Input size='small' style={{ flex: 'auto' }} value={newBadPhenomenon} onChange={e => { setNewBadPhenomenon(e.target.value) }} />
                                         <a
                                             style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
                                             onClick={addBadPhenomenon}
@@ -1008,7 +1133,9 @@ let ProblemQuality = props => {  //品質異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>發生站位</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.station' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={station} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.station', 'target.value')} />
                     </Col>
@@ -1016,7 +1143,9 @@ let ProblemQuality = props => {  //品質異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>影響范圍</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.scope' })
+                    }</Col>
                     <Col span={14}>
                         <Select size='small' className={styles.w100} value={scope}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.scope', '')}
@@ -1032,7 +1161,9 @@ let ProblemQuality = props => {  //品質異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>當前措施</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.measures' })
+                    }</Col>
                     <Col span={19}>
                         <TextArea size="small" value={measures} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.quality.measures', 'target.value')} />
                     </Col>
@@ -1075,7 +1206,9 @@ let ProblemTools = props => {  //治工具異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.desc' })
+                    }</Col>
                     <Col span={15}>
                         {/* <Select size='small' className={styles.w100} value={desc}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.tools.desc', '')}
@@ -1095,7 +1228,7 @@ let ProblemTools = props => {  //治工具異常
                                     {menu}
                                     <Divider style={{ margin: '4px 0' }} />
                                     <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
-                                        <Input size='small' style={{ flex: 'auto' }} value={newDesc} onChange={e => {setNewDesc(e.target.value)}} />
+                                        <Input size='small' style={{ flex: 'auto' }} value={newDesc} onChange={e => { setNewDesc(e.target.value) }} />
                                         <a
                                             style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
                                             onClick={addDesc}
@@ -1115,7 +1248,9 @@ let ProblemTools = props => {  //治工具異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>涉及的產品料號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.skuno' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={skuno} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.tools.skuno', 'target.value')} />
                     </Col>
@@ -1125,7 +1260,9 @@ let ProblemTools = props => {  //治工具異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>使用站位</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.station' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={station} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.tools.station', 'target.value')} />
                     </Col>
@@ -1167,7 +1304,9 @@ let ProblemSystem = props => {  //系統異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常類別</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.case-category' })
+                    }</Col>
                     <Col span={15}>
                         {/* <Select size='small' className={styles.w100} value={category}
                             onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.system.category', '')}
@@ -1187,7 +1326,7 @@ let ProblemSystem = props => {  //系統異常
                                     {menu}
                                     <Divider style={{ margin: '4px 0' }} />
                                     <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '2px 8px' }}>
-                                        <Input size='small' style={{ flex: 'auto' }} value={newCategory} onChange={e => {setNewCategory(e.target.value)}} />
+                                        <Input size='small' style={{ flex: 'auto' }} value={newCategory} onChange={e => { setNewCategory(e.target.value) }} />
                                         <a
                                             style={{ flex: 'none', padding: '2px 8px', display: 'block', cursor: 'pointer' }}
                                             onClick={addCategory}
@@ -1207,7 +1346,9 @@ let ProblemSystem = props => {  //系統異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.desc' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={desc} onChange={retSetNewAbnormalByPlaneObj('problem.abnormalClassify.system.desc', 'target.value')} />
                     </Col>
@@ -1217,10 +1358,12 @@ let ProblemSystem = props => {  //系統異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常開始時間</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.problem.classification.lable.startTime' })
+                    }</Col>
                     <Col span={15}>
                         <DatePicker className={styles.w100} onChange={retSetNewAbnormalByMoment('problem.abnormalClassify.system.startTime')}
-                            value={moment(startTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
+                            value={moment(startTime, 'YYYY/MM/DD HH:mm')} format='YYYY/MM/DD HH:mm' showTime
                         />
                     </Col>
                 </Row>
@@ -1260,7 +1403,9 @@ let Step4 = props => {
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={9}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常損失工時</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.countermeasures.lostWorkTime' })
+                    }</Col>
                     <Col span={16}>
                         {/* <InputNumber
                             style={{width: '100%'}}
@@ -1276,7 +1421,9 @@ let Step4 = props => {
             </Col>
             <Col span={9}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>閒置人力</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.countermeasures.idleHuman' })
+                    }</Col>
                     <Col span={16}>
                         <Input value={idleHuman} onChange={retSetNewAbnormalByPlaneObj('countermeasures.idleHuman', 'target.value')} />
                     </Col>
@@ -1287,7 +1434,9 @@ let Step4 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={9}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>閒置人力安排</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.countermeasures.manpowerArrangement' })
+                    }</Col>
                     <Col span={16}>
                         <Select className={styles.w100} value={manpowerArrangement}
                             onChange={retSetNewAbnormalByPlaneObj('countermeasures.manpowerArrangement', '')}
@@ -1301,7 +1450,9 @@ let Step4 = props => {
             </Col>
             <Col span={9}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>損失產出</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.countermeasures.lostOutput' })
+                    }</Col>
                     <Col span={16}>
                         <Input prefix="" suffix="pcs" value={lostOutput} onChange={retSetNewAbnormalByPlaneObj('countermeasures.lostOutput', 'target.value')} />
                     </Col>
@@ -1312,7 +1463,9 @@ let Step4 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={9}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>良率損失</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.countermeasures.lostYield' })
+                    }</Col>
                     <Col span={16}>
                         <Input prefix="" suffix="%" value={lostYield} onChange={retSetNewAbnormalByPlaneObj('countermeasures.lostYield', 'target.value')} />
                     </Col>
@@ -1323,7 +1476,9 @@ let Step4 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={18}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>臨時解決措施</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.countermeasures.measures' })
+                    }</Col>
                     <Col span={20}>
                         <TextArea value={measures} onChange={retSetNewAbnormalByPlaneObj('countermeasures.measures', 'target.value')} />
                     </Col>
@@ -1333,8 +1488,12 @@ let Step4 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={8} style={{ textAlign: 'center' }}>
                 <Space size="large">
-                    <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
-                    <Button type="primary" size="small" icon={<ArrowDownOutlined />} onClick={nextStep}> 下一步 </Button>
+                    <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> {
+                        formatMessage({ id: 'abnormal-decision-center.add-case.handle.previous-step' })
+                    } </Button>
+                    <Button type="primary" size="small" icon={<ArrowDownOutlined />} onClick={nextStep}> {
+                        formatMessage({ id: 'abnormal-decision-center.add-case.handle.next-step' })
+                    } </Button>
                 </Space>
             </Col>
         </Row>
@@ -1369,7 +1528,9 @@ let Step5 = props => {
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.cause-analysis.chargePerson' })
+                    }</Col>
                     <Col span={10}>
                         <Select mode="multiple" className={styles.w100} showArrow value={chargePerson}
                             options={allChargePerson.map(v => ({ value: v }))}
@@ -1383,7 +1544,9 @@ let Step5 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人課級(&gt3d)</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.cause-analysis.sectionManager' })
+                    }</Col>
                     <Col span={10}>
                         <Select mode="multiple" className={styles.w100} showArrow value={sectionManager}
                             options={allSectionManager.map(v => ({ value: v }))}
@@ -1394,7 +1557,9 @@ let Step5 = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人部級(&gt5d)</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.cause-analysis.minister' })
+                    }</Col>
                     <Col span={10}>
                         <Select mode="multiple" className={styles.w100} showArrow value={minister}
                             options={allMinister.map(v => ({ value: v }))}
@@ -1408,7 +1573,9 @@ let Step5 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人處級(&gt10d)</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.cause-analysis.sectionChief' })
+                    }</Col>
                     <Col span={10}>
                         <Select mode="multiple" className={styles.w100} showArrow value={sectionChief}
                             options={allSectionChief.map(v => ({ value: v }))}
@@ -1421,7 +1588,9 @@ let Step5 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>異常知會人</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.cause-analysis.notifier' })
+                    }</Col>
                     <Col span={19}>
                         <Select mode="multiple" className={styles.w100} showArrow value={notifier}
                             options={allNotifier.map(v => ({ value: v }))}
@@ -1434,8 +1603,12 @@ let Step5 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={8} style={{ textAlign: 'center' }}>
                 <Space size="large">
-                    <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
-                    <Button type="primary" size="small" icon={<ArrowDownOutlined />} onClick={nextStep}> 下一步 </Button>
+                    <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> {
+                        formatMessage({ id: 'abnormal-decision-center.add-case.handle.previous-step' })
+                    } </Button>
+                    <Button type="primary" size="small" icon={<ArrowDownOutlined />} onClick={nextStep}> {
+                        formatMessage({ id: 'abnormal-decision-center.add-case.handle.next-step' })
+                    } </Button>
                 </Space>
             </Col>
         </Row>
@@ -1512,12 +1685,18 @@ let Step6 = props => {
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={18}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>問題狀態</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.remarks-and-attachments.problemStatus' })
+                    }</Col>
                     <Col span={20}>
                         <Space>
                             <Radio.Group value={problemStatus} onChange={retSetNewAbnormalByPlaneObj('remarksAndAttachments.problemStatus', 'target.value')}>
-                                <Radio value="等待处理">等待处理</Radio>
-                                <Radio value="处理中">处理中</Radio>
+                                <Radio value="等待處理">{
+                                    formatMessage({ id: 'abnormal-decision-center.add-case.remarks-and-attachments.problemStatus.waiting' })
+                                }</Radio>
+                                <Radio value="處理中">{
+                                    formatMessage({ id: 'abnormal-decision-center.add-case.remarks-and-attachments.problemStatus.doing' })
+                                }</Radio>
                             </Radio.Group>
                         </Space>
                     </Col>
@@ -1527,7 +1706,9 @@ let Step6 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={18}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>備註</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.remarks-and-attachments.remarks' })
+                    }</Col>
                     <Col span={20}>
                         <TextArea value={remarks} onChange={retSetNewAbnormalByPlaneObj('remarksAndAttachments.remarks', 'target.value')} />
                     </Col>
@@ -1537,7 +1718,9 @@ let Step6 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={18}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>附件</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.add-case.remarks-and-attachments.attachments' })
+                    }</Col>
                     <Col span={20}>
                         <Upload {...prop}>
                             <Button size='small' icon={<UploadOutlined />}>Click to Upload</Button>
@@ -1549,8 +1732,12 @@ let Step6 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={8} style={{ textAlign: 'center' }}>
                 <Space size="large">
-                    <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
-                    <Button type="primary" size="small" icon={<SaveOutlined />} onClick={submit}> 提交 </Button>
+                    <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> {
+                        formatMessage({ id: 'abnormal-decision-center.add-case.handle.previous-step' })
+                    } </Button>
+                    <Button type="primary" size="small" icon={<SaveOutlined />} onClick={submit}> {
+                        formatMessage({ id: 'abnormal-decision-center.add-case.handle.submit' })
+                    } </Button>
                 </Space>
             </Col>
         </Row>

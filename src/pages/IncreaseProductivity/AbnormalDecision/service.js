@@ -39,7 +39,7 @@ let apis = {
     },
     getTableDataByOpenCase: { // 獲取未結案異常表數據
         mock: '/api/abnormalDecision/getTableDataByOpenCase',
-        real: '/api/SMCAbnormalChar/getTableDataByOpenCase'
+        real: '/api/abnormalDecision/GetAbnormalNoCloseTable'
     },
     // ---------------------------------------------------
     toggerCollect: {

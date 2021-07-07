@@ -19,10 +19,12 @@ let throttle = function (fn, delay) { // 节流 （防止多次点击按钮）
     let timer = null;
     return function (...args) {
         let _this = this;
-        !timer && setTimeout(function () {   //有任务在等待执行时不管，不做任何处理，没有任务时再建立任务等待执行。
-            fn.apply(_this, args);
-            timer = null;
-        }, delay);
+        if (!timer) {
+            timer = setTimeout(function () {   //有任务在等待执行时直接退出，不做任何处理，没有任务时再建立任务等待执行。
+                fn.apply(_this, args);
+                timer = null;
+            }, delay);
+        }
     }
 }
 
@@ -177,6 +179,23 @@ let handlePlaneObjectProp3 = (origin, match) => {   // 以match: {new: 'old'}為
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+// let xmlStr1 = "<div class='div'><p>hello</p></div>"
+// let reg1 = /<([A-z]*?) [\w\W]*?>([\w\W]*)<\/\1>/;  // 拿到标签内容
+
+// let xmltoJSON = (xmlStr) => {
+
+// }
 
 
 

@@ -7,6 +7,7 @@ import { SearchOutlined, TagsOutlined, ProfileOutlined, BarsOutlined } from '@an
 import styles from '../style.less';
 
 
+
 // let option = {
 //     title: {
 //         text: '所有异常',
@@ -149,7 +150,7 @@ let Tab1 = props => {   // 异常状态
 
     // 绘制图表要素： echarts实例 echarts配置数据 loading（是否异步中） isReady（是否准备好） resize(响应)  事件绑定
 
-    
+
     // ***** 灵活运用 loading(异步) isReady（得到关键数据）20201009 add by gch *****
 
     let isReady = useMemo(() => {  // ***重要*** 未得到初次渲染依赖的数据时被认为没有准备好，不能进行相关的操作（比如组件渲染，生命周期的执行）
@@ -173,7 +174,7 @@ let Tab1 = props => {   // 异常状态
 
     let [myCharts, setMyCharts] = useState(null); //定义图表实例，方便后续操作
     useEffect(() => {
-        if(activeKey == 'tab1' && isReady){
+        if (activeKey == 'tab1' && isReady) {
             let charts = {
                 chart1: echarts.init(graph1.current),
                 chart2: echarts.init(graph2.current),
@@ -209,9 +210,9 @@ let Tab1 = props => {   // 异常状态
 
     useEffect(() => {   //图表数据源变化时重新渲染
         if (isReady && myCharts) {
-            let option1 = ret_option('所有异常', left.seriesData);
-            let option2 = ret_option('未结案异常', center.seriesData);
-            let option3 = ret_option('待签核异常', right.seriesData);
+            let option1 = ret_option(formatMessage({ id: 'abnormal-decision-center.tab1.left.title' }), left.seriesData);
+            let option2 = ret_option(formatMessage({ id: 'abnormal-decision-center.tab1.center.title' }), center.seriesData);
+            let option3 = ret_option(formatMessage({ id: 'abnormal-decision-center.tab1.right.title' }), right.seriesData);
             myCharts.chart1.setOption(option1);
             myCharts.chart2.setOption(option2);
             myCharts.chart3.setOption(option3);
@@ -227,13 +228,13 @@ let Tab1 = props => {   // 异常状态
     }, [myCharts, w]);
 
     useEffect(() => {  //图表绑定事件
-        if(myCharts){
+        if (myCharts) {
             let link = e => {
                 dispatch({
                     type: 'AbnormalDecision/getTableData',
-                    graphLink: { 
-                        seriesName: e.seriesName, 
-                        name: e.name 
+                    graphLink: {
+                        seriesName: e.seriesName,
+                        name: e.name
                     }
                 });
             }
@@ -242,7 +243,7 @@ let Tab1 = props => {   // 异常状态
             myCharts.chart3.on('click', link);
         }
         return () => {  //组件卸载前先取消绑定事件
-            if(myCharts){
+            if (myCharts) {
                 myCharts.chart1.off('click');
                 myCharts.chart2.off('click');
                 myCharts.chart3.off('click');

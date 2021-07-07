@@ -1,0 +1,55 @@
+git代理 加速
+
+10.191.131.15:3128
+
+git config --global http.proxy http://10.191.131.15:3128     --10.191.131.15:3128   --172.18.3.79:3128   --172.18.65.78:3128
+git config --global https.proxy https://10.191.131.15:3128
+
+git config --global --get http.proxy
+git config --global --get https.proxy
+
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+
+
+
+https://www.ipaddress.com/ 
+github.global.ssl.fastly.net    199.232.69.194
+github.com                      140.82.114.3
+
+
+C:\Windows\System32\drivers\etc\hosts
+199.232.69.194 github.global-ssl.fastly.net
+140.82.114.3 github.com
+
+ipconfig /flushdns
+
+
+
+npm yarn 代理?置
+
+npm config ls  // 查看npm所有配置
+yarn config list // 查看yarn所有配置
+
+npm config set proxy http://10.191.131.15:3128
+npm config set https-proxy http://10.191.131.15:3128
+
+yarn config set proxy http://10.191.131.15:3128
+yarn config set https-proxy http://10.191.131.15:3128
+
+
+
+定義上傳位置（快捷方式）
+
+git remote add ?目 github地址    如： git remote add smc https://github.com/990257048/SMC    
+
+上傳
+
+git push -u smc master
+
+
+
+
+
+
+

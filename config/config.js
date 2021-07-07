@@ -5,6 +5,7 @@ import proxy from './proxy';
 
 const { REACT_APP_ENV } = process.env;
 export default defineConfig({
+  history: { type: 'hash' },
   hash: true,
   antd: {},
   dva: {
@@ -120,18 +121,18 @@ export default defineConfig({
             },
 
             // -------------------------------------------------------------------------------------------------------------------------------------------------------------
-            // {
-            //   path: '/ant-design-components',    // ant-design 组件（快速开发系统）
-            //   name: 'ant-design-components',
-            //   icon: 'antDesign',
-            //   routes: [
-            //     {
-            //       path: '/ant-design-components/antd-button',   // 按钮
-            //       name: 'antd-button',
-            //       component: './AntDesignComponents/AntdButton'
-            //     }
-            //   ]
-            // },
+            {
+              path: '/ant-design-components',    // ant-design 组件（快速开发系统）
+              name: 'ant-design-components',
+              icon: 'antDesign',
+              routes: [
+                {
+                  path: '/ant-design-components/antd-button',   // 按钮
+                  name: 'antd-button',
+                  component: './AntDesignComponents/AntdButton'
+                }
+              ]
+            },
             // {
             //   path: '/practice-page',    //练习页面
             //   name: 'practice-page',

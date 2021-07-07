@@ -11,7 +11,7 @@ import styles from '../style.less';
 let option = {
     color: ['#37a2da', '#67e0e3', '#722ed1', '#fa8c16', '#ffec3d'],
     title: {
-        text: '结案状态统计',
+        text: formatMessage({ id: 'abnormal-decision-center.tab5.title' }),
         left: 'center',
         top: '3%',
         textStyle: {
@@ -62,7 +62,7 @@ let option = {
             type: 'value',
             // name: '次数',
             min: 0,
-            max: 250,
+            max: 'dataMax',
             interval: 50,
             axisLabel: {
                 formatter: '{value} 次'
@@ -72,7 +72,7 @@ let option = {
             type: 'value',
             // name: '工时数',
             min: 0,
-            max: 25,
+            max: 'dataMax',
             interval: 5,
             axisLabel: {
                 formatter: '{value} 次'
@@ -83,7 +83,7 @@ let option = {
         {
             name: '新增异常次数',
             type: 'bar',
-            barWidth: '30%',
+            barWidth: '20%',
             label: {
                 show: true,
                 position: 'top',
@@ -94,7 +94,7 @@ let option = {
         {
             name: '结案异常次数',
             type: 'bar',
-            barWidth: '30%',
+            barWidth: '20%',
             label: {
                 show: true,
                 position: 'top',

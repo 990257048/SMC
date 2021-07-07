@@ -1,20 +1,51 @@
 import requestMock, { requestReal } from '@/utils/request';
 
-export async function accountLogin({userName, password}) {
+export async function accountLogin({ userName, password, vcode }) {
   console.log(userName, password);
-  return requestReal( '/api/SMCAccount/CheckUserInfo', // '/api/DutySheet/GetDutySheet' // '/api/SMCAccount/Connect?User=F1320854',
+  return requestReal('/api/SMCAccount/CheckUserInfo', // '/api/DutySheet/GetDutySheet' // '/api/SMCAccount/Connect?User=F1320854',
     {
       method: 'GET',
       params: {
         WORKID: userName,
         KEY: password,
-        LANGUAGE: 'CHINESE'
+        vcode
       }
     }
   );
 }
 
+export async function getFakeCaptcha() {
+  // /api/login/captcha
+  return requestReal('/api/login/captcha',
+    {
+      method: 'GET'
+    }
+  );
+}
+// http://10.132.50.107:800/api/SMCAccount/GetValidCode
+export async function getValidCode() {
+  return requestReal('/api/SMCAccount/GetValidCode', {
+    method: 'GET'
+  });
+}
 
+// http://10.132.50.107:800/api/DownLoadFile/GetAPPList
+// http://10.132.50.107:800/api/DownLoadFile/GetAppFile?AppName=SFCSMC.apk
+export async function getAppList() {
+  return requestReal('/api/DownLoadFile/GetAPPList', {
+    method: 'GET'
+  })
+}
+
+export async function batchAddUserInfoWeb(data) {   // 上传注册附件  data: FromData<attachFile>
+  return requestReal('/api/SMCAccount/batchAddUserInfoWeb', {
+    method: 'POST',
+    'Content-Type': 'multipart/form-data',
+    data
+  })
+}
+
+// http://10.132.50.107:800/api/SMCAccount/batchAddUserInfoWeb 
 
 //===========================================================================================================================================
 // real

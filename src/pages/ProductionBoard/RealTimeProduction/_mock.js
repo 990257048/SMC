@@ -82,5 +82,30 @@ export default {
                 ]
             }
         });
+    },
+    'GET /api/SMCKanBan/GetDefaultDate': (req, res) => {
+        res.send({
+            Status: 'Pass',
+            Message: 'OK',
+            Data: {
+                classList: [
+                    {
+                        classtype: '早班',
+                        classcode: 'D'
+                    },
+                    {
+                        classtype: '中班',
+                        classcode: 'M'
+                    },
+                    {
+                        classtype: '晚班',
+                        classcode: 'N'
+                    }
+                ],
+                currentClass: 'D'
+            }
+        })
     }
+
+
 };

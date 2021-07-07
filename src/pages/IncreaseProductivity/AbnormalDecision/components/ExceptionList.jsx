@@ -34,7 +34,9 @@ let TableToolBar = props => {
 
     return <div className={styles['table-toolbar']}>
         <Space size="middle">
-            <h3> <TableOutlined /> 异常列表 </h3>
+            <h3> <TableOutlined /> {formatMessage({
+                id: 'abnormal-decision-center.exception-list.title'
+            })} </h3>
         </Space>
 
         <Space size="middle" style={{ float: 'right' }}>
@@ -124,7 +126,7 @@ let useTableConfig = (initTableData) => {
         // 设置異常ID
         dispatch({
             type: 'AbnormalDecision/setAbnormalMaintenanceByProp',
-            prop: 'id', 
+            prop: 'id',
             value: row.id
         });
     }
@@ -140,53 +142,53 @@ let useTableConfig = (initTableData) => {
         dataSource: initTableData,
         columns: [
             {
-                title: '日期',
+                title: formatMessage({ id: 'abnormal-decision-center.exception-list.columns.date' }),
                 dataIndex: 'date',
                 width: 140,
                 fixed: 'left'
             },
             {
-                title: '邮件标题',
+                title: formatMessage({ id: 'abnormal-decision-center.exception-list.columns.title' }),
                 dataIndex: 'title',
                 width: 340
             },
             {
-                title: '料号',
+                title: formatMessage({ id: 'abnormal-decision-center.exception-list.columns.skuno' }),
                 dataIndex: 'skuno',
                 width: 140,
             },
             {
-                title: '班别',
+                title: formatMessage({ id: 'abnormal-decision-center.exception-list.columns.className' }),
                 dataIndex: 'className'
             },
             {
-                title: '发生区域',
+                title: formatMessage({ id: 'abnormal-decision-center.exception-list.columns.region' }),
                 dataIndex: 'region'
             },
             {
-                title: '问题分类',
+                title: formatMessage({ id: 'abnormal-decision-center.exception-list.columns.question' }),
                 dataIndex: 'question'
             },
             {
-                title: '发文人',
+                title: formatMessage({ id: 'abnormal-decision-center.exception-list.columns.person' }),
                 dataIndex: 'person',
                 width: 150,
             },
             {
-                title: '责任人',
+                title: formatMessage({ id: 'abnormal-decision-center.exception-list.columns.duty' }),
                 dataIndex: 'duty',
                 width: 160,
             },
             {
-                title: '状态',
+                title: formatMessage({ id: 'abnormal-decision-center.exception-list.columns.status' }),
                 dataIndex: 'status'
             },
             {
-                title: '时间差',
+                title: formatMessage({ id: 'abnormal-decision-center.exception-list.columns.timediff' }),
                 dataIndex: 'timediff'
             },
             {
-                title: '操作',
+                title: formatMessage({ id: 'abnormal-decision-center.exception-list.columns.handle' }),
                 dataIndex: '',
                 width: 100,//88,
                 fixed: 'right',

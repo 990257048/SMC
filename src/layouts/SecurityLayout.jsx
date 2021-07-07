@@ -65,7 +65,7 @@ class SecurityLayout extends React.Component {
 
   componentDidMount() {  // 第一次（未登录）渲染完毕该组件执行，或者 （登录状态）每次刷新页面（会卸载该组件）又会重新一挂载（不是二次渲染）该组件，相当于又会进行第一次渲染，渲染完毕后触发执行
     // 每次页面刷新都会触发登录验证
-    // console.log("SecurityLayout rendered!!!");
+    console.log("SecurityLayout rendered!!!");
     this.setState({
       isReady: true,
     });
@@ -82,6 +82,7 @@ class SecurityLayout extends React.Component {
   }
 
   render() {
+    console.log('main--------------------------------------')
     const { isReady } = this.state;
     const { children, loading, currentUser } = this.props; // You can replace it to your authentication rule (such as check token exists)
 

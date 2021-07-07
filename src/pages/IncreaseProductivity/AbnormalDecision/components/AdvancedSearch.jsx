@@ -16,16 +16,24 @@ let AdvancedSearch = props => {  // 高级搜索
     // console.log('AdvancedSearch render');
     return <div className={styles['advanced-search']}>
         <Tabs size="small" type='line' defaultActiveKey="1" className={styles['tabs-query']} >
-            <TabPane tab="按BU" key="1">
+            <TabPane tab={
+                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab.bu' })
+            } key="1">
                 <Tab1 />
             </TabPane>
-            <TabPane tab="按发生区域" key="2">
+            <TabPane tab={
+                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab.region' })
+            } key="2">
                 <Tab2 />
             </TabPane>
-            <TabPane tab="按异常分类" key="3">
+            <TabPane tab={
+                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab.case-categories' })
+            } key="3">
                 <Tab3 />
             </TabPane>
-            <TabPane tab="按原因分析" key="4">
+            <TabPane tab={
+                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab.cause' })
+            } key="4">
                 <Tab4 />
             </TabPane>
         </Tabs>
@@ -43,6 +51,7 @@ let AdvancedSearch = props => {  // 高级搜索
 
 let Tab1 = props => {
     let { dispatch, allBU, BU } = props;
+    console.log(BU, allBU);
     let BUChange = useCallback((BU) => {
         dispatch({
             type: 'AbnormalDecision/setAdvancedSearchOfBuAndRegion',
@@ -142,24 +151,36 @@ let Tab3 = props => {
                     <Col span={24}>
                         {/* 設備異常 物料異常 人員異常 品質異常 治工具異常 系統異常     */}
                         <Tabs size="small" type='card' activeKey={currentClassify} onChange={tabChange} style={{ width: '100%', border: '1px solid #ddd' }} >
-                            <TabPane tab="設備異常" key="equipment">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab3.tab.equipment' })
+                            } key="equipment">
                                 <AbnormalClassifyOfEquipment />
                             </TabPane>
-                            <TabPane tab="物料異常" key="material">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab3.tab.material' })
+                            } key="material">
                                 {/* 異常描述: 來料短缺 物料Delay 錯料 混料 物料包裝異常 特采過期 包裝信息與實物不符 有帳無務 其它 */}
                                 <AbnormalClassifyOfMaterial />
                             </TabPane>
-                            <TabPane tab="人員異常" key="person">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab3.tab.person' })
+                            } key="person">
                                 {/* 異常描述: 人力不足 新人技能不足 外借人力技能不足 其它 */}
                                 <AbnormalClassifyOfPerson />
                             </TabPane>
-                            <TabPane tab="品質異常" key="quality">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab3.tab.quality' })
+                            } key="quality">
                                 <AbnormalClassifyOfQuality />
                             </TabPane>
-                            <TabPane tab="治工具異常" key="tools">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab3.tab.tools' })
+                            } key="tools">
                                 <AbnormalClassifyOfTools />
                             </TabPane>
-                            <TabPane tab="系統異常" key="system">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab3.tab.system' })
+                            } key="system">
                                 <AbnormalClassifyOfSystem />
                             </TabPane>
                         </Tabs>
@@ -225,7 +246,9 @@ let AbnormalClassifyOfEquipment = props => {  //設備異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.desc' })
+                    }</Col>
                     <Col span={20}>
                         {/* 設備檔機 保養超時 低效生產 安全隱患 功能缺失 帶病運行 */}
                         <Checkbox.Group value={nativeState.desc} onChange={descChange} >
@@ -245,7 +268,9 @@ let AbnormalClassifyOfEquipment = props => {  //設備異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>機器類別</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.category' })
+                    }</Col>
                     <Col span={20}>
                         {/* 機器類別:  SMT設備 PTH設備 測試設備 流水線   SFC設備 公務設備 */}
                         <Checkbox.Group value={nativeState.category} onChange={categoryChange} >
@@ -265,7 +290,9 @@ let AbnormalClassifyOfEquipment = props => {  //設備異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>設備名稱</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.name' })
+                    }</Col>
                     <Col span={15}><Input size="small" value={nativeState.name} onChange={nameChange} /></Col>
                 </Row>
             </Col>
@@ -274,7 +301,9 @@ let AbnormalClassifyOfEquipment = props => {  //設備異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>設備編號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.equipmentNumber' })
+                    }</Col>
                     <Col span={15}><Input size="small" value={nativeState.equipmentNumber} onChange={equipmentNumberChange} /></Col>
                 </Row>
             </Col>
@@ -344,7 +373,9 @@ let AbnormalClassifyOfMaterial = props => {  //物料異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.desc' })
+                    }</Col>
                     <Col span={20}>
                         <Checkbox.Group value={nativeState.desc} onChange={descChange} >
                             {
@@ -363,13 +394,17 @@ let AbnormalClassifyOfMaterial = props => {  //物料異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>零件料號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.partNo' })
+                    }</Col>
                     <Col span={15}><Input size="small" value={nativeState.partNo} onChange={partNoChange} /></Col>
                 </Row>
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>不良率</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.rejectRatio' })
+                    }</Col>
                     <Col span={15}><Input size="small" value={nativeState.rejectRatio} onChange={rejectRatioChange} /></Col>
                 </Row>
             </Col>
@@ -377,13 +412,17 @@ let AbnormalClassifyOfMaterial = props => {  //物料異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>供應商</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.supplier' })
+                    }</Col>
                     <Col span={15}><Input size="small" value={nativeState.supplier} onChange={supplierChange} /></Col>
                 </Row>
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>DC</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.DC' })
+                    }</Col>
                     <Col span={15}><Input size="small" value={nativeState.DC} onChange={DCChange} /></Col>
                 </Row>
             </Col>
@@ -391,7 +430,9 @@ let AbnormalClassifyOfMaterial = props => {  //物料異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>LC</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.LC' })
+                    }</Col>
                     <Col span={15}><Input size="small" value={nativeState.LC} onChange={LCChange} /></Col>
                 </Row>
             </Col>
@@ -442,7 +483,9 @@ let AbnormalClassifyOfPerson = props => {  //人員異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.desc' })
+                    }</Col>
                     <Col span={20}>
                         <Checkbox.Group value={nativeState.desc} onChange={descChange} >
                             {
@@ -520,7 +563,9 @@ let AbnormalClassifyOfQuality = props => {  //品質異常
             {/* 製程段:  SMT製程不良 PTH製程不良 組裝製程不良 測試製程不良 維修製程不良 壓合製程不良  */}
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>製程段</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.process' })
+                    }</Col>
                     <Col span={20}>
                         <Checkbox.Group value={nativeState.process} onChange={processChange} >
                             {
@@ -540,7 +585,9 @@ let AbnormalClassifyOfQuality = props => {  //品質異常
             {/* 不良現象: 批量損件  燒機  批量錯件 批量少料  批量反向 不良率超標  其它 */}
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>不良現象</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.badPhenomenon' })
+                    }</Col>
                     <Col span={20}>
                         <Checkbox.Group value={nativeState.badPhenomenon} onChange={badPhenomenonChange} >
                             {
@@ -560,7 +607,9 @@ let AbnormalClassifyOfQuality = props => {  //品質異常
             {/* 影響範圍: 當前工站 前置工站  後續工站 =*/}
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>影響範圍</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.scope' })
+                    }</Col>
                     <Col span={20}>
                         <Checkbox.Group value={nativeState.scope} onChange={scopeChange} >
                             {
@@ -579,7 +628,9 @@ let AbnormalClassifyOfQuality = props => {  //品質異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>發生站位</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.station' })
+                    }</Col>
                     <Col span={15}><Input size="small" value={nativeState.station} onChange={stationChange} /></Col>
                 </Row>
             </Col>
@@ -588,7 +639,9 @@ let AbnormalClassifyOfQuality = props => {  //品質異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>當前措施</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.measures' })
+                    }</Col>
                     <Col span={15}><Input size="small" value={nativeState.measures} onChange={measuresChange} /></Col>
                 </Row>
             </Col>
@@ -647,7 +700,9 @@ let AbnormalClassifyOfTools = props => {  //治工具異常
             {/* 異常描述: 治工具損壞 治工具不足 治工具功能不良 治工具未點檢 治工具要求不符 其它 */}
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.desc' })
+                    }</Col>
                     <Col span={20}>
                         <Checkbox.Group value={nativeState.desc} onChange={descChange} >
                             {
@@ -666,7 +721,9 @@ let AbnormalClassifyOfTools = props => {  //治工具異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>涉及的產品料號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.skuno' })
+                    }</Col>
                     <Col span={15}><Input size="small" value={nativeState.skuno} onChange={skunoChange} /></Col>
                 </Row>
             </Col>
@@ -675,7 +732,9 @@ let AbnormalClassifyOfTools = props => {  //治工具異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>使用站位</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.station' })
+                    }</Col>
                     <Col span={15}><Input size="small" value={nativeState.station} onChange={stationChange} /></Col>
                 </Row>
             </Col>
@@ -733,7 +792,9 @@ let AbnormalClassifyOfSystem = props => {  //系統異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>異常類別</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.category' })
+                    }</Col>
                     <Col span={20}>
                         <Checkbox.Group value={nativeState.category} onChange={categoryChange} >
                             {
@@ -752,7 +813,9 @@ let AbnormalClassifyOfSystem = props => {  //系統異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>使用站位</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.station' })
+                    }</Col>
                     <Col span={15}><Input size="small" value={nativeState.station} onChange={stationChange} /></Col>
                 </Row>
             </Col>
@@ -779,7 +842,7 @@ AbnormalClassifyOfSystem = connect(({ AbnormalDecision }) => {
 
 
 let Tab4 = props => {
-    let {dispatch, currentClassify} = props;
+    let { dispatch, currentClassify } = props;
 
     let tabChange = useCallback((classify) => {
         dispatch({
@@ -796,23 +859,35 @@ let Tab4 = props => {
                     <Col span={24}>
                         {/* ====================================================================================================================================== */}
                         {/* 人 機 料 法 環 量檢測     */}
-                        <Tabs size="small" type='card' activeKey={ currentClassify } onChange={ tabChange } style={{ width: '100%', border: '1px solid #ddd' }} >
-                            <TabPane tab="人" key="parson">
+                        <Tabs size="small" type='card' activeKey={currentClassify} onChange={tabChange} style={{ width: '100%', border: '1px solid #ddd' }} >
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab4.tab.parson' })
+                            } key="parson">
                                 <CauseAnalysisOfParson />
                             </TabPane>
-                            <TabPane tab="机" key="equipment">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab4.tab.equipment' })
+                            } key="equipment">
                                 <CauseAnalysisOfEquipment />
                             </TabPane>
-                            <TabPane tab="料" key="material">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab4.tab.material' })
+                            } key="material">
                                 <CauseAnalysisOfMaterial />
                             </TabPane>
-                            <TabPane tab="法" key="function">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab4.tab.function' })
+                            } key="function">
                                 <CauseAnalysisOfFunction />
                             </TabPane>
-                            <TabPane tab="环" key="annulus">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab4.tab.annulus' })
+                            } key="annulus">
                                 <CauseAnalysisOfAnnulus />
                             </TabPane>
-                            <TabPane tab="量检测" key="detection">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.advanced-search.tab4.tab.detection' })
+                            } key="detection">
                                 <CauseAnalysisOfDetection />
                             </TabPane>
                         </Tabs>
@@ -824,19 +899,19 @@ let Tab4 = props => {
     </div>
 }
 
-Tab4 = connect(({AbnormalDecision}) => {
+Tab4 = connect(({ AbnormalDecision }) => {
     return {
         currentClassify: AbnormalDecision.anomalousGraph.advancedSearch.causeAnalysis.currentClassify
     }
 })(Tab4);
 
 let CauseAnalysisOfParson = props => {
-    let {dispatch, parson} = props;
+    let { dispatch, parson } = props;
     //                     chargePerson: '', //责任人
     //                     decision: '', //处理决定
     //                     improve: ''   //改善方向
-    let {chargePerson, decision, improve} = parson;
-    let [nativeState, setNativeState ] = useState({ chargePerson, decision, improve });
+    let { chargePerson, decision, improve } = parson;
+    let [nativeState, setNativeState] = useState({ chargePerson, decision, improve });
 
     let setParson = useCallback((payload) => {
         dispatch({
@@ -870,35 +945,41 @@ let CauseAnalysisOfParson = props => {
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>責任人</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.chargePerson } onChange={ chargePersonChange } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.chargePerson' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.chargePerson} onChange={chargePersonChange} /></Col>
                 </Row>
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>處理決定</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.decision } onChange={ decisionChange } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.decision' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.decision} onChange={decisionChange} /></Col>
                 </Row>
             </Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>改善方向</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.improve } onChange={ improveChange } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.improve' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.improve} onChange={improveChange} /></Col>
                 </Row>
             </Col>
             <Col span={12}></Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12} style={{ textAlign: 'center' }}>
-                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={ confirmHandle }>确定</Button>
+                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={confirmHandle}>确定</Button>
             </Col>
         </Row>
     </div>
 }
 
-CauseAnalysisOfParson = connect(({AbnormalDecision}) => {
+CauseAnalysisOfParson = connect(({ AbnormalDecision }) => {
     return {
         parson: AbnormalDecision.anomalousGraph.advancedSearch.causeAnalysis.parson
     }
@@ -906,7 +987,7 @@ CauseAnalysisOfParson = connect(({AbnormalDecision}) => {
 
 
 let CauseAnalysisOfEquipment = props => {
-    let {dispatch, equipment} = props;
+    let { dispatch, equipment } = props;
     // chargePerson: '', //责任人
     //                     name: '',  // 机器名称
     //                     equipmentNumber: '', // 机器编号
@@ -914,8 +995,8 @@ let CauseAnalysisOfEquipment = props => {
     //                     improve: '',   //改善方向
     //                     anImprove: [],  //橫向展開改善  Y | N
     //                     completionTime: '' //預計完成時間
-    let {chargePerson, name, equipmentNumber, cause, improve, anImprove, completionTime} = equipment;
-    let [nativeState, setNativeState ] = useState({ chargePerson, name, equipmentNumber, cause, improve, anImprove, completionTime });
+    let { chargePerson, name, equipmentNumber, cause, improve, anImprove, completionTime } = equipment;
+    let [nativeState, setNativeState] = useState({ chargePerson, name, equipmentNumber, cause, improve, anImprove, completionTime });
     let setEquipment = useCallback((payload) => {
         dispatch({
             type: 'AbnormalDecision/setAdvancedSearchOfCauseAnalysis',
@@ -948,7 +1029,7 @@ let CauseAnalysisOfEquipment = props => {
     }
 
     let anImproveChange = (anImprove) => {
-        setNativeState({ ...nativeState, anImprove})
+        setNativeState({ ...nativeState, anImprove })
     }
 
     let completionTimeChange = (e) => {
@@ -965,43 +1046,55 @@ let CauseAnalysisOfEquipment = props => {
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>負責人</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.chargePerson } onChange={ chargePersonChange } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.chargePerson' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.chargePerson} onChange={chargePersonChange} /></Col>
                 </Row>
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>機器名稱</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.name } onChange={ nameChange } /></Col>
-                </Row>
-            </Col>
-        </Row>
-        <Row gutter={[0, 12]} justify="center">
-            <Col span={12}>
-                <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>機器編號</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.equipmentNumber } onChange={ equipmentNumberChange } /></Col>
-                </Row>
-            </Col>
-            <Col span={12}>
-                <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>具體原因</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.cause } onChange={ causeChange } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.machine-name' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.name} onChange={nameChange} /></Col>
                 </Row>
             </Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>改善方向</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.improve } onChange={ improveChange } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.machine-equipmentNumber' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.equipmentNumber} onChange={equipmentNumberChange} /></Col>
                 </Row>
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>橫向展開改善</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.cause' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.cause} onChange={causeChange} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.improve' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.improve} onChange={improveChange} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.anImprove' })
+                    }</Col>
                     <Col span={15}>
-                        <Checkbox.Group value={ nativeState.anImprove } onChange={ anImproveChange } >
+                        <Checkbox.Group value={nativeState.anImprove} onChange={anImproveChange} >
                             <Checkbox value="Y">是</Checkbox>
                             <Checkbox value="N">否</Checkbox>
                         </Checkbox.Group>
@@ -1012,21 +1105,23 @@ let CauseAnalysisOfEquipment = props => {
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>預計完成時間</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.completionTime } onChange={ completionTimeChange } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.completionTime' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.completionTime} onChange={completionTimeChange} /></Col>
                 </Row>
             </Col>
             <Col span={12}></Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12} style={{ textAlign: 'center' }}>
-                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={ confirmHandle }>确定</Button>
+                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={confirmHandle}>确定</Button>
             </Col>
         </Row>
     </div>
 }
 
-CauseAnalysisOfEquipment = connect(({AbnormalDecision}) => {
+CauseAnalysisOfEquipment = connect(({ AbnormalDecision }) => {
     return {
         equipment: AbnormalDecision.anomalousGraph.advancedSearch.causeAnalysis.equipment
     }
@@ -1042,9 +1137,9 @@ let CauseAnalysisOfMaterial = props => {
     // result: '', // 處理結果
     // improve: '', // 改善方向
     // completionTime: '' // 預計完成時間
-    let {dispatch, material} = props;
-    let {chargePerson, skuno, DC, LC, vendor, result, improve, completionTime} = material;
-    let [nativeState, setNativeState ] = useState({chargePerson, skuno, DC, LC, vendor, result, improve, completionTime});
+    let { dispatch, material } = props;
+    let { chargePerson, skuno, DC, LC, vendor, result, improve, completionTime } = material;
+    let [nativeState, setNativeState] = useState({ chargePerson, skuno, DC, LC, vendor, result, improve, completionTime });
 
     let setMaterial = useCallback((payload) => {
         dispatch({
@@ -1058,7 +1153,7 @@ let CauseAnalysisOfMaterial = props => {
     }, [material]);
 
     let inputValueChange = useCallback((e, key) => {
-        setNativeState({...nativeState, [key]: e.target.value });
+        setNativeState({ ...nativeState, [key]: e.target.value });
     }, [nativeState]);
 
     let confirmHandle = useCallback(() => {
@@ -1070,68 +1165,84 @@ let CauseAnalysisOfMaterial = props => {
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>負責人</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.chargePerson } onChange={ e => { inputValueChange(e, 'chargePerson') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.chargePerson' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.chargePerson} onChange={e => { inputValueChange(e, 'chargePerson') }} /></Col>
                 </Row>
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>料號</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.skuno } onChange={ e => { inputValueChange(e, 'skuno') } } /></Col>
-                </Row>
-            </Col>
-        </Row>
-        <Row gutter={[0, 12]} justify="center">
-            <Col span={12}>
-                <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>DC</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.DC } onChange={ e => { inputValueChange(e, 'DC') } } /></Col>
-                </Row>
-            </Col>
-            <Col span={12}>
-                <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>LC</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.LC } onChange={ e => { inputValueChange(e, 'LC') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.SKUNO' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.skuno} onChange={e => { inputValueChange(e, 'skuno') }} /></Col>
                 </Row>
             </Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>廠商</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.vendor } onChange={ e => { inputValueChange(e, 'vendor') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.DC' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.DC} onChange={e => { inputValueChange(e, 'DC') }} /></Col>
                 </Row>
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>處理結果</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.result } onChange={ e => { inputValueChange(e, 'result') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.LC' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.LC} onChange={e => { inputValueChange(e, 'LC') }} /></Col>
                 </Row>
             </Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>改善方向</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.improve } onChange={ e => { inputValueChange(e, 'improve') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.vendor' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.vendor} onChange={e => { inputValueChange(e, 'vendor') }} /></Col>
                 </Row>
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>預計完成時間</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.completionTime } onChange={ e => { inputValueChange(e, 'completionTime') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.result' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.result} onChange={e => { inputValueChange(e, 'result') }} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.improve' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.improve} onChange={e => { inputValueChange(e, 'improve') }} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.completionTime' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.completionTime} onChange={e => { inputValueChange(e, 'completionTime') }} /></Col>
                 </Row>
             </Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12} style={{ textAlign: 'center' }}>
-                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={ confirmHandle }>确定</Button>
+                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={confirmHandle}>确定</Button>
             </Col>
         </Row>
     </div>
 }
 
-CauseAnalysisOfMaterial = connect(({AbnormalDecision}) => {
+CauseAnalysisOfMaterial = connect(({ AbnormalDecision }) => {
     return {
         material: AbnormalDecision.anomalousGraph.advancedSearch.causeAnalysis.material
     }
@@ -1143,10 +1254,10 @@ let CauseAnalysisOfFunction = props => {
     //                     result: '', // 改善結果
     //                     anImprove: [],  // 橫向展開改善 Y | N
     //                     completionTime: '' // 預計完成時間
-    let {dispatch, func} = props;
-    let {chargePerson, result, anImprove, completionTime} = func;
+    let { dispatch, func } = props;
+    let { chargePerson, result, anImprove, completionTime } = func;
 
-    let [nativeState, setNativeState ] = useState({chargePerson, result, anImprove, completionTime});
+    let [nativeState, setNativeState] = useState({ chargePerson, result, anImprove, completionTime });
 
     let setFunction = useCallback((payload) => {
         dispatch({
@@ -1160,11 +1271,11 @@ let CauseAnalysisOfFunction = props => {
     }, [func]);
 
     let inputValueChange = useCallback((e, key) => {
-        setNativeState({...nativeState, [key]: e.target.value });
+        setNativeState({ ...nativeState, [key]: e.target.value });
     }, [nativeState]);
 
     let checkboxValueChange = useCallback((val, key) => {
-        setNativeState({...nativeState, [key]:val })
+        setNativeState({ ...nativeState, [key]: val })
     }, [nativeState]);
 
     let confirmHandle = useCallback(() => {
@@ -1177,23 +1288,29 @@ let CauseAnalysisOfFunction = props => {
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>負責人</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.chargePerson } onChange={ e => { inputValueChange(e, 'chargePerson') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.chargePerson' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.chargePerson} onChange={e => { inputValueChange(e, 'chargePerson') }} /></Col>
                 </Row>
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>改善結果</Col>
-                    <Col span={14}><Input size="small" value={ nativeState.result } onChange={ e => { inputValueChange(e, 'result') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.result' })
+                    }</Col>
+                    <Col span={14}><Input size="small" value={nativeState.result} onChange={e => { inputValueChange(e, 'result') }} /></Col>
                 </Row>
             </Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>橫向展開改善</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.anImprove' })
+                    }</Col>
                     <Col span={15}>
-                        <Checkbox.Group value={ nativeState.anImprove } onChange={ v => { checkboxValueChange(v, 'anImprove') } }>
+                        <Checkbox.Group value={nativeState.anImprove} onChange={v => { checkboxValueChange(v, 'anImprove') }}>
                             <Checkbox value="Y">是</Checkbox>
                             <Checkbox value="N">否</Checkbox>
                         </Checkbox.Group>
@@ -1202,14 +1319,16 @@ let CauseAnalysisOfFunction = props => {
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>預計完成時間</Col>
-                    <Col span={14}><Input size="small" value={ nativeState.completionTime } onChange={ e => { inputValueChange(e, 'completionTime') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.completionTime' })
+                    }</Col>
+                    <Col span={14}><Input size="small" value={nativeState.completionTime} onChange={e => { inputValueChange(e, 'completionTime') }} /></Col>
                 </Row>
             </Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12} style={{ textAlign: 'center' }}>
-                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={ confirmHandle }>确定</Button>
+                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={confirmHandle}>确定</Button>
             </Col>
         </Row>
     </div>
@@ -1228,10 +1347,10 @@ let CauseAnalysisOfAnnulus = props => {
     //                     result: '', // 處理結果
     //                     improve: '',  // 改善方向
     //                     completionTime: '' // 預計完成時間
-    let {dispatch, annulus} = props;
-    let {chargePerson, cause, result, improve, completionTime} = annulus;
+    let { dispatch, annulus } = props;
+    let { chargePerson, cause, result, improve, completionTime } = annulus;
 
-    let [nativeState, setNativeState ] = useState({chargePerson, cause, result, improve, completionTime});
+    let [nativeState, setNativeState] = useState({ chargePerson, cause, result, improve, completionTime });
 
     let setAnnulus = useCallback((payload) => {
         dispatch({
@@ -1245,7 +1364,7 @@ let CauseAnalysisOfAnnulus = props => {
     }, [annulus]);
 
     let inputValueChange = useCallback((e, key) => {
-        setNativeState({...nativeState, [key]: e.target.value });
+        setNativeState({ ...nativeState, [key]: e.target.value });
     }, [nativeState]);
 
     let confirmHandle = useCallback(() => {
@@ -1257,43 +1376,53 @@ let CauseAnalysisOfAnnulus = props => {
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>負責人</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.chargePerson } onChange={ e => { inputValueChange(e, 'chargePerson') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.chargePerson' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.chargePerson} onChange={e => { inputValueChange(e, 'chargePerson') }} /></Col>
                 </Row>
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>具體原因</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.cause } onChange={ e => { inputValueChange(e, 'cause') } } /></Col>
-                </Row>
-            </Col>
-        </Row>
-        <Row gutter={[0, 12]} justify="center">
-            <Col span={12}>
-                <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>處理結果</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.result } onChange={ e => { inputValueChange(e, 'result') } } /></Col>
-                </Row>
-            </Col>
-            <Col span={12}>
-                <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>改善方向</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.improve } onChange={ e => { inputValueChange(e, 'improve') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.cause' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.cause} onChange={e => { inputValueChange(e, 'cause') }} /></Col>
                 </Row>
             </Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>預計完成時間</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.completionTime } onChange={ e => { inputValueChange(e, 'completionTime') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.result' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.result} onChange={e => { inputValueChange(e, 'result') }} /></Col>
+                </Row>
+            </Col>
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.improve' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.improve} onChange={e => { inputValueChange(e, 'improve') }} /></Col>
+                </Row>
+            </Col>
+        </Row>
+        <Row gutter={[0, 12]} justify="center">
+            <Col span={12}>
+                <Row>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.completionTime' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.completionTime} onChange={e => { inputValueChange(e, 'completionTime') }} /></Col>
                 </Row>
             </Col>
             <Col span={12}></Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12} style={{ textAlign: 'center' }}>
-                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={ confirmHandle }>确定</Button>
+                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={confirmHandle}>确定</Button>
             </Col>
         </Row>
     </div>
@@ -1307,10 +1436,10 @@ CauseAnalysisOfAnnulus = connect(({ AbnormalDecision }) => {
 
 
 let CauseAnalysisOfDetection = props => {
-    let {dispatch, detection} = props;
-    let {chargePerson, content, result} = detection;
+    let { dispatch, detection } = props;
+    let { chargePerson, content, result } = detection;
 
-    let [nativeState, setNativeState ] = useState({chargePerson, content, result});
+    let [nativeState, setNativeState] = useState({ chargePerson, content, result });
 
     let setDetection = useCallback((payload) => {
         dispatch({
@@ -1324,7 +1453,7 @@ let CauseAnalysisOfDetection = props => {
     }, [detection]);
 
     let inputValueChange = useCallback((e, key) => {
-        setNativeState({...nativeState, [key]: e.target.value });
+        setNativeState({ ...nativeState, [key]: e.target.value });
     }, [nativeState]);
 
     let confirmHandle = useCallback(() => {
@@ -1336,35 +1465,41 @@ let CauseAnalysisOfDetection = props => {
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>負責人</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.chargePerson } onChange={ e => { inputValueChange(e, 'chargePerson') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.chargePerson' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.chargePerson} onChange={e => { inputValueChange(e, 'chargePerson') }} /></Col>
                 </Row>
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>測試內容</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.content } onChange={ e => { inputValueChange(e, 'content') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.test-content' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.content} onChange={e => { inputValueChange(e, 'content') }} /></Col>
                 </Row>
             </Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>測試結果</Col>
-                    <Col span={15}><Input size="small" value={ nativeState.result } onChange={ e => { inputValueChange(e, 'result') } } /></Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.advanced-search.lable.test-result' })
+                    }</Col>
+                    <Col span={15}><Input size="small" value={nativeState.result} onChange={e => { inputValueChange(e, 'result') }} /></Col>
                 </Row>
             </Col>
             <Col span={12}></Col>
         </Row>
         <Row gutter={[0, 12]} justify="center">
             <Col span={12} style={{ textAlign: 'center' }}>
-                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={ confirmHandle }>确定</Button>
+                <Button type="primary" size="small" icon={<CheckOutlined />} onClick={confirmHandle}>确定</Button>
             </Col>
         </Row>
     </div>
 }
 
-CauseAnalysisOfDetection = connect(({AbnormalDecision}) => {
+CauseAnalysisOfDetection = connect(({ AbnormalDecision }) => {
     return {
         detection: AbnormalDecision.anomalousGraph.advancedSearch.causeAnalysis.detection
     }

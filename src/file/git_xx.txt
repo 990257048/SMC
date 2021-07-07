@@ -1,0 +1,51 @@
+git config --global http.proxy 'socks5://172.18.65.78:3128'     172.18.65.78:3128
+
+git config --global https.proxy 'socks5://172.18.65.78:3128'
+
+git config --global https.proxy http://172.18.65.78:3128
+
+git config --global https.proxy https://172.18.65.78:3128
+
+git config --global --unset http.proxy
+
+git config --global --unset https.proxy
+
+
+
+https://www.ipaddress.com/ 
+github.global.ssl.fastly.net    199.232.69.194
+github.com                      140.82.114.4
+
+
+C:\Windows\System32\drivers\etc\hosts
+199.232.69.194 github.global-ssl.fastly.net
+140.82.114.4 github.com
+
+ipconfig /flushdns
+
+
+
+192.30.255.112  github.com git 
+185.31.16.184 github.global.ssl.fastly.net 
+
+
+140.82.114.4
+199.232.69.194
+
+
+http代理：git config --global http.proxy 'http://127.0.0.1:1087'
+
+https代理：git config --global https.proxy 'https://127.0.0.1:1087'
+
+git config --global http.proxy 'socks5://127.0.0.1:1080' 
+git config --global https.proxy 'socks5://127.0.0.1:1080'
+
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+
+git config --global --get http.proxy
+git config --global --get https.proxy
+
+
+
+

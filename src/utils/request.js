@@ -71,7 +71,7 @@ const requestMock = extend({    // 请求模拟数据
 
 //==========================================================================
 
-export const isMock = true;  // 是否使用模拟数据
+export const isMock = false;    // 是否使用模拟数据
 export const isDebug = true;   // 是否DEBUG
 
 //==========================================================================
@@ -80,7 +80,14 @@ let requestReal;
 if (!isMock) {
   requestReal = (url, options, ...args) => {   // 请求真实数据
     isDebug && console.log(url, options);
-    const host = 'http://10.132.37.63:800';  // 'http://10.132.37.63:800'; // 'https://gcrc.efoxconn.com:8023'; http://localhost:3001  // 宿主
+    const host = 'http://10.132.50.107:800';
+    // 'http://10.132.50.107:808'; 
+    // 'http://10.132.50.107:800'; 正常
+    // 'https://gsmc.efoxconn.com:809';   
+    // 'http://10.132.50.107:800';  
+    // 'http://10.132.37.63:800'; 
+    // 'https://gcrc.efoxconn.com:8023'; 
+    // http://localhost:3001  // 宿主
 
     return umiRequest(host + url, {
       ...options,
@@ -88,7 +95,8 @@ if (!isMock) {
       headers: {
         // 'Content-Type': 'application/json',
         Accept: 'application/json',
-        token: cookies.get('token')
+        token: cookies.get('token'),
+        lang: localStorage.umi_locale
       },
     }, ...args);
 

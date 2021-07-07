@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Card, Row, Col, Input, Button, Modal, Space, Select, message } from 'antd';
 import { SettingOutlined, EditOutlined, SearchOutlined, SelectOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { getUPHMsg, updateSMCUPH, addUPHMsg } from './service';
+import { formatMessage } from 'umi';
 import styles from './style.less';
 
 let { Option } = Select;
@@ -11,7 +12,9 @@ let UPHAndSKUSetting = props => {
   return <div>
     <h3>
       <SettingOutlined />
-      <b>UPH和机种信息配置</b>
+      <b>{
+        formatMessage({ id: 'UPH和机种信息配置.标题' })
+      }</b>
     </h3>
     <Card1 />
     <Card2 />
@@ -23,11 +26,15 @@ UPHAndSKUSetting = connect(state => state.UPHAndSKUSetting)(UPHAndSKUSetting);
 export default UPHAndSKUSetting;
 
 let CardTitle1 = () => {
-  return <div className={styles['card-tit']}><SelectOutlined /> UPH维护</div>
+  return <div className={styles['card-tit']}><SelectOutlined /> {
+    formatMessage({ id: 'UPH和机种信息配置.UPH维护' })
+  }</div>
 }
 
 let CardTitle2 = () => {
-  return <div className={styles['card-tit']}><SelectOutlined /> 机种信息维护</div>
+  return <div className={styles['card-tit']}><SelectOutlined /> {
+    formatMessage({ id: 'UPH和机种信息配置.机种信息维护' })
+  }</div>
 }
 
 let filterOption = (input, option) => option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -63,7 +70,7 @@ let M = () => {
     <>
       <Button type="primary" onClick={showModal}>
         Open Modal
-        </Button>
+      </Button>
       <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <p>Some contents...</p>
         <p>Some contents...</p>
@@ -90,7 +97,7 @@ let Card1 = props => {
   let { dispatch } = props;
   let { MFG, line, skuno, allMFG, allLine, allSkuno } = props.UPHMsg;
 
-  
+
   // UPH信息
   let [searchResult, setResult] = useState({ isShow: false, isSuccess: false, skuno: '未找到', face: '未找到', pcasUPH: '未找到', editTime: '未找到', smcUPH: '未找到' });
 
@@ -116,7 +123,7 @@ let Card1 = props => {
   useEffect(() => {
     MFG && line && dispatch({ type: 'UPHAndSKUSetting/getSkuno', MFG, line });
     setResult({ ...searchResult, isShow: false });
-    setModalState({line}); 
+    setModalState({ line });
   }, [MFG, line]);
 
   useEffect(() => {
@@ -149,16 +156,16 @@ let Card1 = props => {
 
 
   let onOk = useCallback(() => {
-    let {line, face, skuno, smcUPH} = modalState;
+    let { line, face, skuno, smcUPH } = modalState;
     let flag = line && face && skuno && smcUPH;
-    if(!flag){
+    if (!flag) {
       message.error('请补全信息！');
     }
-    flag && addUPHMsg({MFG, line, face, skuno, smcUPH}).then(({Status, Message}) => {
-      if(Status == 'Pass'){
+    flag && addUPHMsg({ MFG, line, face, skuno, smcUPH }).then(({ Status, Message }) => {
+      if (Status == 'Pass') {
         message.success(Message);
-        setModalState({visible: false, face: '无', skuno: '', smcUPH: ''});   // 清空
-      }else{
+        setModalState({ visible: false, face: '无', skuno: '', smcUPH: '' });   // 清空
+      } else {
         message.error(Message);
       }
     });
@@ -170,7 +177,9 @@ let Card1 = props => {
       <Row gutter={[16, 16]} justify='center'>
         <Col span={6}>
           <Row gutter={16}>
-            <Col span={8} className={styles['col-label']}>制造处</Col>
+            <Col span={8} className={styles['col-label']}>{
+              formatMessage({ id: 'UPH和机种信息配置.UPH维护.制造处' })
+            }</Col>
             <Col span={16}>
               <Select showSearch optionFilterProp="children" value={MFG} onChange={(v) => { setUPHMsg({ MFG: v, line: '', skuno: '' }) }} filterOption={filterOption} style={{ width: '100%' }}>
                 {
@@ -182,7 +191,9 @@ let Card1 = props => {
         </Col>
         <Col span={6}>
           <Row gutter={16}>
-            <Col span={8} className={styles['col-label']}>SMC線別</Col>
+            <Col span={8} className={styles['col-label']}>{
+              formatMessage({ id: 'UPH和机种信息配置.UPH维护.SMC线别' })
+            }</Col>
             <Col span={16}>
               <Select showSearch optionFilterProp="children" value={line} onChange={(v) => { setUPHMsg({ line: v, skuno: '' }) }} filterOption={filterOption} style={{ width: '100%' }}>
                 {
@@ -194,7 +205,9 @@ let Card1 = props => {
         </Col>
         <Col span={6}>
           <Row gutter={16}>
-            <Col span={8} className={styles['col-label']}>机种料号</Col>
+            <Col span={8} className={styles['col-label']}>{
+              formatMessage({ id: 'UPH和机种信息配置.UPH维护.机种料号' })
+            }</Col>
             <Col span={16}>
               <Select showSearch optionFilterProp="children" value={skuno} onChange={(v) => { setUPHMsg({ skuno: v }) }} filterOption={filterOption} style={{ width: '100%' }}>
                 {
@@ -211,32 +224,42 @@ let Card1 = props => {
                 <Button type="primary" disabled={false} icon={<SearchOutlined />} onClick={() => { }}>查询</Button>
                 <Button type="primary" disabled={false} icon={<PlusOutlined />} onClick={() => { }}>新增</Button>
               </Space> */}
-              <Button type="primary" disabled={new_disabled} icon={<PlusOutlined />} onClick={openModal}>新增</Button>
+              <Button type="primary" disabled={new_disabled} icon={<PlusOutlined />} onClick={openModal}>{
+                formatMessage({ id: 'UPH和机种信息配置.UPH维护.新增' })
+              }</Button>
               <Modal title="Basic Modal" visible={modalState.visible} onOk={onOk} onCancel={closeModal}>
                 <Row gutter={[16, 16]} justify='center'>
-                  <Col span={4} className={styles['col-label']}>线体名称</Col>
+                  <Col span={4} className={styles['col-label']}>{
+                    formatMessage({ id: 'UPH和机种信息配置.UPH维护.新增.线体名称' })
+                  }</Col>
                   <Col span={16}>
                     <Input disabled={true} value={modalState.line} onChange={(e) => { setModalState({ line: e.target.value }) }} />
                   </Col>
                 </Row>
                 <Row gutter={[16, 16]} justify='center'>
-                  <Col span={4} className={styles['col-label']}>面别</Col>
+                  <Col span={4} className={styles['col-label']}>{
+                    formatMessage({ id: 'UPH和机种信息配置.UPH维护.新增.面别' })
+                  }</Col>
                   <Col span={16}>
                     <Select value={modalState.face} style={{ width: '100%' }}>
-                        {
-                          modalState.allFace.map(v => <Option key={v} value={v}>{v}</Option>)
-                        }
+                      {
+                        modalState.allFace.map(v => <Option key={v} value={v}>{v}</Option>)
+                      }
                     </Select>
                   </Col>
                 </Row>
                 <Row gutter={[16, 16]} justify='center'>
-                  <Col span={4} className={styles['col-label']}>机种料号</Col>
+                  <Col span={4} className={styles['col-label']}>{
+                    formatMessage({ id: 'UPH和机种信息配置.UPH维护.新增.机种料号' })
+                  }</Col>
                   <Col span={16}>
                     <Input value={modalState.skuno} onChange={(e) => { setModalState({ skuno: e.target.value }) }} />
                   </Col>
                 </Row>
                 <Row gutter={[16, 16]} justify='center'>
-                  <Col span={4} className={styles['col-label']}>SMC UPH</Col>
+                  <Col span={4} className={styles['col-label']}>{
+                    formatMessage({ id: 'UPH和机种信息配置.UPH维护.新增.SMC UPH' })
+                  }</Col>
                   <Col span={16}>
                     <Input value={modalState.smcUPH} onChange={(e) => { Number(e.target.value) >= 0 && setModalState({ smcUPH: e.target.value }) }} />
                   </Col>
@@ -252,7 +275,9 @@ let Card1 = props => {
             <Row gutter={[16, 16]} justify='center'>
               <Col span={6}>
                 <Row gutter={16}>
-                  <Col span={8} className={styles['col-label']}>料号</Col>
+                  <Col span={8} className={styles['col-label']}>{
+                    formatMessage({ id: 'UPH和机种信息配置.UPH维护.料号' })
+                  }</Col>
                   <Col span={16} className={styles['col-text']}>
                     {searchResult.skuno}
                   </Col>
@@ -260,7 +285,9 @@ let Card1 = props => {
               </Col>
               <Col span={6}>
                 <Row gutter={16}>
-                  <Col span={8} className={styles['col-label']}>面别</Col>
+                  <Col span={8} className={styles['col-label']}>{
+                    formatMessage({ id: 'UPH和机种信息配置.UPH维护.面别' })
+                  }</Col>
                   <Col span={16} className={styles['col-text']}>
                     {searchResult.face}
                   </Col>
@@ -268,7 +295,9 @@ let Card1 = props => {
               </Col>
               <Col span={6}>
                 <Row gutter={16}>
-                  <Col span={8} className={styles['col-label']}>PCAS UPH</Col>
+                  <Col span={8} className={styles['col-label']}>{
+                    formatMessage({ id: 'UPH和机种信息配置.UPH维护.PCAS UPH' })
+                  }</Col>
                   <Col span={16} className={styles['col-text']}>
                     {searchResult.pcasUPH}
                   </Col>
@@ -276,7 +305,9 @@ let Card1 = props => {
               </Col>
               <Col span={6}>
                 <Row gutter={16}>
-                  <Col span={8} className={styles['col-label']}>修改时间</Col>
+                  <Col span={8} className={styles['col-label']}>{
+                    formatMessage({ id: 'UPH和机种信息配置.UPH维护.修改时间' })
+                  }</Col>
                   <Col span={16} className={styles['col-text']}>
                     {searchResult.editTime}
                   </Col>
@@ -284,7 +315,9 @@ let Card1 = props => {
               </Col>
               <Col span={6}>
                 <Row gutter={16}>
-                  <Col span={8} className={styles['col-label']}>SMC UPH</Col>
+                  <Col span={8} className={styles['col-label']}>{
+                    formatMessage({ id: 'UPH和机种信息配置.UPH维护.SMC UPH' })
+                  }</Col>
                   <Col span={16} className={styles['col-text']}>
                     <Input value={searchResult.smcUPH} disabled={!searchResult.isSuccess} onChange={e => { Number(e.target.value) >= 0 && setResult({ ...searchResult, smcUPH: e.target.value }) }} />
                   </Col>
@@ -329,17 +362,17 @@ let Card2 = props => {
   // skuno: '68-100056-01',
   //           allSkuno: ['68-100056-01', '68-100056-02', '68-100056-03'],
   //           skuName: ''
-  
+
   useMemo(() => {
-    dispatch({type: 'UPHAndSKUSetting/skuSetting_getSkuno'});
+    dispatch({ type: 'UPHAndSKUSetting/skuSetting_getSkuno' });
   }, []);
 
   useEffect(() => {
-    dispatch({type: 'UPHAndSKUSetting/getSkuName', skuno});
+    dispatch({ type: 'UPHAndSKUSetting/getSkuName', skuno });
   }, [skuno]);
 
   let saveHandle = useCallback(() => {
-    dispatch({type: 'UPHAndSKUSetting/updateSkuName', skuno, skuName});
+    dispatch({ type: 'UPHAndSKUSetting/updateSkuName', skuno, skuName });
   }, [skuno, skuName]);
 
   return <Card size='small' title={<CardTitle2 />} style={{ marginTop: '25px' }}>
@@ -347,7 +380,9 @@ let Card2 = props => {
       <Row gutter={[16, 16]} justify='left'>
         <Col span={6}>
           <Row gutter={16}>
-            <Col span={8} className={styles['col-label']}>料号</Col>
+            <Col span={8} className={styles['col-label']}>{
+              formatMessage({ id: 'UPH和机种信息配置.机种信息维护.料号' })
+            }</Col>
             <Col span={16}>
               <Select showSearch optionFilterProp="children" value={skuno} onChange={retChange('skuno')} filterOption={filterOption} style={{ width: '100%' }}>
                 {
@@ -359,16 +394,20 @@ let Card2 = props => {
         </Col>
         <Col span={6}>
           <Row gutter={16}>
-            <Col span={8} className={styles['col-label']}>机种名称</Col>
+            <Col span={8} className={styles['col-label']}>{
+              formatMessage({ id: 'UPH和机种信息配置.机种信息维护.机种名称' })
+            }</Col>
             <Col span={16}>
-              <Input value={skuName} onChange={e => {setSkuMsg({skuName: e.target.value})}} style={{ width: '100%' }} />
+              <Input value={skuName} onChange={e => { setSkuMsg({ skuName: e.target.value }) }} style={{ width: '100%' }} />
             </Col>
           </Row>
         </Col>
         <Col span={6}>
           <Row gutter={24} justify='center'>
             <Col span={20}>
-              <Button type="primary" disabled={false} icon={<SaveOutlined />} onClick={saveHandle}>保存</Button>
+              <Button type="primary" disabled={false} icon={<SaveOutlined />} onClick={saveHandle}>{
+                formatMessage({ id: 'UPH和机种信息配置.机种信息维护.保存' })
+              }</Button>
             </Col>
           </Row>
         </Col>

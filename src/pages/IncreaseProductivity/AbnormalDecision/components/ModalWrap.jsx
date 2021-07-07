@@ -67,13 +67,27 @@ let EditAbnormal = () => {  // 修改异常
         <div className={styles['new-abnormal-steps']}>
             <p></p>
             <Steps size='small' current={current} direction="vertical" onChange={setpChange}>
-                <Step title="基本信息"></Step>
-                <Step title="上報機制"></Step>
-                <Step title="問題描述"></Step>
-                <Step title="臨時對策"></Step>
-                <Step title="原因分析"></Step>
-                <Step title="備註與附件"></Step>
-                <Step title="問題跟蹤"></Step>
+                <Step title={
+                    formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg' })
+                }></Step>
+                <Step title={
+                    formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.report' })
+                }></Step>
+                <Step title={
+                    formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem' })
+                }></Step>
+                <Step title={
+                    formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.countermeasures' })
+                }></Step>
+                <Step title={
+                    formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis' })
+                }></Step>
+                <Step title={
+                    formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.remarks-and-attachments' })
+                }></Step>
+                <Step title={
+                    formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.issue-tracking' })
+                }></Step>
             </Steps>
         </div>
         <div className={styles['new-abnormal-steps-right']}>
@@ -124,18 +138,32 @@ let Step1 = props => {
     return <div className={styles['step1']}>
         <div style={{ textAlign: 'center' }}>
             <p></p>
-            <h3><b>NSDI 【通知单】</b></h3>
+            <h3><b>{
+                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.title' })
+            }</b></h3>
             <Space size="middle">
-                <b>类型：</b>
+                <b>{
+                    formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.type' })
+                }</b>
                 <Radio.Group value={type} onChange={retSetEditAbnormalByPlaneObj('type', 'target.value')}>
-                    <Radio value="異常"> 異常 </Radio>
-                    <Radio value="停線"> 停線 </Radio>
+                    <Radio value="異常"> {
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.type.abnormal' })
+                    } </Radio>
+                    <Radio value="停線"> {
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.type.stop-line' })
+                    } </Radio>
                 </Radio.Group>
                 <span>  </span>
-                <b>紧急程度：</b>
+                <b>{
+                    formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.emergencyDegree' })
+                }</b>
                 <Radio.Group value={emergencyDegree} onChange={retSetEditAbnormalByPlaneObj('emergencyDegree', 'target.value')}>
-                    <Radio value="正常"> 正常 </Radio>
-                    <Radio value="緊急"> 緊急 </Radio>
+                    <Radio value="正常"> {
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.emergencyDegree.normal' })
+                    } </Radio>
+                    <Radio value="緊急"> {
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.emergencyDegree.urgent' })
+                    } </Radio>
                 </Radio.Group>
             </Space>
         </div>
@@ -143,19 +171,25 @@ let Step1 = props => {
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>發文人員</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg.issuer' })
+                    }</Col>
                     <Col span={15}><Input disabled={true} value={issuer} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>發文單位</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg.units' })
+                    }</Col>
                     <Col span={15}><Input disabled={true} value={units} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>發文日期</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg.date' })
+                    }</Col>
                     <Col span={15}><Input disabled={true} value={date} /></Col>
                 </Row>
             </Col>
@@ -164,7 +198,9 @@ let Step1 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常時間</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg.abnormalTime' })
+                    }</Col>
                     <Col span={15}>
                         <DatePicker className={styles.w100} onChange={retSetEditAbnormalByMoment('baseMsg.abnormalTime')}
                             value={moment(abnormalTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
@@ -174,7 +210,9 @@ let Step1 = props => {
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常班別</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg.abnormalClass' })
+                    }</Col>
                     <Col span={15}>
                         <Select className={styles.w100} value={abnormalClass} onChange={retSetEditAbnormalByPlaneObj('baseMsg.abnormalClass', '')}>
                             {
@@ -186,7 +224,9 @@ let Step1 = props => {
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常BU</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg.BU' })
+                    }</Col>
                     <Col span={15}>
                         <Select className={styles.w100} value={BU} onChange={retSetEditAbnormalByPlaneObj('baseMsg.BU', '')}>
                             {
@@ -201,7 +241,9 @@ let Step1 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常區域</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg.region' })
+                    }</Col>
                     <Col span={15}>
                         <Select className={styles.w100} value={region} onChange={retSetEditAbnormalByPlaneObj('baseMsg.region', '')}>
                             {
@@ -213,13 +255,17 @@ let Step1 = props => {
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常工站</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg.station' })
+                    }</Col>
                     <Col span={15}><Input value={station} onChange={retSetEditAbnormalByPlaneObj('baseMsg.station', 'target.value')} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>機種名稱</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg.skuName' })
+                    }</Col>
                     <Col span={15}><Input value={skuName} onChange={retSetEditAbnormalByPlaneObj('baseMsg.skuName', 'target.value')} /></Col>
                 </Row>
             </Col>
@@ -228,19 +274,25 @@ let Step1 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>機種料號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg.skuno' })
+                    }</Col>
                     <Col span={15}><Input value={skuno} onChange={retSetEditAbnormalByPlaneObj('baseMsg.skuno', 'target.value')} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>工單編號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg.WO' })
+                    }</Col>
                     <Col span={15}><Input value={WO} onChange={retSetEditAbnormalByPlaneObj('baseMsg.WO', 'target.value')} /></Col>
                 </Row>
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>產品階段</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.base-msg.stage' })
+                    }</Col>
                     <Col span={15}>
                         <Select className={styles.w100} value={stage} onChange={retSetEditAbnormalByPlaneObj('baseMsg.stage', '')}>
                             {
@@ -292,7 +344,9 @@ let Step2 = props => {
             <Col span={24}>
                 <Row>
                     <Col span={4}></Col>
-                    <Col span={4} style={{ textAlign: 'center' }}>課級（&gt30m）</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.report.sectionManager' })
+                    }</Col>
                     <Col span={10}>
                         <Select className={styles.w100} value={sectionManager} onChange={retSetEditAbnormalByPlaneObj('report.sectionManager', '')}>
                             {
@@ -305,7 +359,9 @@ let Step2 = props => {
             <Col span={24}>
                 <Row>
                     <Col span={4}></Col>
-                    <Col span={4} style={{ textAlign: 'center' }}>部級（0.5~1h）</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.report.minister' })
+                    }</Col>
                     <Col span={10}>
                         <Select className={styles.w100} value={minister} onChange={retSetEditAbnormalByPlaneObj('report.minister', '')}>
                             {
@@ -318,7 +374,9 @@ let Step2 = props => {
             <Col span={24}>
                 <Row>
                     <Col span={4}></Col>
-                    <Col span={4} style={{ textAlign: 'center' }}>處級（&gt1h）</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.report.sectionChief' })
+                    }</Col>
                     <Col span={10}>
                         <Select className={styles.w100} value={sectionChief} onChange={retSetEditAbnormalByPlaneObj('report.sectionChief', '')}>
                             {
@@ -357,7 +415,9 @@ let Step3 = props => {
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={16}>
                 <Row>
-                    <Col span={6} style={{ textAlign: 'right', paddingRight: '15px' }}>異常處理人</Col>
+                    <Col span={6} style={{ textAlign: 'right', paddingRight: '15px' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.handler' })
+                    }</Col>
                     <Col span={18}>
                         {/* 多选 */}
                         <Select mode="multiple" className={styles.w100} showArrow value={handler}
@@ -369,7 +429,9 @@ let Step3 = props => {
             </Col>
             <Col span={8}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>通知時間</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.noticeTime' })
+                    }</Col>
                     <Col span={13}>
                         <DatePicker className={styles.w100} onChange={retSetEditAbnormalByMoment('problem.noticeTime')}
                             value={moment(noticeTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
@@ -381,7 +443,9 @@ let Step3 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>郵件標題</Col>
+                    <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.emailTitle' })
+                    }</Col>
                     <Col span={19}>
                         <TextArea value={emailTitle} onChange={retSetEditAbnormalByPlaneObj('problem.emailTitle', 'target.value')} />
                     </Col>
@@ -391,7 +455,9 @@ let Step3 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>問題分類</Col>
+                    <Col span={4} style={{ textAlign: 'right', paddingRight: '15px' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification' })
+                    }</Col>
                     <Col span={19}>
 
                         {/* ====================================================================================================================================== */}
@@ -401,22 +467,34 @@ let Step3 = props => {
                             onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.currentClassify', '')}
                             style={{ width: '100%', border: '1px solid #ddd' }}
                         >
-                            <TabPane tab="設備異常" key="equipment">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.tab.equipment' })
+                            } key="equipment">
                                 <ProblemEquipment />
                             </TabPane>
-                            <TabPane tab="物料異常" key="material">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.tab.material' })
+                            } key="material">
                                 <ProblemMaterial />
                             </TabPane>
-                            <TabPane tab="人員異常" key="person">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.tab.person' })
+                            } key="person">
                                 <ProblemPerson />
                             </TabPane>
-                            <TabPane tab="品質異常" key="quality">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.tab.quality' })
+                            } key="quality">
                                 <ProblemQuality />
                             </TabPane>
-                            <TabPane tab="治工具異常" key="tools">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.tab.tools' })
+                            } key="tools">
                                 <ProblemTools />
                             </TabPane>
-                            <TabPane tab="系統異常" key="system">
+                            <TabPane tab={
+                                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.tab.system' })
+                            } key="system">
                                 <ProblemSystem />
                             </TabPane>
                         </Tabs>
@@ -471,7 +549,9 @@ let ProblemEquipment = props => {  //設備異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.desc' })
+                    }</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={desc}
                             onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.equipment.desc', '')}
@@ -485,7 +565,9 @@ let ProblemEquipment = props => {  //設備異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>機器類別</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.category' })
+                    }</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={category}
                             onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.equipment.category', '')}
@@ -501,7 +583,9 @@ let ProblemEquipment = props => {  //設備異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>設備名稱</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.name' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={name} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.equipment.name', 'target.value')} />
                     </Col>
@@ -509,7 +593,9 @@ let ProblemEquipment = props => {  //設備異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>設備編號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.equipmentNumber' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={equipmentNumber} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.equipment.equipmentNumber', 'target.value')} />
                     </Col>
@@ -519,7 +605,9 @@ let ProblemEquipment = props => {  //設備異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>設備型號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.equipmentModel' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={equipmentModel} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.equipment.equipmentModel', 'target.value')} />
                     </Col>
@@ -551,7 +639,9 @@ let ProblemMaterial = props => {  //物料異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.desc' })
+                    }</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={desc}
                             onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.material.desc', '')}
@@ -565,7 +655,9 @@ let ProblemMaterial = props => {  //物料異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>DC</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.DC' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={DC} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.material.DC', 'target.value')} />
                     </Col>
@@ -575,7 +667,9 @@ let ProblemMaterial = props => {  //物料異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>LC</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.LC' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={LC} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.material.LC', 'target.value')} />
                     </Col>
@@ -583,7 +677,9 @@ let ProblemMaterial = props => {  //物料異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>零件料號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.partNo' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={partNo} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.material.partNo', 'target.value')} />
                     </Col>
@@ -593,7 +689,9 @@ let ProblemMaterial = props => {  //物料異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>不良率</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.rejectRatio' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={rejectRatio} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.material.rejectRatio', 'target.value')} />
                     </Col>
@@ -601,7 +699,9 @@ let ProblemMaterial = props => {  //物料異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>供應商</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.supplier' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={supplier} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.material.supplier', 'target.value')} />
                     </Col>
@@ -625,7 +725,9 @@ let ProblemPerson = props => {  //人員異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.desc' })
+                    }</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={desc}
                             onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.person.desc', '')}
@@ -667,7 +769,9 @@ let ProblemQuality = props => {  //品質異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>制程段</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.process' })
+                    }</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={process}
                             onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.quality.process', '')}
@@ -681,7 +785,9 @@ let ProblemQuality = props => {  //品質異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>不良現象</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.badPhenomenon' })
+                    }</Col>
                     <Col span={14}>
                         <Select size='small' className={styles.w100} value={badPhenomenon}
                             onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.quality.badPhenomenon', '')}
@@ -697,7 +803,9 @@ let ProblemQuality = props => {  //品質異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>發生站位</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.station' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={station} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.quality.station', 'target.value')} />
                     </Col>
@@ -705,7 +813,9 @@ let ProblemQuality = props => {  //品質異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>影響范圍</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.scope' })
+                    }</Col>
                     <Col span={14}>
                         <Select size='small' className={styles.w100} value={scope}
                             onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.quality.scope', '')}
@@ -721,7 +831,9 @@ let ProblemQuality = props => {  //品質異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>當前措施</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.measures' })
+                    }</Col>
                     <Col span={19}>
                         <TextArea size="small" value={measures} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.quality.measures', 'target.value')} />
                     </Col>
@@ -750,7 +862,9 @@ let ProblemTools = props => {  //治工具異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.desc' })
+                    }</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={desc}
                             onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.tools.desc', '')}
@@ -764,7 +878,9 @@ let ProblemTools = props => {  //治工具異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>涉及的產品料號</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.skuno' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={skuno} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.tools.skuno', 'target.value')} />
                     </Col>
@@ -774,7 +890,9 @@ let ProblemTools = props => {  //治工具異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>使用站位</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.station' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={station} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.tools.station', 'target.value')} />
                     </Col>
@@ -803,7 +921,9 @@ let ProblemSystem = props => {  //系統異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常類別</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.category' })
+                    }</Col>
                     <Col span={15}>
                         <Select size='small' className={styles.w100} value={category}
                             onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.system.category', '')}
@@ -817,7 +937,9 @@ let ProblemSystem = props => {  //系統異常
             </Col>
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常描述</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.desc' })
+                    }</Col>
                     <Col span={15}>
                         <Input size="small" value={desc} onChange={retSetEditAbnormalByPlaneObj('problem.abnormalClassify.system.desc', 'target.value')} />
                     </Col>
@@ -827,7 +949,9 @@ let ProblemSystem = props => {  //系統異常
         <Row gutter={[0, 12]} justify="center">
             <Col span={12}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常開始時間</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.problem.classification.lable.startTime' })
+                    }</Col>
                     <Col span={15}>
                         <DatePicker className={styles.w100} onChange={retSetEditAbnormalByMoment('problem.abnormalClassify.system.startTime')}
                             value={moment(startTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
@@ -869,7 +993,9 @@ let Step4 = props => {
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={9}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>異常損失工時</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.countermeasures.lostWorkTime' })
+                    }</Col>
                     <Col span={16}>
                         {/* <InputNumber
                             style={{width: '100%'}}
@@ -885,7 +1011,9 @@ let Step4 = props => {
             </Col>
             <Col span={9}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>閒置人力</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.countermeasures.idleHuman' })
+                    }</Col>
                     <Col span={16}>
                         <Input value={idleHuman} onChange={retSetEditAbnormalByPlaneObj('countermeasures.idleHuman', 'target.value')} />
                     </Col>
@@ -896,7 +1024,9 @@ let Step4 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={9}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>閒置人力安排</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.countermeasures.manpowerArrangement' })
+                    }</Col>
                     <Col span={16}>
                         <Select className={styles.w100} value={manpowerArrangement}
                             onChange={retSetEditAbnormalByPlaneObj('countermeasures.manpowerArrangement', '')}
@@ -910,7 +1040,9 @@ let Step4 = props => {
             </Col>
             <Col span={9}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>損失產出</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.countermeasures.lostOutput' })
+                    }</Col>
                     <Col span={16}>
                         <Input prefix="" suffix="pcs" value={lostOutput} onChange={retSetEditAbnormalByPlaneObj('countermeasures.lostOutput', 'target.value')} />
                     </Col>
@@ -921,7 +1053,9 @@ let Step4 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={9}>
                 <Row>
-                    <Col span={8} style={{ textAlign: 'center' }}>良率損失</Col>
+                    <Col span={8} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.countermeasures.lostYield' })
+                    }</Col>
                     <Col span={16}>
                         <Input prefix="" suffix="%" value={lostYield} onChange={retSetEditAbnormalByPlaneObj('countermeasures.lostYield', 'target.value')} />
                     </Col>
@@ -932,7 +1066,9 @@ let Step4 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={18}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>臨時解決措施</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.countermeasures.measures' })
+                    }</Col>
                     <Col span={20}>
                         <TextArea value={measures} onChange={retSetEditAbnormalByPlaneObj('countermeasures.measures', 'target.value')} />
                     </Col>
@@ -986,7 +1122,9 @@ let Step5 = props => {
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={23}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.chargePerson' })
+                    }</Col>
                     <Col span={9}>
                         <Select mode="multiple" className={styles.w100} showArrow value={chargePerson}
                             options={allChargePerson.map(v => ({ value: v }))}
@@ -1000,7 +1138,9 @@ let Step5 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={23}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人課級(&gt3d)</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.sectionManager' })
+                    }</Col>
                     <Col span={9}>
                         <Select mode="multiple" className={styles.w100} showArrow value={sectionManager}
                             options={allSectionManager.map(v => ({ value: v }))}
@@ -1011,7 +1151,9 @@ let Step5 = props => {
             </Col>
             <Col span={23}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人部級(&gt5d)</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.minister' })
+                    }</Col>
                     <Col span={9}>
                         <Select mode="multiple" className={styles.w100} showArrow value={minister}
                             options={allMinister.map(v => ({ value: v }))}
@@ -1022,7 +1164,9 @@ let Step5 = props => {
             </Col>
             <Col span={23}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>責任人處級(&gt10d)</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.sectionChief' })
+                    }</Col>
                     <Col span={9}>
                         <Select mode="multiple" className={styles.w100} showArrow value={sectionChief}
                             options={allSectionChief.map(v => ({ value: v }))}
@@ -1035,7 +1179,9 @@ let Step5 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={23}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>異常知會人</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.notifier' })
+                    }</Col>
                     <Col span={18}>
                         <Select mode="multiple" className={styles.w100} showArrow value={notifier}
                             options={allNotifier.map(v => ({ value: v }))}
@@ -1055,12 +1201,24 @@ let Step5 = props => {
                     <Col span={18}>
                         {/* ['parson', 'equipment', 'material', 'function', 'annulus', 'detection'] */}
                         <Checkbox.Group value={allCause} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.allCause', '')}>
-                            <Checkbox value="parson">人</Checkbox>
-                            <Checkbox value="equipment">机</Checkbox>
-                            <Checkbox value="material">料</Checkbox>
-                            <Checkbox value="function">法</Checkbox>
-                            <Checkbox value="annulus">环</Checkbox>
-                            <Checkbox value="detection">量检测</Checkbox>
+                            <Checkbox value="parson">{
+                                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.parson' })
+                            }</Checkbox>
+                            <Checkbox value="equipment">{
+                                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.equipment' })
+                            }</Checkbox>
+                            <Checkbox value="material">{
+                                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.material' })
+                            }</Checkbox>
+                            <Checkbox value="function">{
+                                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.function' })
+                            }</Checkbox>
+                            <Checkbox value="annulus">{
+                                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.annulus' })
+                            }</Checkbox>
+                            <Checkbox value="detection">{
+                                formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.detection' })
+                            }</Checkbox>
                         </Checkbox.Group>
                     </Col>
                 </Row>
@@ -1181,7 +1339,9 @@ let CauseAnalysisOfParson = props => {
         <Row gutter={[0, 16]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>責任人</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.chargePerson' })
+                    }</Col>
                     <Col span={18}>
                         <Select mode="multiple" className={styles.w100} showArrow value={chargePerson}
                             onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.parson.chargePerson', '')}
@@ -1192,7 +1352,9 @@ let CauseAnalysisOfParson = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>處理決定</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.decision' })
+                    }</Col>
                     <Col span={18}>
                         <TextArea value={decision} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.parson.decision', 'target.value')} />
                     </Col>
@@ -1200,7 +1362,9 @@ let CauseAnalysisOfParson = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>改善方向</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.improve' })
+                    }</Col>
                     <Col span={18}>
                         <TextArea value={improve} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.parson.improve', 'target.value')} />
                     </Col>
@@ -1234,7 +1398,9 @@ let CauseAnalysisOfEquipment = props => {
         <Row gutter={[0, 16]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>負責人</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.chargePerson' })
+                    }</Col>
                     <Col span={18}>
                         <Select mode="multiple" className={styles.w100} showArrow value={chargePerson}
                             onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.equipment.chargePerson', '')}
@@ -1245,7 +1411,9 @@ let CauseAnalysisOfEquipment = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>機器名稱</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.machine-name' })
+                    }</Col>
                     <Col span={18}>
                         <Input size="middle" value={name} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.equipment.name', 'target.value')} />
                     </Col>
@@ -1253,7 +1421,9 @@ let CauseAnalysisOfEquipment = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>機器編號</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.machine-equipmentNumber' })
+                    }</Col>
                     <Col span={18}>
                         <Input size="middle" value={equipmentNumber} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.equipment.equipmentNumber', 'target.value')} />
                     </Col>
@@ -1261,7 +1431,9 @@ let CauseAnalysisOfEquipment = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>具體原因</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.cause' })
+                    }</Col>
                     <Col span={18}>
                         <TextArea value={cause} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.equipment.cause', 'target.value')} />
                     </Col>
@@ -1269,7 +1441,9 @@ let CauseAnalysisOfEquipment = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>改善方向</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.improve' })
+                    }</Col>
                     <Col span={18}>
                         <TextArea value={improve} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.equipment.improve', 'target.value')} />
                     </Col>
@@ -1277,7 +1451,9 @@ let CauseAnalysisOfEquipment = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>橫向展開改善</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.anImprove' })
+                    }</Col>
                     <Col span={18}>
                         {/* <Checkbox.Group value={anImprove} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.equipment.anImprove', '')} >
                             <Checkbox value="Y">是</Checkbox>
@@ -1292,7 +1468,9 @@ let CauseAnalysisOfEquipment = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>預計完成時間</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.completionTime' })
+                    }</Col>
                     <Col span={18}>
                         <DatePicker className={styles.w100} onChange={retSetEditAbnormalByMoment('causeAnalysis.cause.equipment.completionTime')}
                             value={moment(completionTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
@@ -1319,7 +1497,9 @@ let CauseAnalysisOfMaterial = props => {
         <Row gutter={[0, 16]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>負責人</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.chargePerson' })
+                    }</Col>
                     <Col span={18}>
                         <Select mode="multiple" className={styles.w100} showArrow value={chargePerson}
                             onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.material.chargePerson', '')}
@@ -1330,7 +1510,9 @@ let CauseAnalysisOfMaterial = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>料號</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.SKUNO' })
+                    }</Col>
                     <Col span={18}>
                         <Input size="middle" value={skuno} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.material.skuno', 'target.value')} />
                     </Col>
@@ -1338,7 +1520,9 @@ let CauseAnalysisOfMaterial = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>DC</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.DC' })
+                    }</Col>
                     <Col span={18}>
                         <Input size="middle" value={DC} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.material.DC', 'target.value')} />
                     </Col>
@@ -1346,7 +1530,9 @@ let CauseAnalysisOfMaterial = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>LC</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.LC' })
+                    }</Col>
                     <Col span={18}>
                         <Input size="middle" value={LC} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.material.LC', 'target.value')} />
                     </Col>
@@ -1354,7 +1540,9 @@ let CauseAnalysisOfMaterial = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>廠商</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.vendor' })
+                    }</Col>
                     <Col span={18}>
                         <Input size="middle" value={vendor} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.material.vendor', 'target.value')} />
                     </Col>
@@ -1362,7 +1550,9 @@ let CauseAnalysisOfMaterial = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>處理結果</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.result' })
+                    }</Col>
                     <Col span={18}>
                         <TextArea value={result} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.material.result', 'target.value')} />
                     </Col>
@@ -1370,7 +1560,9 @@ let CauseAnalysisOfMaterial = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>改善方向</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.improve' })
+                    }</Col>
                     <Col span={18}>
                         <TextArea value={improve} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.material.improve', 'target.value')} />
                     </Col>
@@ -1378,7 +1570,9 @@ let CauseAnalysisOfMaterial = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>預計完成時間</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.completionTime' })
+                    }</Col>
                     <Col span={18}>
                         <DatePicker className={styles.w100} onChange={retSetEditAbnormalByMoment('causeAnalysis.cause.material.completionTime')}
                             value={moment(completionTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
@@ -1406,7 +1600,9 @@ let CauseAnalysisOfFunction = props => {
         <Row gutter={[0, 16]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>負責人</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.chargePerson' })
+                    }</Col>
                     <Col span={18}>
                         <Select mode="multiple" className={styles.w100} showArrow value={chargePerson}
                             onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.function.chargePerson', '')}
@@ -1417,7 +1613,9 @@ let CauseAnalysisOfFunction = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>改善結果</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.result' })
+                    }</Col>
                     <Col span={18}>
                         <TextArea value={result} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.function.result', 'target.value')} />
                     </Col>
@@ -1425,7 +1623,9 @@ let CauseAnalysisOfFunction = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>橫向展開改善</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.anImprove' })
+                    }</Col>
                     <Col span={18}>
                         <Radio.Group value={anImprove} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.function.anImprove', 'target.value')}>
                             <Radio value="Y">是</Radio>
@@ -1436,7 +1636,9 @@ let CauseAnalysisOfFunction = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>預計完成時間</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.completionTime' })
+                    }</Col>
                     <Col span={18}>
                         <DatePicker className={styles.w100} onChange={retSetEditAbnormalByMoment('causeAnalysis.cause.function.completionTime')}
                             value={moment(completionTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
@@ -1464,7 +1666,9 @@ let CauseAnalysisOfAnnulus = props => {
         <Row gutter={[0, 16]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>負責人</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.chargePerson' })
+                    }</Col>
                     <Col span={18}>
                         <Select mode="multiple" className={styles.w100} showArrow value={chargePerson}
                             onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.annulus.chargePerson', '')}
@@ -1475,7 +1679,9 @@ let CauseAnalysisOfAnnulus = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>具體原因</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.cause' })
+                    }</Col>
                     <Col span={18}>
                         <TextArea value={cause} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.annulus.cause', 'target.value')} />
                     </Col>
@@ -1483,7 +1689,9 @@ let CauseAnalysisOfAnnulus = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>處理結果</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.result' })
+                    }</Col>
                     <Col span={18}>
                         <TextArea value={result} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.annulus.result', 'target.value')} />
                     </Col>
@@ -1491,7 +1699,9 @@ let CauseAnalysisOfAnnulus = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>改善方向</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.improve' })
+                    }</Col>
                     <Col span={18}>
                         <TextArea value={improve} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.annulus.improve', 'target.value')} />
                     </Col>
@@ -1499,7 +1709,9 @@ let CauseAnalysisOfAnnulus = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>預計完成時間</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.completionTime' })
+                    }</Col>
                     <Col span={18}>
                         <DatePicker className={styles.w100} onChange={retSetEditAbnormalByMoment('causeAnalysis.cause.annulus.completionTime')}
                             value={moment(completionTime, 'YYYY/MM/DD hh:mm')} format='YYYY/MM/DD hh:mm' showTime
@@ -1527,7 +1739,9 @@ let CauseAnalysisOfDetection = props => {
         <Row gutter={[0, 16]} justify="center">
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>負責人</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.chargePerson' })
+                    }</Col>
                     <Col span={18}>
                         <Select mode="multiple" className={styles.w100} showArrow value={chargePerson}
                             onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.detection.chargePerson', '')}
@@ -1538,7 +1752,9 @@ let CauseAnalysisOfDetection = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>測試內容</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.test-content' })
+                    }</Col>
                     <Col span={18}>
                         <TextArea value={content} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.detection.content', 'target.value')} />
                     </Col>
@@ -1546,7 +1762,9 @@ let CauseAnalysisOfDetection = props => {
             </Col>
             <Col span={24}>
                 <Row>
-                    <Col span={5} style={{ textAlign: 'center' }}>測試結果</Col>
+                    <Col span={5} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.cause-analysis.cause.lable.test-result' })
+                    }</Col>
                     <Col span={18}>
                         <TextArea value={result} onChange={retSetEditAbnormalByPlaneObj('causeAnalysis.cause.detection.result', 'target.value')} />
                     </Col>
@@ -1631,13 +1849,21 @@ let Step6 = props => {
         <Row gutter={[0, 24]} justify="center" style={{ marginTop: '20px' }}>
             <Col span={18}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>問題狀態</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.remarks-and-attachments.problemStatus' })
+                    }</Col>
                     <Col span={20}>
                         <Space>
                             <Radio.Group value={problemStatus} onChange={retSetEditAbnormalByPlaneObj('remarksAndAttachments.problemStatus', 'target.value')}>
-                                <Radio value="等待處理">等待處理</Radio>
-                                <Radio value="處理中">處理中</Radio>
-                                <Radio value="申請結案" disabled={allCause.length > 0 ? false : true}>申請結案</Radio>
+                                <Radio value="等待處理">{
+                                    formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.remarks-and-attachments.problemStatus.waiting' })
+                                }</Radio>
+                                <Radio value="處理中">{
+                                    formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.remarks-and-attachments.problemStatus.doing' })
+                                }</Radio>
+                                <Radio value="申請結案" disabled={allCause.length > 0 ? false : true}>{
+                                    formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.remarks-and-attachments.problemStatus.application-for-closure' })
+                                }</Radio>
                             </Radio.Group>
                         </Space>
                     </Col>
@@ -1647,7 +1873,9 @@ let Step6 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={18}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>備註</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.remarks-and-attachments.remarks' })
+                    }</Col>
                     <Col span={20}>
                         <TextArea value={remarks} onChange={retSetEditAbnormalByPlaneObj('remarksAndAttachments.remarks', 'target.value')} />
                     </Col>
@@ -1657,13 +1885,15 @@ let Step6 = props => {
         <Row gutter={[0, 24]} justify="center">
             <Col span={18}>
                 <Row>
-                    <Col span={4} style={{ textAlign: 'center' }}>附件</Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>{
+                        formatMessage({ id: 'abnormal-decision-center.abnormal-maintenance.remarks-and-attachments.problemStatus' })
+                    }</Col>
                     <Col span={20}>
                         <Upload {...prop}>
                             <Button size='small' icon={<UploadOutlined />}>Click to Upload</Button>
                         </Upload>
                     </Col>
-                </Row> 
+                </Row>
             </Col>
         </Row>
         <Row gutter={[0, 24]} justify="center">
@@ -1688,7 +1918,7 @@ Step6 = connect(state => {
 
 
 let Operation = props => {
-    let {dispatch, status, operationPermissions } = props;
+    let { dispatch, status, operationPermissions } = props;
     let { prevStep } = useContext(EditAbnormalContext);
     //status: 等待處理，處理中，申請結案，已結案
     let saveDraft = () => {
@@ -1715,7 +1945,33 @@ let Operation = props => {
             type: 'AbnormalDecision/abnormalMaintenanceReject'
         })
     }
-    if (status == '已結案' || operationPermissions == 'N') {   //已結案或無權限操作，不顯示操作按鈕
+    // if (status == '已結案' || operationPermissions == 'N') {   //已結案或無權限操作，不顯示操作按鈕
+    //     return <Space size="large">
+    //         <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
+    //     </Space>
+    // } else {
+    //     switch (status) {
+    //         case '申請結案':    // 申請結案時顯示通過和駁回按鈕
+    //             return <Space size="large">
+    //                 <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
+    //                 <Button type="primary" size="small" icon={<CheckOutlined />} onClick={resolve}> 通過 </Button>
+    //                 <Button type="danger" size="small" icon={<CloseOutlined />} onClick={reject}> 駁回 </Button>
+    //             </Space>
+    //         case '等待處理':
+    //         case '處理中':
+    //             return <Space size="large">
+    //                 <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
+    //                 <Button type="danger" size="small" icon={<SaveOutlined />} onClick={saveDraft}> 存入草稿 </Button>
+    //                 <Button type="primary" size="small" icon={<SaveOutlined />} onClick={submit}> 提交 </Button>
+    //             </Space>
+    //         default:
+    //             return <Space size="large">
+    //                 <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
+    //             </Space>
+    //     }
+    // }
+
+    if (status == '已結案' || (operationPermissions == 'N' && status == '申請結案')) {   //无操作    已結案或無權限操作，不顯示操作按鈕
         return <Space size="large">
             <Button type="primary" size="small" icon={<ArrowUpOutlined />} onClick={prevStep}> 上一步 </Button>
         </Space>

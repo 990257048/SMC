@@ -1,8 +1,14 @@
 import React, { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { connect, FormattedMessage, formatMessage } from 'umi';
-import { Space, Input, Button, Table } from 'antd';
+import { Space, Input, Button, Table, Modal, Row, Col, Switch, Select } from 'antd';
 import { ProfileOutlined, BarChartOutlined, RedoOutlined } from '@ant-design/icons';
+let { Option } = Select;
 
+import {
+    findAllAbnormalCategory, findAllSubAbnormal, findSubAbnormalCategoryByLiCodeTypeCode,
+    findAllAbnormalCategoryByLCTCIC, getPCASOrgsByPcasUserID, responsibilitydepartment,
+    insertAbnormal, bindPcasid
+} from '../service';
 import styles from '../style.less';
 
 const dataSource = [
@@ -128,19 +134,7 @@ const dataSource = [
     }
 ];
 
-
-// PERIOD: "8:00~9:00"     时间段
-// SKU_NAME: null          机种
-// SKUNO: "74-120728-01(D)" 料号
-// COST_TIME: "45"         有效工时
-// UPH: "45"               目标产能
-// REAL_OUT: "4"           实际产出
-// DIFF: "-41"             差异
-// TOTAL_OUT: "4"          总产出
-// TOTAL_DIFF: "-41"       累计差异
-// REMARK: ""              描述
-
-let ret_table_config = (h, tableData) => ({
+const ret_table_config = (h, tableData) => ({
     size: 'small',
     scroll: { y: h },
     bordered: true,
@@ -152,13 +146,13 @@ let ret_table_config = (h, tableData) => ({
     dataSource: tableData, // dataSource.map((row, i) => ({ key: 'row' + i, ...row })),
     columns: [
         {
-            title: '时间段',
+            title: formatMessage({ id: '实时生产看板.表字段.时间段' }),
             align: 'center',
             dataIndex: 'PERIOD',
             width: 120
         },
         {
-            title: '机种',
+            title: formatMessage({ id: '实时生产看板.表字段.机种' }),
             align: 'center',
             dataIndex: 'SKU_NAME',
             width: 120,
@@ -167,7 +161,7 @@ let ret_table_config = (h, tableData) => ({
             } </>
         },
         {
-            title: '料号',
+            title: formatMessage({ id: '实时生产看板.表字段.料号' }),
             align: 'center',
             dataIndex: 'SKUNO',
             width: 130,
@@ -176,7 +170,7 @@ let ret_table_config = (h, tableData) => ({
             } </>
         },
         {
-            title: '有效工时',
+            title: formatMessage({ id: '实时生产看板.表字段.有效工时' }),
             align: 'center',
             dataIndex: 'COST_TIME',
             width: 80,
@@ -185,7 +179,7 @@ let ret_table_config = (h, tableData) => ({
             } </>
         },
         {
-            title: '目标产能',
+            title: formatMessage({ id: '实时生产看板.表字段.目标产能' }),
             align: 'center',
             dataIndex: 'UPH',
             width: 80,
@@ -194,7 +188,7 @@ let ret_table_config = (h, tableData) => ({
             } </>
         },
         {
-            title: '实际产出',
+            title: formatMessage({ id: '实时生产看板.表字段.实际产出' }),
             align: 'center',
             dataIndex: 'REAL_OUT',
             width: 80,
@@ -203,7 +197,7 @@ let ret_table_config = (h, tableData) => ({
             } </>
         },
         {
-            title: '差异',
+            title: formatMessage({ id: '实时生产看板.表字段.差异' }),
             align: 'center',
             dataIndex: 'DIFF',
             width: 80,
@@ -212,19 +206,19 @@ let ret_table_config = (h, tableData) => ({
             } </>
         },
         {
-            title: '累计产出',
+            title: formatMessage({ id: '实时生产看板.表字段.累计产出' }),
             align: 'center',
             dataIndex: 'TOTAL_OUT',
             width: 80,
         },
         {
-            title: '累计差异',
+            title: formatMessage({ id: '实时生产看板.表字段.累计差异' }),
             align: 'center',
             dataIndex: 'TOTAL_DIFF',
             width: 80,
         },
         {
-            title: '备注',
+            title: formatMessage({ id: '实时生产看板.表字段.备注' }),
             align: 'center',
             dataIndex: 'REMARK',
             // width: 300,
@@ -236,31 +230,214 @@ let ret_table_config = (h, tableData) => ({
             } </>
         }
     ],
-    // onRow: (a, b, c) => {   //绑事件（行）
-    //     console.log(a, b, c);
-    // }
     rowClassName: styles._tab_row
 })
 
+let useModal = (initState = {}) => {
+    let [state, setState] = useState({ ...initState, visible: false, width: 800 });
+    let setStates = payload => {
+        setState({ ...state, ...payload });
+    }
+    let open = () => {
+        setStates({ visible: true });
+    }
+    let close = () => {
+        setStates({ visible: false });
+    }
+    let submit = () => {
 
+    }
+    return [state, setStates, open, close];
+}
 
 let TableWrap = props => {
-    let { height, realTimeProduction: {AbnormalTable} } = props;
-
+    let { height, realTimeProduction: { AbnormalTable, currentDate, currentMFG, currentLine, currentClass } } = props;
 
     const tableConfig = useMemo(() => {
         let h = height - 430;
         return ret_table_config(h, AbnormalTable);
     }, [height, AbnormalTable]);
 
+    let [modalData, setModalData, open, close, submit] = useModal({
+        KANBAN_ID: "",
+        currentLine: "", WO: "", caseLarge: "", caseLargeList: [], caseSmall: "", caseSmallList: [], PERIOD: "", organization: "", responsibleUnit: "", responsibleUnitList: [], skuno: "",
+        desc: "", PredictiveMaintenance: false
+    });
+    let [subModalData, setSubModalData, subOpen, subClose] = useModal({});
+
+    const onRow = useCallback((row, index) => {   //绑事件（行）
+        //console.log(row, index);
+        return {
+            onClick: () => {
+                console.log(row);
+                setModalData({ visible: true, KANBAN_ID: row.KANBAN_ID, currentLine, PERIOD: row.PERIOD, skuno: row.SKUNO });   // 代入表数据，全局条件
+            }
+        };
+    }, [modalData, currentLine]);
+
+    // PCAS信息（licode）发生变化 -> 初始化异常大项 findAllAbnormalCategory 初始化异常小项 findAllSubAbnormal  带出责任单位 responsibilitydepartment
+    // 异常大项(licode typecode )发生变化 -> 带出异常小项 findSubAbnormalCategoryByLiCodeTypeCode
+    // 异常大项，异常小项(licode typecode itemcode)发生变化 -》 带出异常描述 findAllAbnormalCategoryByLCTCIC
+    // 根据登录人(empno) -》 组织名称 getPCASOrgsByPcasUserID
+    // 填完信息 -》提交  insertAbnormal
+    // 根据登录人 pcasuserid -》修改绑定信息  bindPcasid
+
+    // useEffect(() => {
+    //     PCAS.LI_CODE && Promise.all([findAllAbnormalCategory(PCAS.LI_CODE), findAllSubAbnormal(PCAS.LI_CODE), responsibilitydepartment(PCAS.LI_CODE)]).then(res => {
+    //         console.log(res);
+    //         res.forEach(({ Status, Data, Message }, index) => {
+    //             if (Status == 'Pass') {
+    //                 switch (index) {
+    //                     case 0:   // 异常大项
+    //                         setModalData({
+    //                             caseLarge: Data[0].DEFECT_TYPE_CODE,
+    //                             caseLargeList: Data.map(r => ({ label: r.DEFECT_TYPE_DESC1, value: r.DEFECT_TYPE_CODE }))
+    //                         });
+    //                         break;
+    //                     case 1:
+    //                         setModalData({
+    //                             caseSmall: Data[0].DEFECT_ITEM_CODE,
+    //                             caseSmallList: Data.map(r => ({ label: r.DEFECT_TYPE_DESC1, value: r.DEFECT_ITEM_CODE }))
+    //                         });
+    //                         break;
+    //                     default:
+    //                         setModalData({
+    //                             responsibleUnit: Data[0].DEPART_CODE,
+    //                             responsibleUnitList: Data.map(r => ({ label: r.DEPART_DESC, value: r.DEPART_CODE }))
+    //                         });
+    //                         console.log(modalData);
+    //                         break;
+    //                 }
+    //             } else {
+    //                 message.error(Message);
+    //             }
+    //         })
+    //     });
+    // }, [PCAS.LI_CODE])
+
+
     return <div className={styles['table-wrap']}>
-        <Table {...tableConfig} />
+        <Table {...tableConfig} onRow={onRow} />
+        <Modal title="异常维护" visible={modalData.visible} onOk={close} onCancel={close} width={modalData.width}>
+            <div className={styles['modal-wrap']}>
+                <Row gutter={[12, 24]}>
+                    <Col className={styles['modal-lable']} span={4}>
+                        线体名
+                    </Col>
+                    <Col span={8}>
+                        <Input disabled defaultValue={modalData.currentLine} />
+                    </Col>
+                    <Col className={styles['modal-lable']} span={4}>
+                        工单号（选填）
+                    </Col>
+                    <Col span={8}>
+                        <Input value={modalData.WO} onChange={e => setModalData({ WO: e.target.value })} />
+                    </Col>
+                </Row>
+                <Row gutter={[12, 24]}>
+                    <Col className={styles['modal-lable']} span={4}>
+                        异常大项
+                    </Col>
+                    <Col span={8}>
+                        <Select value={modalData.caseLarge} onChange={v => setModalData({ caseLarge: v })} style={{ width: '100%' }}>
+                            {
+                                modalData.caseLargeList.map((v, i) => <Option key={i} value={v}>{v}</Option>)
+                            }
+                        </Select>
+                    </Col>
+                    <Col className={styles['modal-lable']} span={4}>
+                        异常小项
+                    </Col>
+                    <Col span={8}>
+                        <Select value={modalData.caseSmall} onChange={v => setModalData({ caseSmall: v })} style={{ width: '100%' }}>
+                            {
+                                modalData.caseSmallList.map((v, i) => <Option key={i} value={v}>{v}</Option>)
+                            }
+                        </Select>
+                    </Col>
+                </Row>
+                <Row gutter={[12, 24]}>
+                    <Col className={styles['modal-lable']} span={4}>
+                        时间段
+                    </Col>
+                    <Col span={8}>
+                        <Input value={modalData.PERIOD} onChange={e => setModalData({ PERIOD: e.target.value })} />
+                    </Col>
+                    <Col className={styles['modal-lable']} span={4}>
+                        组织名称
+                    </Col>
+                    <Col span={8}>
+                        <Input value={modalData.organization} onChange={e => setModalData({ organization: e.target.value })} />
+                    </Col>
+                </Row>
+                <Row gutter={[12, 24]}>
+                    <Col className={styles['modal-lable']} span={4}>
+                        责任单位
+                    </Col>
+                    <Col span={8}>
+                        <Input value={modalData.responsibleUnit} onChange={e => setModalData({ responsibleUnit: e.target.value })} />
+                    </Col>
+                    <Col className={styles['modal-lable']} span={4}>
+                        料号（必填）
+                    </Col>
+                    <Col span={8}>
+                        <Input value={modalData.skuno} onChange={e => setModalData({ skuno: e.target.value })} />
+                    </Col>
+                </Row>
+                <Row gutter={[12, 24]}>
+                    <Col className={styles['modal-lable']} span={4}>
+                        异常描述
+                    </Col>
+                    <Col span={20}>
+                        <Input value={modalData.desc} onChange={e => setModalData({ desc: e.target.value })} />
+                    </Col>
+                </Row>
+                <Row gutter={[12, 24]}>
+                    <Col className={styles['modal-lable']} span={4}>
+                        是否为预维护
+                    </Col>
+                    <Col span={20}>
+                        <Switch checkedChildren="是" unCheckedChildren="否" checked={modalData.PredictiveMaintenance} onChange={v => setModalData({ PredictiveMaintenance: v })} />
+                    </Col>
+                </Row>
+                <Row gutter={[12, 24]}>
+                    <Col className={styles['modal-lable']} span={9}>
+
+                    </Col>
+                    <Col span={8}>
+                        <Space>
+                            <Button type='primary' onClick={submit}>提交</Button>
+                            <Button type='primary' onClick={subOpen}>PCAS账号绑定修改</Button>
+                            <Modal title="PCAS账号绑定" visible={subModalData.visible} onOk={subClose} onCancel={subClose} width={400}>
+                                <Row gutter={[12, 24]}>
+                                    <Col span={8}>
+                                        要绑定的PCAS账号
+                                    </Col>
+                                    <Col span={16}>
+                                        <Input />
+                                    </Col>
+                                </Row>
+                            </Modal>
+                        </Space>
+                    </Col>
+                </Row>
+            </div>
+
+        </Modal>
     </div>
 }
 
-export default connect(({ global, realTimeProduction: { AbnormalTable } }) => ({
+
+
+export default connect(({ global, user, realTimeProduction: { AbnormalTable, currentDate, currentMFG, currentLine, currentClass, PCAS } }) => ({
     height: global.height,
+    // empno: user.currentUser[0].WORKID,
     realTimeProduction: {
-        AbnormalTable
+        currentDate,
+        currentMFG,
+        currentLine,
+        currentClass,
+        AbnormalTable,
+        // PCAS
     }
 }))(TableWrap);

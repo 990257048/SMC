@@ -60,29 +60,32 @@ const GlobalModel = {
   subscriptions: {
     setup({ history, dispatch }) {  // 打開系統時執行一次
       // Subscribe history(url) change, trigger `load` action if pathname is `/`
-      history.listen(({ pathname, search, query }) => {   // 系統路由發生變化後執行
+      history.listen((location) => {   // 系統路由發生變化後執行
+        let { pathname, search, query } = location;
         if (typeof window.ga !== 'undefined') {  // 原本就有的
           window.ga('send', 'pageview', pathname + search);
         }
-
+        console.log(pathname);
         // 路由變化後獲取全局通知
-        dispatch({
-          type: 'getNotices'
-        });
-        switch (pathname) {
-          case '/increase-productivity/abnormal-decision': // 異常決策中心
-            if (query.description && query.description == 'open-case') { // 未結案異常快捷入口
-              // 加載異常表數據
-              setTimeout(() => {
-                dispatch({
-                  type: 'AbnormalDecision/getTableDataByOpenCase'
-                });
-              }, 1000);
-            }
-            break;
-          default:
-            // 不做任何處理
-            break;
+        if (pathname !== "/user/login" && pathname !== "/") { //  需要登录后（不能是根 不能是登錄頁）再獲取全局消息 
+          dispatch({   // 获取消息列表
+            type: 'getNotices'
+          });
+          switch (pathname) {
+            case '/increase-productivity/abnormal-decision': // 異常決策中心
+              if (query.description && query.description == 'open-case') { // 未結案異常快捷入口
+                // 加載異常表數據
+                setTimeout(() => {
+                  dispatch({
+                    type: 'AbnormalDecision/getTableDataByOpenCase'
+                  });
+                }, 3000);
+              }
+              break;
+            default:
+              // 不做任何處理
+              break;
+          }
         }
       });
     },

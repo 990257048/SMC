@@ -1,0 +1,53 @@
+?境
+	node(npm npm加速 cnpm yarn) nvm(node版本控制) git加速 SVN
+技?
+	html/html5 
+	css/css3 less/sass/scss/postcss 
+	javascript/es3/es5/es5?格模式/es6/es6+/jsx/typescript
+	nodejs express/koa/next/egg/mongodb  webpack/?手架
+	jquery jqueryPlugin / bootstrap boottrapPlugin
+	?表 highcharts echarts antv(?表可?化引擎 G2 G2Plot G6 F2 L7 )
+	??	animation ???
+	3d	D3  webGL(three)
+	React Redux Redux-Saga ReactRouter dva antd antd-pro umi
+	Vue Vuex VueRouter element-ui iview iview-master
+	Remax WebAssmary ServerLess
+	?代??（微?分 概率? ?理?? 几何解析 ??? 拓扑? ??? ）
+	?代物理
+	mathematics matlab
+	?算机原理 网?基? 人工智能 算法研究
+	 
+??工具
+	vscode git（本地版本控制） github（?程??） 
+
+??工具·插件
+	??器 react-dev-tools redux-devtools 翻?·谷歌商店 / 本地安?
+活?
+	SEE Conf
+	FCC
+
+國慶前（2020/09/26）：
+	鍛鍊（慢跑 400m * 10圈  2天一次  23：30前睡覺）
+	js基礎(大量練習) ts基礎 webpack基本配置 nodejs基礎 express nest koa egg
+	es6（加深 promise實現 迭代器 async await）
+	mvvm原理
+	redux-saga使用&原理（加深）
+	DIFF策略
+	React優化
+	dva 使用&原理（初探）
+	antd 高效開發
+	微信小程序 RN Flutter	
+
+	重要極限 導數 微分 泰勒公式（大量練習）
+	mathematica 使用
+
+	mes系統（bug）資料整理（介紹 代碼） 代碼整理
+	smc系統（權限）資料整理（介紹 代碼） 代碼整理
+	
+	git加速 代理加速  github（拉取 上傳）
+
+
+
+
+
+

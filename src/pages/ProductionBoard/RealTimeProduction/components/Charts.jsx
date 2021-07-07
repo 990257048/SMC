@@ -11,7 +11,7 @@ import styles from '../style.less';
 let option = {
     // color: ['#3398DB'],
     title: {
-        text: '分机种实时产出（单位:pcs）',
+        text: formatMessage({ id: '实时生产看板.图表.分机种实时产出' }),
         left: 'center',
         top: '8%',
         textStyle: {
@@ -77,9 +77,9 @@ let option = {
                 color: new echarts.graphic.LinearGradient(
                     0, 0, 0, 1,
                     [
-                        {offset: 0, color: '#83bff6'},
-                        {offset: 0.5, color: '#188df0'},
-                        {offset: 1, color: '#188df0'}
+                        { offset: 0, color: '#83bff6' },
+                        { offset: 0.5, color: '#188df0' },
+                        { offset: 1, color: '#188df0' }
                     ]
                 )
             }
@@ -113,8 +113,8 @@ let Charts = props => {
         dispatch,
         collapsed,
         realTimeProduction: {
-            Abnormal: {Abnormal_NoOK_Count, Abnormal_Count, Abnormal_Time, Capacity_achievement_rate},
-            AbnormalChart: {yAxis, series}
+            Abnormal: { Abnormal_NoOK_Count, Abnormal_Count, Abnormal_Time, Capacity_achievement_rate },
+            AbnormalChart: { yAxis, series }
         }
     } = props;
     let chartWrap = useRef();
@@ -129,35 +129,42 @@ let Charts = props => {
         // console.log("componwntDidMount");
         let mychart = echarts.init(chartWrap.current);
         let option = ret_option(yAxis, series);
-        mychart.resize({width: w});
+        mychart.resize({ width: w });
         mychart.setOption(option);
     }, [w, yAxis, series]);
-
 
     return <div className={styles.charts}>
         <Row gutter={[24, 12]}>
             <Col span={3}>
                 <div className={styles.box}>
-                    <h3> <b>待维护异常</b> </h3>
-                    <h2 style={{ color: 'red' }}> <b>{ Abnormal_NoOK_Count }个</b> </h2>
+                    <h3> <b>{
+                        formatMessage({ id: '实时生产看板.图表.待维护异常' })
+                    }</b> </h3>
+                    <h2 style={{ color: 'red' }}> <b>{Abnormal_NoOK_Count}个</b> </h2>
                 </div>
             </Col>
             <Col span={3}>
                 <div className={styles.box}>
-                    <h3> <b>全部异常</b> </h3>
-                    <h2 style={{ color: 'red' }}> <b>{ Abnormal_Count }个</b> </h2>
+                    <h3> <b>{
+                        formatMessage({ id: '实时生产看板.图表.全部异常' })
+                    }</b> </h3>
+                    <h2 style={{ color: 'red' }}> <b>{Abnormal_Count}个</b> </h2>
                 </div>
             </Col>
             <Col span={3}>
                 <div className={styles.box}>
-                    <h3> <b>异常时间</b> </h3>
-                    <h2 style={ Abnormal_Time == '0' ? { color: 'green' } : { color: 'red' }}> <b>{ Abnormal_Time }小时</b> </h2>
+                    <h3> <b>{
+                        formatMessage({ id: '实时生产看板.图表.异常时间' })
+                    }</b> </h3>
+                    <h2 style={Abnormal_Time == '0' ? { color: 'green' } : { color: 'red' }}> <b>{Abnormal_Time}小时</b> </h2>
                 </div>
             </Col>
             <Col span={3}>
                 <div className={styles.box}>
-                    <h3> <b>目标达成率</b> </h3>
-                    <h2 style={{ color: 'green' }}> <b>{ Capacity_achievement_rate }</b> </h2>
+                    <h3> <b>{
+                        formatMessage({ id: '实时生产看板.图表.目标达成率' })
+                    }</b> </h3>
+                    <h2 style={{ color: 'green' }}> <b>{Capacity_achievement_rate}</b> </h2>
                 </div>
             </Col>
             <Col span={12}>
@@ -172,9 +179,9 @@ let Charts = props => {
     </div>
 }
 
-let mapStateToProps = ({global, realTimeProduction: {Abnormal, AbnormalChart}}) => ({
+let mapStateToProps = ({ global, realTimeProduction: { Abnormal, AbnormalChart } }) => ({
     collapsed: global.collapsed,
-    realTimeProduction: {Abnormal, AbnormalChart}
+    realTimeProduction: { Abnormal, AbnormalChart }
 })
 
 export default connect(mapStateToProps)(Charts);

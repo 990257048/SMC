@@ -1,6 +1,6 @@
 import { Tooltip, Tag } from 'antd';
 import { QuestionCircleOutlined, NotificationOutlined } from '@ant-design/icons';
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { connect, SelectLang } from 'umi';
 import Avatar from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
@@ -17,7 +17,6 @@ const ENVTagColor = {
 const GlobalHeaderRight = props => {
   const { theme, layout } = props;
   let className = styles.right;
-
   if (theme === 'dark' && layout === 'top') {
     className = `${styles.right}  ${styles.dark}`;
   }

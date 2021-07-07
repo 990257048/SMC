@@ -673,10 +673,11 @@ let Model = {
 
         *getBU({ MFG }, { call, put }) {
             let { Status, Message, Data } = yield call(getBU, MFG);
+            console.log('getBU', Data);
             if (Status == 'Pass') {
                 yield put({
                     type: 'setAdvancedSearchOfBuAndRegion',
-                    payload: { allBU: Data.BU, BU: [] } //得到新的BU 之前的BU要置空
+                    payload: { allBU: Data, BU: [] } //得到新的BU 之前的BU要置空
                 })
             } else {
                 message.error(Message);
@@ -687,7 +688,7 @@ let Model = {
             let currentDate = moment();
             let year = currentDate.year(), month = currentDate.month() + 1, week = currentDate.week(), time, allYear = [], season;
             for (var i = 2017; i <= year; i++) allYear.push(i);
-            season = month <= 3 ? '第一季度' : month <= 6 ? '第二季度' : month <= 9 ? '第三季度' : '第四季度';
+            season = month <= 3 ? 1 : month <= 6 ? 2 : month <= 9 ? 3 : 4;
             time = [currentDate.subtract(1, 'days').format('YYYY-MM-DD'), currentDate.add(1, 'days').format('YYYY-MM-DD')];
             // console.log(allYear, year, season, month, week, time);
             yield put({
@@ -720,6 +721,7 @@ let Model = {
         *getGraph1(_, { call, put, select }) {
             let anomalousGraph = yield select(state => state.AbnormalDecision.anomalousGraph);
             let sendData = filterData(anomalousGraph, graph1SendData);
+            // console.log(sendData)
             // select...
             let { Status, Message, Data } = yield call(getGraph1, sendData);
             if (Status == 'Pass') {
@@ -803,7 +805,10 @@ let Model = {
         // =========================================================================================================================
 
         *getTableData({ graphLink }, { call, put, select }) {
-
+            graphLink = graphLink ? graphLink : {    // 保證格式一致
+                name: "",
+                seriesName: ""
+            };
             // yield select(...)  整合發送數據，適應所有情況（①切換tab時 ②改變收藏狀態時 ③統計圖點擊時） 重点********
             let anomalousGraph = yield select(state => state.AbnormalDecision.anomalousGraph);
             let { activeKey } = anomalousGraph;
@@ -844,12 +849,14 @@ let Model = {
                 })
                 message.success('getTableData' + Message);
             } else {
-                message.error(Message);
+                // message.error(Message);  // 不需要报错
             }
         },
 
         *getTableDataByOpenCase(_, { call, put, select }) {   // 獲取未結案的異常
+
             let { Status, Message, Data } = yield call(getTableDataByOpenCase);
+            console.log(Data);
             if (Status == 'Pass') {
                 let d = Data.map((row) => ({ ...row, key: row.id }));     // 加上key
                 yield put({    // 設置 all
@@ -904,6 +911,7 @@ let Model = {
             }
         },
 
+
         *getNewAbnormalMsg({ MFG }, { select, call, put }) {    //获取新增异常需要的附带信息
             // select...
             // let newAbnormal = yield select(state => state.AbnormalDecision.anomalousGraph.newAbnormal);
@@ -917,6 +925,8 @@ let Model = {
                         retNewState: state => combineData(state, Data)
                     });
                     message.success(Message);
+                } else {
+                    message.error(Message);
                 }
             } catch (e) {
                 message.error(e);
@@ -933,6 +943,8 @@ let Model = {
                         retNewState: state => combineData(state, Data)
                     });
                     message.success(Message);
+                } else {
+                    message.error(Message);
                 }
             } catch (e) {
                 message.error(e);
@@ -943,7 +955,7 @@ let Model = {
             try {
                 let { Status, Message, Data } = yield call(getAbnormalMaintenanceMsg, id);
                 console.log({ Status, Message, Data });
-                // 格式兼容：
+                // 格式兼容：（把数据的状态status带过来）
                 Data = Data.baseMsg.abnormalInformation ? { ...Data, status, baseMsg: { ...Data.baseMsg, ...Data.baseMsg.abnormalInformation } } : { ...Data, status }; // 前者真實數據 後者模擬數據
 
                 if (Status == 'Pass') {
@@ -951,11 +963,20 @@ let Model = {
                         type: 'setAbnormalMaintenanceByFn',
                         retNewState: state => {
                             let r = combineData(state, Data);
+                            // 添加原因分析-原因模块的责任人（后台没传，以原因分析-责任人为准）
+                            Object.keys(r.causeAnalysis.cause).forEach(name => {
+                                if (Object.keys(r.causeAnalysis.cause[name]).includes('allChargePerson')) {
+                                    // console.log(name, r.causeAnalysis.parson.allChargePerson);
+                                    r.causeAnalysis.cause[name].allChargePerson = r.causeAnalysis.parson.allChargePerson;
+                                }
+                            });
                             console.log(r);
                             return r;
                         }
                     });
                     message.success(Message);
+                } else {
+                    message.error(Message);
                 }
             } catch (e) {
                 message.error(e)
@@ -1019,11 +1040,12 @@ let Model = {
                         type: 'getTableData'
                     });
                     message.success(Message);
+                } else {
+                    message.error(Message);
                 }
             } catch (e) {
                 message.error(e);
             }
-
         },
         *clearNewAbnormalData(_, { select, put, call }) {   //清空新增异常的状态(关闭弹出框时; 提交数据后;)
             yield put({
@@ -1054,6 +1076,8 @@ let Model = {
                     });
                     // 关闭
                     message.success(Message);
+                } else {
+                    message.error(Message);
                 }
             } catch (e) {
                 message.error(e)
@@ -1061,20 +1085,26 @@ let Model = {
         },
         // 提交數據（異常維護）
         *abnormalMaintenanceSubmit(_, { select, put, call }) {
+
+            console.log('xxxxxxxxxxxxxxxxxxxxxxx');
             // abnormalMaintenanceSubmitSendData
             let abnormalMaintenanceState = yield select(state => state.AbnormalDecision.abnormalMaintenance);
 
             // let data = filterData(abnormalMaintenanceState, abnormalMaintenanceSubmitSendData);  //原来的 不符合后台接收的格式（要稍微修改一下）
 
             // 修正后 start---------
-            abnormalMaintenanceState = deepClone(abnormalMaintenanceState);
-            let data = filterData(abnormalMaintenanceState, abnormalMaintenanceSubmitSendData);
+            let abnormalMaintenanceState_b = deepClone(abnormalMaintenanceState);
+            console.log(abnormalMaintenanceState_b);
+            let data = filterData(abnormalMaintenanceState_b, deepClone(abnormalMaintenanceSubmitSendData));
+            console.log(data);
             data.ID = data.id;  // 新增需要的
             data.cause = data.causeAnalysis.cause;
             data.cause.currentClassify = data.cause.allCause;
+            data.causeAnalysis = data.causeAnalysis.parson
             delete data.id;  // 删除没用的
-            delete data.causeAnalysis.cause;
+            // delete data.causeAnalysis.cause;
             delete data.cause.allCause;
+            // delete data.causeAnalysis.person;
             // 修正后 end-----------
 
             console.log(data);
@@ -1098,6 +1128,8 @@ let Model = {
                         type: 'clearAbnormalMaintenanceData'
                     });
                     message.success(Message);
+                } else {
+                    message.error(Message);
                 }
             } catch (e) {
                 message.error(e)
@@ -1122,6 +1154,8 @@ let Model = {
                         type: 'clearAbnormalMaintenanceData'
                     });
                     message.success(Message);
+                } else {
+                    message.error(Message);
                 }
             } catch (e) {
                 message.error(e)
@@ -1145,6 +1179,8 @@ let Model = {
                         type: 'clearAbnormalMaintenanceData'
                     });
                     message.success(Message);
+                } else {
+                    message.error(Message);
                 }
             } catch (e) {
                 message.error(e)
@@ -1156,7 +1192,6 @@ let Model = {
                 type: 'setAbnormalMaintenanceByFn',
                 retNewState: state => combineData(state, AbnormalMaintenance_empty)
             });
-
         }
     },
     subscriptions: {

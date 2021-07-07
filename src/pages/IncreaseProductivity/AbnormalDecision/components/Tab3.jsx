@@ -10,7 +10,7 @@ import styles from '../style.less';
 let option = {
     color: ['#3398DB'],
     title: {
-        text: '原因類別統計（单位:個）',
+        text: formatMessage({ id: 'abnormal-decision-center.tab3.title' }),
         left: 'center',
         top: '3%',
         textStyle: {

@@ -1,0 +1,9 @@
+http://ics.foxconn.com/nwing.pac   F0539198 / Lty33fsw
+
+http://ics.foxconn.com/staip15LH.pac / 10.191.131.15:3128  F1320854 / vJCQe7A7
+
+
+172.18.3.79:3128
+
+172.18.65.78:3128
+

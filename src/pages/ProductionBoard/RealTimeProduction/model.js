@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import moment from 'moment';
-import { getAllMFG, getLineData, getRealTimeProductionData } from './service'
+import { getAllMFG, getLineData, getRealTimeProductionData, GetLineInfoFromPCAS } from './service'
 import cookies from 'js-cookie';
 
 let Model = {
@@ -14,6 +14,21 @@ let Model = {
         currentMFG: null,
         currentLine: null,
         currentClass: 'D',
+        PCAS: {
+            // BU_DESC: "NSD MFGII"
+            // FL_CODE: "FL0014"
+            // FL_DESC1: "DA3F SMT"
+            // FL_NAME: "DA3F"
+            // LI_AP_NAME: "DA3S3A"
+            // LI_CODE: "LI0072"
+            // LI_CODE1: "LI0072"
+            // LI_DESC1: "1H2G"
+            // LI_NAME: "DA3S3A"
+            // LI_SFC_NAME: "DA3S3A"
+            // LI_STN: 5
+            // LO_NAME: "龍華"
+            // PL_NAME: "CNSBG"
+        },  // PCAS信息
         //异常统计 box 条形图
         Abnormal: {
             Abnormal_NoOK_Count: "4",  // 待维护异常
@@ -47,14 +62,14 @@ let Model = {
             // [0-8] 前一天（晚班） [8-20]当天（白班） [20-23]当天(晚班)
             let h = date.hours(), className, dateStr;
 
-            if(h >= 8) {    //今天
+            if (h >= 8) {    //今天
                 dateStr = date.format('YYYY-MM-DD');
-                if(h < 20){    //白班
+                if (h < 20) {    //白班
                     className = 'D';
-                }else{  // 晚班
+                } else {  // 晚班
                     className = 'N';
                 }
-            }else{  // 前天晚班
+            } else {  // 前天晚班
                 dateStr = date.subtract(1, 'days').format('YYYY-MM-DD'); //前一天
                 className = 'N';
             }
@@ -104,9 +119,32 @@ let Model = {
                 }
             }
         },
+        // *getLineInfoFromPCAS(_, { put, call, select }) {  // 获取PCAS信息
+        //     let { currentMFG, currentLine } = yield select(state => {
+        //         console.log(state.realTimeProduction);
+        //         return state.realTimeProduction
+        //     });
+        //     console.log(currentMFG, currentLine);
+        //     if (currentMFG && currentLine && currentLine.split('|').length >= 2) {
+        //         let { Data, Message, Status } = yield call(GetLineInfoFromPCAS, currentMFG, currentLine.split('|')[1]);
+        //         if (Status == 'Pass') {
+        //             if (Data.length) {
+        //                 console.log(Data);
+        //                 yield put({
+        //                     type: 'setGlobalState',
+        //                     payload: {
+        //                         PCAS: Data[0]
+        //                     }
+        //                 })
+        //             }
+        //         } else {
+        //             message.error(Message)
+        //         }
+        //     }
+        // },
         *getProductionData(_, { call, put, select }) {    // 获取生产数据
             console.log("获取生产数据");
-            let {currentClass, currentMFG, currentLine, currentDate } = yield select(state => state.realTimeProduction);
+            let { currentClass, currentMFG, currentLine, currentDate } = yield select(state => state.realTimeProduction);
             if (currentMFG && currentLine && currentDate) {
                 let { Status, Message, Data } = yield call(getRealTimeProductionData, currentClass, currentMFG, currentLine, currentDate);
                 if (Status == "Pass") {

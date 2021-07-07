@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { connect, FormattedMessage, formatMessage } from 'umi';
-import { Space, Input, Button, Table, Tooltip, Select, Switch, DatePicker } from 'antd';
+import { Space, Input, Button, Table, Tooltip, Select, Switch, DatePicker, Radio } from 'antd';
 import moment from 'moment';
 import { PageLoading } from '@ant-design/pro-layout';
 import { ProfileOutlined, BarChartOutlined, RedoOutlined, AimOutlined } from '@ant-design/icons';
 import PageWrap from '../../../components/PageWrap';
 import TableWrap from './components/TableWrap';
 import Charts from './components/charts';
+import { getDefaultDate } from './service';
 
 
 import styles from './style.less';
@@ -22,6 +23,11 @@ let RealTimeProduction = props => {
         modelLoading
     } = props;
     let [isReady, setIsReady] = useState(false);
+    let [classOption, setClassOption] = useState([
+        { label: '早班', value: 'D' },
+        { label: '中班', value: 'M' },
+        { label: '晚班', value: 'N' }
+    ]);
 
     // 渲染前： 1.获取当前时间，制造处 2.拿到制造处加载线体 3.拿到线体加载生产数据，4.拿到生产数据开始渲染
     // 1.任何全局数据发生变化 立即获取生产数据重新渲染 2.制造处发生变化重新获取线体，拿到线体（默认第一个）获取生产数据
@@ -40,6 +46,25 @@ let RealTimeProduction = props => {
         dispatch({
             type: 'realTimeProduction/getLineData'
         });
+        // 获取班别信息
+        getDefaultDate(currentMFG).then((e) => {
+            console.log(e);
+            if (e.Status == 'Pass') {
+                console.log(e.Data.class);
+                setClassOption(e.Data.classList.map(r => {
+                    return {
+                        label: r.classtype,
+                        value: r.classcode
+                    }
+                }));
+                dispatch({
+                    type: 'realTimeProduction/setGlobalState',
+                    payload: {
+                        currentClass: e.Data.currentClass
+                    }
+                });
+            }
+        });
     }, [currentMFG]);  // 制造处
 
     useEffect(() => {
@@ -49,19 +74,25 @@ let RealTimeProduction = props => {
         });
     }, [currentClass, currentDate, currentLine]);   // 时间 线体
 
+    useEffect(() => {  // 获取pcas信息
+        dispatch({
+            type: 'realTimeProduction/getLineInfoFromPCAS'
+        })
+    }, [currentMFG, currentLine])
+
     useEffect(() => {
         setIsReady(true);
     }, []);
 
-    let classChange = useCallback(() => {
-        let newCurrentClass = currentClass == 'D' ? 'N' : 'D';
+    let classChange = useCallback((e) => {
+        let newCurrentClass = e.target.value;
         dispatch({
             type: 'realTimeProduction/setGlobalState',
             payload: {
                 currentClass: newCurrentClass
             }
         });
-    }, [currentClass]);
+    }, []);
 
     let dateChange = useCallback((date) => {
         console.log(date);
@@ -109,18 +140,25 @@ let RealTimeProduction = props => {
         <div className={styles['real-time-production']}>
             <h3>
                 <BarChartOutlined />
-                <b> 实时生产看板</b>
+                <b> {formatMessage({ id: '实时生产看板.标题' })}</b>
             </h3>
             <div className={styles['real-time-production-main']}>
                 <div className={styles['real-time-production-main-top']}>
                     <Space size="middle" style={{ float: 'right' }}>
                         {/* <b>{currentDate}</b> */}
                         <Tooltip title="班别">
-                            <Switch size="middle" checkedChildren="白班" unCheckedChildren="晚班" checked={ currentClass == 'D' ? true : false } onChange={ classChange } />
+                            {/* <Switch size="middle" checkedChildren="白班" unCheckedChildren="晚班" checked={ currentClass == 'D' ? true : false } onChange={ classChange } /> */}
+                            <Radio.Group
+                                options={classOption}
+                                onChange={classChange}
+                                value={currentClass}
+                                optionType="button"
+                                buttonStyle="solid"
+                            />
                         </Tooltip>
 
                         <Tooltip title="日期">
-                            <DatePicker value={moment(currentDate, 'YYYY-MM-DD')} format='YYYY-MM-DD' onChange={ dateChange } />
+                            <DatePicker value={moment(currentDate, 'YYYY-MM-DD')} format='YYYY-MM-DD' onChange={dateChange} />
                         </Tooltip>
 
                         <Tooltip title="制造处">
@@ -139,11 +177,11 @@ let RealTimeProduction = props => {
                         </Tooltip>
 
                         <Tooltip title="定位到当前时间（实时）">
-                            <Button type="primary" icon={<AimOutlined />} onClick={ jumpCurrent } ></Button>
+                            <Button type="primary" icon={<AimOutlined />} onClick={jumpCurrent} ></Button>
                         </Tooltip>
 
                         <Tooltip title="刷新">
-                            <Button type="primary" icon={<RedoOutlined />} onClick={ reload } ></Button>
+                            <Button type="primary" icon={<RedoOutlined />} onClick={reload} ></Button>
                         </Tooltip>
                     </Space>
                 </div>

@@ -11,7 +11,7 @@ export async function queryNotices() {
 //----------------------------------------------
 
 export async function getNotices() {
-  return requestReal('/api/getNotices');
+  return requestReal('/api/abnormalDecision/GetAbnormalNoticeList');
 }
 
 export async function queryCurrent(Token) {
